@@ -272,9 +272,9 @@ export const site = {
       { display: '302 588 7010', href: 'https://wa.me/573025887010' },
       { display: '319 726 6104', href: 'https://wa.me/573197266104' },
     ] satisfies readonly WhatsappLine[],
-    email: 'hola@carpinteriayebanisteria.com',
-    address: 'Actualiza con la dirección del taller o oficina.',
-    hours: 'Lunes a viernes 8:00–18:00',
+    email: 'csmarketingdejandohuella@gmail.com',
+    address: 'KR 14 C NO 93 SUR 02',
+    hours: 'Horarios de 7 a 5 lunes a sabado',
   },
 
   footer: {
