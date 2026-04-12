@@ -83,8 +83,7 @@ export function ContactoPage() {
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-wood/95">Taller</p>
                 <p className="mt-3 text-sm leading-relaxed text-paper/65">
-                  Coordinamos visita o llamada cuando te venga bien. Sustituye este texto por cómo trabajáis en la
-                  realidad.
+                  Coordinamos visita o llamada, contactanos para mas información.
                 </p>
               </div>
               <div className="space-y-3">
