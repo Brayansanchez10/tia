@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+
+  --color-ink: #000000;
+  --color-paper: #f8f7fc;
+  --color-surface: #ffffff;
+  --color-wood-dark: #3c280d;
+  --color-gold: #cba14b;
+  --color-wood: #8c6023;
+  /** Bloques tipo “caja crema” del mockup (encima de la imagen). */
+  --color-cream: #ede6dc;
+
+  --shadow-card: 0 16px 48px rgb(0 0 0 / 0.08);
+  --shadow-card-hover: 0 20px 56px rgb(60 40 13 / 0.12);
+}
+
+@keyframes home-hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  /**
+   * Entrada escalonada del hero (solo si el usuario no pide menos movimiento).
+   */
+  .home-hero-reveal > * {
+    opacity: 0;
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-reveal > * {
+      animation: home-hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .home-hero-reveal > *:nth-child(1) {
+      animation-delay: 0.06s;
+    }
+
+    .home-hero-reveal > *:nth-child(2) {
+      animation-delay: 0.14s;
+    }
+
+    .home-hero-reveal > *:nth-child(3) {
+      animation-delay: 0.22s;
+    }
+
+    .home-hero-reveal > *:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero-reveal > * {
+      opacity: 1;
+    }
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply scroll-smooth;
+    scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 5rem);
+  }
+
+  body {
+    @apply m-0 min-h-svh bg-paper font-sans text-[1.05rem] leading-[1.55] text-wood-dark/80 antialiased;
+  }
+
+  #root {
+    @apply min-h-svh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-semibold tracking-tight text-ink;
+  }
+
+  h1 {
+    @apply mb-3 text-[clamp(1.85rem,4vw,2.5rem)] leading-tight;
+  }
+
+  h2 {
+    @apply mb-2 text-xl leading-snug;
+  }
+
+  h3 {
+    @apply mb-1.5 text-[1.05rem] leading-snug;
+  }
+
+  p {
+    @apply m-0;
+  }
+
+  a {
+    @apply text-wood-dark underline decoration-1 underline-offset-[3px];
+  }
+
+  a:hover {
+    @apply underline;
+  }
+}
