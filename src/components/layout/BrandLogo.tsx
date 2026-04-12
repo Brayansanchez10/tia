@@ -10,21 +10,37 @@ function brandInitials(name: string): string {
 
 export function BrandLogo() {
   const src = site.logoSrc.trim()
+  const initials = site.logoInitials.trim()
+    ? site.logoInitials.trim().toUpperCase()
+    : brandInitials(site.brand)
+
+  if (src) {
+    return (
+      <NavLink
+        to="/"
+        end
+        aria-label={`Ir al inicio — ${site.brand}`}
+        className="flex min-w-0 shrink-0 items-center no-underline transition-opacity duration-200 hover:opacity-90 hover:no-underline motion-safe:active:scale-[0.99]"
+      >
+        <img
+          src={src}
+          alt={site.brand}
+          className="h-12 w-auto max-w-[min(58vw,16rem)] object-contain object-left sm:h-14 sm:max-w-[min(72vw,26rem)] md:h-[4.25rem] md:max-w-[min(78vw,34rem)] lg:h-20 lg:max-w-[min(72vw,40rem)] xl:max-w-[44rem]"
+          loading="eager"
+          decoding="async"
+        />
+      </NavLink>
+    )
+  }
 
   return (
     <NavLink
       to="/"
       end
       aria-label="Ir al inicio"
-      className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gold/35 bg-gradient-to-br from-wood-dark to-ink no-underline shadow-sm ring-1 ring-inset ring-gold/15 transition duration-200 hover:border-gold/55 hover:ring-gold/30 motion-safe:hover:scale-[1.04] motion-safe:active:scale-[0.98]"
+      className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-wood/30 bg-gradient-to-br from-wood-dark to-ink no-underline shadow-sm ring-1 ring-inset ring-gold/25 transition duration-200 hover:border-gold/50 hover:ring-gold/35 motion-safe:hover:scale-[1.04] motion-safe:active:scale-[0.98]"
     >
-      {src ? (
-        <img src={src} alt="" className="h-full w-full object-contain p-1.5" loading="eager" />
-      ) : (
-        <span className="select-none text-sm font-bold tracking-tight text-gold">
-          {brandInitials(site.brand)}
-        </span>
-      )}
+      <span className="select-none text-sm font-bold tracking-tight text-gold">{initials}</span>
     </NavLink>
   )
 }

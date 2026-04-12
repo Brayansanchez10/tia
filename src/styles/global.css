@@ -3,17 +3,26 @@
 @theme {
   --font-sans: ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
 
-  --color-ink: #000000;
-  --color-paper: #f8f7fc;
-  --color-surface: #ffffff;
-  --color-wood-dark: #3c280d;
-  --color-gold: #cba14b;
-  --color-wood: #8c6023;
-  /** Bloques tipo “caja crema” del mockup (encima de la imagen). */
-  --color-cream: #ede6dc;
+  /** Gris muy oscuro (casi negro) — lienzo principal. */
+  --color-ink: #16181e;
+  /** Texto claro sobre oscuro. */
+  --color-paper: #f1f5f9;
+  /** Tarjetas y botones secundarios elevados. */
+  --color-surface: #1e222c;
+  /** Franjas y pie un poco más claros que el lienzo. */
+  --color-wood-dark: #1c2028;
+  /**
+   * Acento principal (antes oro): rojo vivo como el “CS” de la tarjeta.
+   * Los nombres `gold` / `wood` se mantienen para no romper clases en todo el proyecto.
+   */
+  --color-gold: #e11d32;
+  /** Acento secundario: azul tipo “Marketing — Pop”. */
+  --color-wood: #38bdf8;
+  /** Paneles y cajas sobre fondo oscuro. */
+  --color-cream: #22262f;
 
-  --shadow-card: 0 16px 48px rgb(0 0 0 / 0.08);
-  --shadow-card-hover: 0 20px 56px rgb(60 40 13 / 0.12);
+  --shadow-card: 0 16px 48px rgb(0 0 0 / 0.35);
+  --shadow-card-hover: 0 22px 56px rgb(225 29 50 / 0.12);
 }
 
 @keyframes home-hero-fade-up {
@@ -75,10 +84,13 @@
   html {
     @apply scroll-smooth;
     scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 5rem);
+    scroll-padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   body {
-    @apply m-0 min-h-svh bg-paper font-sans text-[1.05rem] leading-[1.55] text-wood-dark/80 antialiased;
+    @apply m-0 min-h-svh font-sans text-[0.98rem] leading-[1.55] text-paper/85 antialiased sm:text-[1.05rem];
+    background-color: #16181e;
+    background-image: linear-gradient(180deg, rgb(28 31 38) 0%, rgb(22 24 30) 38%, rgb(18 20 26) 100%);
   }
 
   #root {
@@ -88,7 +100,7 @@
   h1,
   h2,
   h3 {
-    @apply font-semibold tracking-tight text-ink;
+    @apply font-semibold tracking-tight text-paper;
   }
 
   h1 {
@@ -108,7 +120,7 @@
   }
 
   a {
-    @apply text-wood-dark underline decoration-1 underline-offset-[3px];
+    @apply text-wood underline decoration-1 underline-offset-[3px];
   }
 
   a:hover {

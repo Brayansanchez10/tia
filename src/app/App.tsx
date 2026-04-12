@@ -4,7 +4,8 @@ import { ContactoPage } from '@/pages/ContactoPage'
 import { HomePage } from '@/pages/HomePage'
 import { NosotrosPage } from '@/pages/NosotrosPage'
 import { ServiciosPage } from '@/pages/ServiciosPage'
-import { TrabajoDetailPage } from '@/pages/TrabajoDetailPage'
+import { TrabajoChildDetailPage } from '@/pages/TrabajoChildDetailPage'
+import { TrabajoEntryPage } from '@/pages/TrabajoEntryPage'
 import { TrabajosPage } from '@/pages/TrabajosPage'
 
 export function App() {
@@ -14,7 +15,8 @@ export function App() {
         <Route element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="trabajos" element={<TrabajosPage />} />
-          <Route path="trabajos/:slug" element={<TrabajoDetailPage />} />
+          <Route path="trabajos/:parentSlug/:childSlug" element={<TrabajoChildDetailPage />} />
+          <Route path="trabajos/:slug" element={<TrabajoEntryPage />} />
           <Route path="servicios" element={<ServiciosPage />} />
           <Route path="nosotros" element={<NosotrosPage />} />
           <Route path="contacto" element={<ContactoPage />} />

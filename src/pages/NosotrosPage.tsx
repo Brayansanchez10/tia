@@ -14,16 +14,16 @@ export function NosotrosPage() {
       </RevealOnView>
 
       <RevealOnView delayMs={100}>
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.62fr)] lg:items-start lg:gap-14">
-          <div className="min-w-0 border-l-[3px] border-gold pl-6 md:pl-8">
+        <div className="grid gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.62fr)] lg:items-start lg:gap-14">
+          <div className="min-w-0 border-l-[3px] border-gold pl-4 sm:pl-6 md:pl-8">
             <div className="flex flex-col gap-6 md:gap-8">
               {about.paragraphs.map((p, i) => (
                 <p
                   key={i}
                   className={
                     i === 0
-                      ? 'm-0 text-lg leading-relaxed text-wood-dark/90 md:text-xl'
-                      : 'm-0 text-[1.05rem] leading-relaxed text-wood-dark/85'
+                      ? 'm-0 text-lg leading-relaxed text-paper/90 md:text-xl'
+                      : 'm-0 text-[1.05rem] leading-relaxed text-paper/82'
                   }
                 >
                   {p}

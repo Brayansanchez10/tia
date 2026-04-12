@@ -15,8 +15,8 @@ export function ServiciosPage() {
         <ul className="m-0 list-none p-0">
           {services.items.map((item, i) => (
             <li
-              key={item.name}
-              className="group relative border-t border-wood/12 py-10 first:border-t-0 first:pt-0 md:py-12"
+              key={`${i}-${item.name}`}
+              className="group relative border-t border-wood/12 py-8 first:border-t-0 first:pt-0 sm:py-10 md:py-12"
             >
               <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-10 lg:gap-14">
                 <span
@@ -26,10 +26,13 @@ export function ServiciosPage() {
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="m-0 text-2xl font-medium tracking-tight text-ink lowercase md:text-3xl lg:text-[2rem]">
+                  <h2 className="m-0 text-2xl font-medium tracking-tight text-paper md:text-3xl lg:text-[2rem]">
                     {item.name}
                   </h2>
-                  <p className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-wood-dark/88 md:text-lg">
+                  <p className="mt-2 max-w-2xl text-base font-medium leading-snug text-wood/95 md:text-lg">
+                    {item.tagline}
+                  </p>
+                  <p className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-paper/82 md:text-lg">
                     {item.description}
                   </p>
                 </div>

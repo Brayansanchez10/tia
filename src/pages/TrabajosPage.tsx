@@ -1,6 +1,7 @@
 import { site } from '@/content/site'
 import { RevealOnView } from '@/components/motion/RevealOnView'
-import { WorkCard, workPortfolioGridClass } from '@/components/trabajos/WorkCard'
+import { WorkCard } from '@/components/trabajos/WorkCard'
+import { workPortfolioGridClass } from '@/components/trabajos/workPortfolioGrid'
 import { PageHeader, PageSection } from '@/components/ui/PageShell'
 
 export function TrabajosPage() {
@@ -13,7 +14,7 @@ export function TrabajosPage() {
       </RevealOnView>
 
       <RevealOnView delayMs={100}>
-        <ul className={workPortfolioGridClass}>
+        <ul className={`${workPortfolioGridClass()} mt-10 md:mt-12`}>
           {trabajos.items.map((post, i) => (
             <li key={post.slug}>
               <RevealOnView delayMs={i * 90}>
