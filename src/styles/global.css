@@ -1,28 +1,75 @@
 @import 'tailwindcss';
 
+/**
+ * Tema: `html[data-theme="dark"]` (defecto) y `html[data-theme="light"]`.
+ * Colores semánticos enlazados a variables para Tailwind (`bg-paper`, `text-luxury-gold`, etc.).
+ */
+:root,
+html[data-theme='dark'] {
+  --theme-paper: #f1f5f9;
+  --theme-ink: #16181e;
+  --theme-surface: #1e222c;
+  --theme-wood-dark: #1c2028;
+  --theme-cream: #22262f;
+  --theme-luxury-bg: #0d0d0d;
+  --theme-luxury-gold: #c5a059;
+  --theme-luxury-muted: #a8a8a8;
+  --theme-luxury-panel: #0a0a0a;
+  --theme-body-bg: #16181e;
+  --theme-body-gradient: linear-gradient(180deg, rgb(28 31 38) 0%, rgb(22 24 30) 38%, rgb(18 20 26) 100%);
+  --theme-divider: rgb(255 255 255 / 0.1);
+  --theme-shadow-card: 0 16px 48px rgb(0 0 0 / 0.35);
+  --theme-shadow-card-hover: 0 22px 56px rgb(225 29 50 / 0.12);
+  --theme-ambient-grid: rgb(241 245 249);
+}
+
+/**
+ * Modo claro: crema / piedra cálido (sin blanco puro) para no “lavar” la interfaz.
+ */
+html[data-theme='light'] {
+  --theme-paper: #3a3632;
+  --theme-ink: #f6f3ed;
+  --theme-surface: #e9e3db;
+  --theme-wood-dark: #d9d2c7;
+  --theme-cream: #e2dcd2;
+  --theme-luxury-bg: #f1ece4;
+  --theme-luxury-gold: #8a6a28;
+  --theme-luxury-muted: #6c665e;
+  --theme-luxury-panel: #e6e0d6;
+  --theme-body-bg: #ede8e0;
+  --theme-body-gradient: linear-gradient(180deg, #f0ebe3 0%, #e8e2d8 40%, #ede8e0 100%);
+  --theme-divider: rgb(55 48 42 / 0.11);
+  --theme-shadow-card: 0 14px 44px rgb(40 32 24 / 0.07);
+  --theme-shadow-card-hover: 0 22px 52px rgb(40 32 24 / 0.1);
+  --theme-ambient-grid: rgb(72 64 56);
+  --theme-header-bg: rgb(244 240 233 / 0.94);
+  --theme-header-border: rgb(55 48 42 / 0.09);
+  --theme-mobile-nav-bg: rgb(241 236 228 / 0.98);
+  --theme-toggle-bg: rgb(232 226 216 / 0.96);
+}
+
 @theme {
-  --font-sans: ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-serif: 'Cinzel', 'Times New Roman', serif;
 
-  /** Gris muy oscuro (casi negro) — lienzo principal. */
-  --color-ink: #16181e;
-  /** Texto claro sobre oscuro. */
-  --color-paper: #f1f5f9;
-  /** Tarjetas y botones secundarios elevados. */
-  --color-surface: #1e222c;
-  /** Franjas y pie un poco más claros que el lienzo. */
-  --color-wood-dark: #1c2028;
-  /**
-   * Acento principal (antes oro): rojo vivo como el “CS” de la tarjeta.
-   * Los nombres `gold` / `wood` se mantienen para no romper clases en todo el proyecto.
-   */
+  --color-ink: var(--theme-ink);
+  --color-paper: var(--theme-paper);
+  --color-surface: var(--theme-surface);
+  --color-wood-dark: var(--theme-wood-dark);
+  --color-cream: var(--theme-cream);
+
   --color-gold: #e11d32;
-  /** Acento secundario: azul tipo “Marketing — Pop”. */
   --color-wood: #38bdf8;
-  /** Paneles y cajas sobre fondo oscuro. */
-  --color-cream: #22262f;
 
-  --shadow-card: 0 16px 48px rgb(0 0 0 / 0.35);
-  --shadow-card-hover: 0 22px 56px rgb(225 29 50 / 0.12);
+  --color-luxury-bg: var(--theme-luxury-bg);
+  --color-luxury-gold: var(--theme-luxury-gold);
+  --color-luxury-muted: var(--theme-luxury-muted);
+  --color-luxury-panel: var(--theme-luxury-panel);
+
+  --color-divider: var(--theme-divider);
+
+  --shadow-card: var(--theme-shadow-card);
+  --shadow-card-hover: var(--theme-shadow-card-hover);
 }
 
 @keyframes home-hero-fade-up {
@@ -36,17 +83,33 @@
   }
 }
 
+/** Zoom muy suave en el hero (efecto “Ken Burns”). */
+@keyframes home-hero-bg-drift {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate(-1.2%, -0.4%);
+  }
+}
+
 @layer components {
   /**
    * Entrada escalonada del hero (solo si el usuario no pide menos movimiento).
+   * El bloque `.home-hero-cta-group` no se anima entero: animan los botones internos.
    */
-  .home-hero-reveal > * {
+  .home-hero-reveal > *:not(.home-hero-cta-group) {
+    opacity: 0;
+    animation: none;
+  }
+
+  .home-hero-cta-group > * {
     opacity: 0;
     animation: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .home-hero-reveal > * {
+    .home-hero-reveal > *:not(.home-hero-cta-group) {
       animation: home-hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
@@ -62,14 +125,33 @@
       animation-delay: 0.22s;
     }
 
-    .home-hero-reveal > *:nth-child(4) {
-      animation-delay: 0.3s;
+    .home-hero-cta-group > *:nth-child(1) {
+      animation: home-hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: 0.36s;
+    }
+
+    .home-hero-cta-group > *:nth-child(2) {
+      animation: home-hero-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: 0.48s;
+    }
+
+    .home-hero-bg {
+      animation: home-hero-bg-drift 32s ease-in-out infinite alternate;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .home-hero-reveal > * {
+    .home-hero-reveal > *:not(.home-hero-cta-group) {
       opacity: 1;
+    }
+
+    .home-hero-cta-group > * {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+
+    .home-hero-bg {
+      animation: none;
     }
   }
 }
@@ -87,10 +169,20 @@
     scroll-padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /**
+   * Scroll-snap por sección (solo en home, clase `home-scroll-snap` en `<html>`).
+   * `mandatory`: el scroll siempre termina alineado a un punto de snap (sección centrada).
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    html.home-scroll-snap {
+      scroll-snap-type: y mandatory;
+    }
+  }
+
   body {
     @apply m-0 min-h-svh font-sans text-[0.98rem] leading-[1.55] text-paper/85 antialiased sm:text-[1.05rem];
-    background-color: #16181e;
-    background-image: linear-gradient(180deg, rgb(28 31 38) 0%, rgb(22 24 30) 38%, rgb(18 20 26) 100%);
+    background-color: var(--theme-body-bg);
+    background-image: var(--theme-body-gradient);
   }
 
   #root {
@@ -125,5 +217,38 @@
 
   a:hover {
     @apply underline;
+  }
+
+  /** Cabecera y menú móvil en modo claro (crema, alineado a --theme-header-*) */
+  html[data-theme='light'] .site-header {
+    border-bottom-color: var(--theme-header-border) !important;
+    background-color: var(--theme-header-bg) !important;
+  }
+
+  html[data-theme='light'] .site-mobile-nav {
+    border-color: var(--theme-header-border) !important;
+    background-color: var(--theme-mobile-nav-bg) !important;
+    box-shadow: 0 16px 40px rgb(40 32 24 / 0.06);
+  }
+
+  html[data-theme='light'] .theme-toggle-btn {
+    border-color: rgb(55 48 42 / 0.12) !important;
+    background-color: var(--theme-toggle-bg) !important;
+    color: var(--theme-paper) !important;
+  }
+
+  html[data-theme='light'] .theme-toggle-wide {
+    border-color: rgb(55 48 42 / 0.1) !important;
+    background-color: var(--theme-toggle-bg) !important;
+    color: var(--theme-paper) !important;
+  }
+
+  html[data-theme='light'] .ambient-backdrop {
+    opacity: 0.3;
+  }
+
+  /** Bordes que en oscuro son blancos: en claro, tono tierra suave */
+  html[data-theme='light'] [class*='border-white'] {
+    border-color: rgb(55 48 42 / 0.1);
   }
 }

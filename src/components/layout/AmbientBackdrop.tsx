@@ -3,7 +3,7 @@
  */
 export function AmbientBackdrop() {
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+    <div className="ambient-backdrop pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
       <div className="absolute -right-[20%] -top-[25%] h-[min(55vw,28rem)] w-[min(55vw,28rem)] rounded-full bg-gold/6 blur-3xl" />
       <div className="absolute -bottom-[30%] -left-[15%] h-[min(60vw,32rem)] w-[min(60vw,32rem)] rounded-full bg-wood/7 blur-3xl" />
 
@@ -52,8 +52,8 @@ export function AmbientBackdrop() {
       <div
         className="absolute inset-0 opacity-[0.035]"
         style={{
-          backgroundImage: `linear-gradient(rgb(241 245 249) 1px, transparent 1px),
-            linear-gradient(90deg, rgb(241 245 249) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(var(--theme-ambient-grid) 1px, transparent 1px),
+            linear-gradient(90deg, var(--theme-ambient-grid) 1px, transparent 1px)`,
           backgroundSize: '48px 48px',
         }}
       />

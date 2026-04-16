@@ -4,8 +4,7 @@ import { TrabajoDetailPage } from '@/pages/TrabajoDetailPage'
 import { TrabajoHubPage } from '@/pages/TrabajoHubPage'
 
 /**
- * /trabajos/:slug — Si el trabajo tiene `children`, muestra el hub de subvistas;
- * si no, el detalle clásico.
+ * `/trabajos/:slug` — Sin UI propia: con `children` → hub de exhibiciones; si no → detalle con galería.
  */
 export function TrabajoEntryPage() {
   const { slug } = useParams()

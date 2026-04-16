@@ -1,212 +1,258 @@
-import type { ServiceItem } from '@/content/site'
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { site } from '@/content/site'
 import { ButtonLink } from '@/components/ui/ButtonLink'
+import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 
 const HERO_BG = '/img/Fondo.jpg'
 
-function HomeFeaturePanel({
-  index,
-  title,
-  tagline,
-  text,
-  overlapLeft,
-}: {
-  index: number
-  title: string
-  tagline: string
-  text: string
-  overlapLeft: boolean
-}) {
+/** Solo imágenes (sin repetir textos de servicios): taller + proyectos. */
+const VISUAL_STRIP_IMAGES = [
+  '/img/Fondo.jpg',
+  '/img/cruzverde/Exibidor.jpeg',
+  '/img/Exibidor Jugos/Jugos2.jpeg',
+  '/img/Exibidor Jugos/jugos5.jpeg',
+  '/img/cruzverde/exibidor1.jpeg',
+  '/img/Exibidor Jugos/Jugos6.jpeg',
+] as const
+
+function IconCalendar({ className }: { className?: string }) {
   return (
-    <div
-      className={[
-        'relative flex min-w-0 flex-col justify-center border border-wood/15 bg-cream/95 p-6 shadow-card backdrop-blur-[2px] motion-safe:transition-shadow motion-safe:duration-300 motion-safe:hover:border-gold/25 motion-safe:hover:shadow-card-hover sm:p-8 md:max-w-lg md:p-10 lg:p-12',
-        overlapLeft
-          ? 'md:translate-x-4 lg:translate-x-10 xl:translate-x-14'
-          : 'md:-translate-x-4 md:justify-self-end lg:-translate-x-10 xl:-translate-x-14',
-      ].join(' ')}
-    >
-      <p className="m-0 font-mono text-[0.7rem] font-semibold tabular-nums tracking-[0.2em] text-gold/85">
-        {String(index + 1).padStart(2, '0')}
-      </p>
-      <h2 className="m-0 mt-2 text-2xl font-medium tracking-tight text-paper md:text-3xl">{title}</h2>
-      <p className="mt-2 text-base font-medium leading-snug text-wood/95 md:text-[1.05rem]">{tagline}</p>
-      <p className="mt-4 text-[1.02rem] leading-relaxed text-paper/80">{text}</p>
-      <div className="mt-8">
-        <ButtonLink
-          variant="primary"
-          to="/servicios"
-          className="w-full justify-center rounded-sm px-6 py-2.5 text-sm uppercase tracking-wide sm:w-auto"
-        >
-          Saber más
-        </ButtonLink>
-      </div>
-    </div>
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" aria-hidden>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round" />
+    </svg>
   )
 }
 
-function HomeFeatureImage({ layout = 'desktop' }: { layout?: 'desktop' | 'mobile' }) {
-  if (layout === 'mobile') {
-    return (
-      <div className="group relative aspect-16/10 w-full max-h-[200px] overflow-hidden rounded-lg bg-wood-dark sm:max-h-[240px]">
-        <img
-          src={HERO_BG}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center motion-safe:transition-transform motion-safe:duration-[1.1s] motion-safe:ease-out motion-safe:group-hover:scale-[1.03]"
-          loading="lazy"
-        />
-        <div
-          className="absolute inset-0 bg-linear-to-br from-wood-dark/60 via-ink/35 to-gold/10 motion-safe:transition-opacity motion-safe:duration-500 group-hover:opacity-90"
-          aria-hidden
-        />
-      </div>
-    )
-  }
-
+function IconUser({ className }: { className?: string }) {
   return (
-    <div className="group relative min-h-[min(52vw,280px)] overflow-hidden rounded-sm bg-wood-dark sm:min-h-[280px] md:min-h-[360px] lg:min-h-[420px]">
-      <img
-        src={HERO_BG}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-[1.1s] motion-safe:ease-out motion-safe:group-hover:scale-[1.04]"
-        loading="lazy"
-      />
-      <div
-        className="absolute inset-0 bg-linear-to-br from-wood-dark/60 via-ink/35 to-gold/10 motion-safe:transition-opacity motion-safe:duration-500 group-hover:opacity-90"
-        aria-hidden
-      />
-    </div>
-  )
-}
-
-function HomeServiceSlideMobile({ item, index }: { item: ServiceItem; index: number }) {
-  return (
-    <article className="w-full min-w-0 shrink-0 grow-0 basis-full snap-center snap-always">
-      <div className="flex min-w-0 flex-col gap-5">
-        <HomeFeatureImage layout="mobile" />
-        <HomeFeaturePanel
-          index={index}
-          title={item.name}
-          tagline={item.tagline}
-          text={item.description}
-          overlapLeft={false}
-        />
-      </div>
-    </article>
-  )
-}
-
-function HomeServiceArticleDesktop({ item, index }: { item: ServiceItem; index: number }) {
-  const isOdd = index % 2 === 1
-  return (
-    <RevealOnView delayMs={index * 100}>
-      <article className="isolate grid min-w-0 gap-8 sm:gap-10 md:grid-cols-2 md:items-center md:gap-8 lg:gap-12">
-        {isOdd ? (
-          <>
-            <HomeFeatureImage layout="desktop" />
-            <HomeFeaturePanel
-              index={index}
-              title={item.name}
-              tagline={item.tagline}
-              text={item.description}
-              overlapLeft={false}
-            />
-          </>
-        ) : (
-          <>
-            <HomeFeaturePanel
-              index={index}
-              title={item.name}
-              tagline={item.tagline}
-              text={item.description}
-              overlapLeft
-            />
-            <HomeFeatureImage layout="desktop" />
-          </>
-        )}
-      </article>
-    </RevealOnView>
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" aria-hidden>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeLinecap="round" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
   )
 }
 
 export function HomePage() {
-  const { home, services } = site
+  const { home, services, about } = site
+  const location = useLocation()
+
+  useEffect(() => {
+    document.documentElement.classList.add('home-scroll-snap')
+    return () => document.documentElement.classList.remove('home-scroll-snap')
+  }, [])
+
+  useEffect(() => {
+    const id = location.hash.replace(/^#/, '')
+    if (!id) return
+    const el = document.getElementById(id)
+    if (!el) return
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+  }, [location.hash, location.pathname, location.key])
 
   return (
-    <div className="pt-0">
+    <div className="bg-luxury-bg pt-0">
+      {/* Hero */}
       <section
+        id="inicio"
         aria-label="Presentación"
-        className="relative flex min-h-[calc(100svh-env(safe-area-inset-top,0px)-5rem)] w-full flex-col justify-center bg-ink pt-10 pb-[max(2.75rem,env(safe-area-inset-bottom,0px)+1.25rem)] sm:pt-12 sm:pb-12 md:min-h-[min(88vh,820px)] md:justify-center md:pt-28 md:pb-24"
+        className="relative flex min-h-svh w-full snap-center snap-always flex-col justify-center overflow-hidden px-4 pb-16 pt-[calc(env(safe-area-inset-top,0px)+4.5rem)] sm:px-6 md:px-10 md:pb-24 md:pt-28"
       >
         <img
           src={HERO_BG}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_42%] max-md:object-[center_40%]"
+          className="home-hero-bg absolute inset-0 h-full w-full object-cover object-[center_42%]"
           fetchPriority="high"
         />
-        <div
-          className="absolute inset-0 bg-linear-to-t from-ink via-ink/80 to-ink/40 md:bg-linear-to-r md:from-ink/90 md:via-ink/55 md:to-ink/25"
-          aria-hidden
-        />
+        <div className="absolute inset-0 bg-linear-to-b from-luxury-bg/55 via-luxury-bg/45 to-luxury-bg/92 md:bg-linear-to-r md:from-luxury-bg/88 md:via-luxury-bg/50 md:to-luxury-bg/25" aria-hidden />
 
-        <div className="home-hero-reveal relative z-1 mx-auto flex w-full min-w-0 max-w-[65rem] flex-col items-center px-4 text-center sm:px-6 md:items-start md:px-10 md:text-left">
-          <h1 className="mb-4 w-full max-w-[min(100%,22rem)] text-balance text-[clamp(1.75rem,5.2vw+0.6rem,2.35rem)] font-semibold leading-[1.1] tracking-tight text-paper sm:mb-5 sm:max-w-xl sm:text-4xl md:max-w-[18ch] md:text-5xl lg:text-6xl">
+        <div className="home-hero-reveal relative z-1 mx-auto flex w-full min-w-0 max-w-[65rem] flex-col items-center text-center md:items-start md:text-left">
+          <p className="mb-3 text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-paper/75">{site.tagline}</p>
+          <h1 className="mb-5 max-w-[min(100%,20rem)] text-balance font-serif text-[clamp(1.85rem,4.5vw+0.5rem,3.25rem)] font-semibold leading-[1.12] tracking-[0.02em] text-luxury-gold sm:max-w-2xl md:max-w-[18ch]">
             {home.heroTitle}
           </h1>
-          <p className="mb-8 w-full max-w-xl text-pretty text-base leading-relaxed text-paper/90 sm:mb-10 sm:text-lg md:text-xl">
-            {home.heroLead}
-          </p>
-          <div className="flex w-full min-w-0 max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center md:max-w-none md:justify-start">
+          <p className="mb-10 max-w-xl text-pretty text-base leading-relaxed text-paper/92 sm:text-lg md:text-xl">{home.heroLead}</p>
+          <div className="home-hero-cta-group flex w-full min-w-0 max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center md:justify-start">
+            <ButtonLink
+              variant="luxuryOutline"
+              to={home.ctaSecondary.to}
+              className="w-full justify-center motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.02] sm:w-auto"
+            >
+              {home.ctaSecondary.label}
+            </ButtonLink>
             <ButtonLink
               variant="primary"
               to={home.ctaPrimary.to}
-              className="w-full justify-center rounded-sm px-6 uppercase tracking-wide sm:w-auto"
+              className="w-full justify-center rounded-sm px-8 text-sm uppercase tracking-[0.18em] motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.02] sm:w-auto"
             >
               {home.ctaPrimary.label}
-            </ButtonLink>
-            <ButtonLink variant="heroGhost" to={home.ctaSecondary.to} className="w-full justify-center sm:w-auto">
-              {home.ctaSecondary.label}
             </ButtonLink>
           </div>
         </div>
       </section>
 
+      {/* Nosotros */}
       <section
-        className="w-full bg-wood-dark px-4 pb-16 pt-12 sm:px-5 sm:pb-20 sm:pt-14 md:px-8 md:pb-28 md:pt-20"
-        aria-labelledby="home-features-heading"
+        id="nosotros"
+        aria-labelledby="nosotros-heading"
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] flex min-h-svh snap-center snap-always flex-col justify-center border-t border-white/5 px-4 py-16 sm:px-6 md:px-10 md:py-24"
       >
-        <div className="mx-auto min-w-0 max-w-[72rem]">
-          <h2 id="home-features-heading" className="sr-only">
-            Servicios
-          </h2>
+        <div className="mx-auto w-full max-w-[72rem]">
+          <RevealOnView variant="fadeRight">
+            <p className="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-luxury-gold">{about.pageEyebrow}</p>
+            <h2 id="nosotros-heading" className="mt-3 font-serif text-3xl font-semibold tracking-wide text-paper md:text-4xl">
+              {about.title}
+            </h2>
+            <GrowLine className="mt-5" />
+          </RevealOnView>
 
-          {/* Móvil: un servicio por pantalla, deslizar horizontal (no afecta escritorio). */}
-          <RevealOnView className="md:hidden">
-            <div className="min-w-0">
-              <div
-                role="region"
-                aria-roledescription="carrusel"
-                aria-label="Servicios. Desliza a los lados para ver cada uno."
-                tabIndex={0}
-                className="-mx-4 flex snap-x snap-mandatory gap-0 overflow-x-auto scroll-smooth scroll-pl-4 scroll-pr-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              >
-                {services.items.map((item, i) => (
-                  <HomeServiceSlideMobile key={item.name} item={item} index={i} />
+          <RevealOnView delayMs={90} variant="fadeUp">
+            <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.62fr)] lg:items-start lg:gap-16">
+              <div className="min-w-0 border-l border-luxury-gold/50 pl-5 sm:pl-8 md:pl-10">
+                <div className="flex flex-col gap-7 md:gap-9">
+                  {about.paragraphs.map((p, i) => (
+                    <p
+                      key={i}
+                      className={
+                        i === 0
+                          ? 'm-0 text-lg leading-relaxed text-paper/92 md:text-xl'
+                          : 'm-0 text-[1.05rem] leading-relaxed text-luxury-muted'
+                      }
+                    >
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              <figure className="group/fig relative m-0 overflow-hidden lg:sticky lg:top-[calc(env(safe-area-inset-top,0px)+6rem)]">
+                <img
+                  src={HERO_BG}
+                  alt=""
+                  className="aspect-[4/5] h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-[1.4s] motion-safe:ease-out group-hover/fig:scale-[1.03] lg:aspect-auto lg:min-h-[22rem]"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-luxury-bg/90 via-luxury-bg/20 to-transparent motion-safe:transition-opacity motion-safe:duration-500 group-hover/fig:opacity-95" aria-hidden />
+                <figcaption className="absolute bottom-5 left-5 right-5 m-0 translate-y-0 text-sm leading-snug text-paper/88 motion-safe:transition-transform motion-safe:duration-500 group-hover/fig:-translate-y-1 md:bottom-6 md:left-6 md:right-6">
+                  Madera, medida y oficio. Calidad y compromiso en cada instalación.
+                </figcaption>
+              </figure>
+            </div>
+          </RevealOnView>
+        </div>
+      </section>
+
+      {/* Servicios: un solo bloque — intro, fotos (solo visual), CTA, listado detallado */}
+      <section
+        id="servicios"
+        aria-labelledby="servicios-heading"
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] snap-start border-t border-white/5 bg-luxury-panel px-4 py-16 sm:px-6 md:px-10 md:py-24"
+      >
+        <div className="mx-auto w-full max-w-[72rem]">
+          <RevealOnView variant="fadeDown">
+            <p className="m-0 text-center text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-luxury-gold">
+              {services.pageEyebrow}
+            </p>
+            <h2 id="servicios-heading" className="mt-3 text-center font-serif text-3xl font-semibold tracking-wide text-paper md:text-4xl">
+              {services.title}
+            </h2>
+            <GrowLine align="center" className="mt-5" />
+            <p className="mx-auto mt-8 max-w-2xl text-center text-[1.02rem] leading-relaxed text-luxury-muted">{services.intro}</p>
+          </RevealOnView>
+
+          <RevealOnView delayMs={80} variant="fadeUp">
+            <div className="mt-14">
+              <p className="m-0 text-center text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-luxury-muted">
+                Referencias visuales
+              </p>
+              <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+                {VISUAL_STRIP_IMAGES.map((src, i) => (
+                  <div
+                    key={src}
+                    className="group/img relative aspect-[4/3] overflow-hidden bg-luxury-bg sm:aspect-[16/10]"
+                  >
+                    <img
+                      src={src}
+                      alt=""
+                      className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-[1.1s] motion-safe:ease-out motion-safe:group-hover/img:scale-105"
+                      loading={i < 3 ? 'eager' : 'lazy'}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-0 bg-linear-to-t from-luxury-bg/50 to-transparent opacity-70 motion-safe:transition-opacity group-hover/img:opacity-90"
+                      aria-hidden
+                    />
+                  </div>
                 ))}
               </div>
-              <p className="mt-3 text-center text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-paper/45">
-                Desliza para ver más servicios
-              </p>
             </div>
           </RevealOnView>
 
-          {/* Escritorio: mismo diseño en dos columnas y orden alterno. */}
-          <div className="hidden flex-col gap-14 sm:gap-20 md:flex md:gap-32">
+          <RevealOnView delayMs={100} variant="scale">
+            <div className="mt-14 flex flex-col gap-4 border border-white/10 bg-luxury-bg/80 px-4 py-4 motion-safe:transition-[border-color,box-shadow] motion-safe:duration-500 motion-safe:hover:border-luxury-gold/25 motion-safe:hover:shadow-[0_20px_48px_rgba(197,160,89,0.06)] sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 md:mt-16">
+              <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
+                <div className="flex items-center gap-3 text-paper/85">
+                  <IconCalendar className="h-5 w-5 shrink-0 text-luxury-gold" />
+                  <div>
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-luxury-muted">Disponibilidad</p>
+                    <p className="text-sm text-paper/90">Agenda una visita o llamada</p>
+                  </div>
+                </div>
+                <div className="hidden h-8 w-px bg-white/10 sm:block" aria-hidden />
+                <div className="flex items-center gap-3 text-paper/85">
+                  <IconUser className="h-5 w-5 shrink-0 text-luxury-gold" />
+                  <div>
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-luxury-muted">Proyecto</p>
+                    <p className="text-sm text-paper/90">Retail, POP o a medida</p>
+                  </div>
+                </div>
+              </div>
+              <ButtonLink
+                variant="luxuryOutline"
+                to="/contacto"
+                className="w-full shrink-0 justify-center motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.03] sm:w-auto sm:min-w-[11rem]"
+              >
+                Pedir cotización
+              </ButtonLink>
+            </div>
+          </RevealOnView>
+
+          <ul className="m-0 mt-16 list-none border-t border-white/10 p-0 md:mt-20">
             {services.items.map((item, i) => (
-              <HomeServiceArticleDesktop key={item.name} item={item} index={i} />
+              <li
+                key={`${i}-${item.name}`}
+                className="group border-b border-white/10 py-10 motion-safe:transition-colors motion-safe:duration-500 last:border-b-0 motion-safe:hover:bg-white/[0.02] md:py-12"
+              >
+                <RevealOnView delayMs={Math.min(i * 55, 420)} variant="fadeLeft">
+                  <div className="flex flex-col gap-5 md:flex-row md:items-start md:gap-10 lg:gap-14">
+                    <span
+                      className="shrink-0 font-mono text-[0.7rem] font-semibold tabular-nums tracking-[0.22em] text-luxury-gold/90 motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:translate-x-1 md:min-w-[2.75rem] md:pt-1.5"
+                      aria-hidden
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="m-0 font-serif text-2xl font-semibold tracking-wide text-paper motion-safe:transition-colors motion-safe:duration-300 motion-safe:group-hover:text-luxury-gold md:text-[1.65rem]">
+                        {item.name}
+                      </h3>
+                      <p className="mt-2 max-w-2xl text-base font-medium leading-snug text-paper/85 md:text-lg">{item.tagline}</p>
+                      <p className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-luxury-muted md:text-lg">{item.description}</p>
+                    </div>
+                    <div
+                      className="hidden shrink-0 self-start text-luxury-gold/40 motion-safe:transition-[transform,color] motion-safe:duration-500 motion-safe:group-hover:translate-x-1 motion-safe:group-hover:text-luxury-gold md:flex md:h-11 md:w-11 md:items-center md:justify-center md:rounded-full md:border md:border-luxury-gold/35"
+                      aria-hidden
+                    >
+                      <span className="text-lg leading-none">→</span>
+                    </div>
+                  </div>
+                </RevealOnView>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
     </div>

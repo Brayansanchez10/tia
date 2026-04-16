@@ -17,7 +17,7 @@ export function PageSection({ children, edgeToEdge }: PageSectionProps) {
   }
   return (
     <div className="min-h-[50vh] w-full bg-transparent">
-      <div className="mx-auto max-w-[65rem] px-4 pb-12 pt-8 sm:px-5 sm:pb-16 sm:pt-10 md:px-6 md:pb-20 md:pt-12">
+      <div className="mx-auto max-w-[72rem] px-4 pb-12 pt-8 sm:px-5 sm:pb-16 sm:pt-10 md:px-6 md:pb-20 md:pt-12">
         {children}
       </div>
     </div>
@@ -38,9 +38,9 @@ export function PageHeader({ eyebrow, title, meta, intro }: PageHeaderProps) {
     <header className="mb-8 sm:mb-10 md:mb-14">
       <Eyebrow>{eyebrow}</Eyebrow>
       <AccentPageTitle>{title}</AccentPageTitle>
-      {meta ? <p className="mt-2 text-sm font-medium tracking-wide text-wood">{meta}</p> : null}
+      {meta ? <p className="mt-2 text-sm font-medium tracking-wide text-luxury-gold/90">{meta}</p> : null}
       {intro ? (
-        <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-paper/80 md:text-lg">
+        <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-luxury-muted md:text-lg">
           {intro}
         </p>
       ) : null}
