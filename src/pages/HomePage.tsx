@@ -1,11 +1,14 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { HeroHomeVisual } from '@/components/home/HeroHomeVisual'
 import { site } from '@/content/site'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 
 const HERO_BG = '/img/Fondo.jpg'
+/** Hero principal (render 3D con fondo negro integrado). */
+const HERO_VISUAL = '/img/fondoHome.png'
 
 /** Solo imágenes (sin repetir textos de servicios): taller + proyectos. */
 const VISUAL_STRIP_IMAGES = [
@@ -60,38 +63,47 @@ export function HomePage() {
       <section
         id="inicio"
         aria-label="Presentación"
-        className="relative flex min-h-svh w-full snap-center snap-always flex-col justify-center overflow-hidden px-4 pb-16 pt-[calc(env(safe-area-inset-top,0px)+4.5rem)] sm:px-6 md:px-10 md:pb-24 md:pt-28"
+        className="relative flex min-h-svh w-full snap-center snap-always flex-col justify-center overflow-hidden bg-black px-4 pb-16 pt-[calc(env(safe-area-inset-top,0px)+4.5rem)] sm:px-6 md:px-8 md:pb-20 md:pt-24 lg:px-12 xl:px-16 2xl:px-20"
       >
-        <img
-          src={HERO_BG}
-          alt=""
-          className="home-hero-bg absolute inset-0 h-full w-full object-cover object-[center_42%]"
-          fetchPriority="high"
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_100%,rgb(0_0_0_/_0),rgb(0_0_0_/_0.85)_100%)] opacity-90" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-35"
+          aria-hidden
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 52% at 78% 36%, rgb(154 0 32 / 0.14), transparent 52%), radial-gradient(ellipse 72% 58% at 82% 38%, rgb(197 160 89 / 0.14), transparent 55%), radial-gradient(ellipse 48% 42% at 12% 72%, rgb(56 189 248 / 0.06), transparent 48%)',
+          }}
         />
-        <div className="absolute inset-0 bg-linear-to-b from-luxury-bg/55 via-luxury-bg/45 to-luxury-bg/92 md:bg-linear-to-r md:from-luxury-bg/88 md:via-luxury-bg/50 md:to-luxury-bg/25" aria-hidden />
 
-        <div className="home-hero-reveal relative z-1 mx-auto flex w-full min-w-0 max-w-[65rem] flex-col items-center text-center md:items-start md:text-left">
-          <p className="mb-3 text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-paper/75">{site.tagline}</p>
-          <h1 className="mb-5 max-w-[min(100%,20rem)] text-balance font-serif text-[clamp(1.85rem,4.5vw+0.5rem,3.25rem)] font-semibold leading-[1.12] tracking-[0.02em] text-luxury-gold sm:max-w-2xl md:max-w-[18ch]">
-            {home.heroTitle}
-          </h1>
-          <p className="mb-10 max-w-xl text-pretty text-base leading-relaxed text-paper/92 sm:text-lg md:text-xl">{home.heroLead}</p>
-          <div className="home-hero-cta-group flex w-full min-w-0 max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center md:justify-start">
-            <ButtonLink
-              variant="luxuryOutline"
-              to={home.ctaSecondary.to}
-              className="w-full justify-center motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.02] sm:w-auto"
-            >
-              {home.ctaSecondary.label}
-            </ButtonLink>
-            <ButtonLink
-              variant="primary"
-              to={home.ctaPrimary.to}
-              className="w-full justify-center rounded-sm px-8 text-sm uppercase tracking-[0.18em] motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.02] sm:w-auto"
-            >
-              {home.ctaPrimary.label}
-            </ButtonLink>
+        <div className="relative z-10 mx-auto grid w-full min-w-0 max-w-none flex-1 items-center gap-10 md:min-h-0 md:grid-cols-[minmax(0,0.78fr)_minmax(0,1.42fr)] md:gap-8 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.48fr)] lg:gap-14 xl:gap-20">
+          <div className="home-hero-reveal flex min-w-0 max-w-xl flex-col items-center text-center md:max-w-none md:items-start md:justify-center md:pr-2 md:text-left lg:pr-6">
+            <p className="mb-2 text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-white/72">{site.tagline}</p>
+            <div className="mb-5 flex w-full justify-center md:justify-start">
+              <GrowLine align="left" className="w-14" />
+            </div>
+            <h1 className="mb-5 max-w-[min(100%,20rem)] text-balance font-serif text-[clamp(1.85rem,4.5vw+0.5rem,3.25rem)] font-semibold leading-[1.12] tracking-[0.02em] text-luxury-gold sm:max-w-2xl md:max-w-[20ch]">
+              {home.heroTitle}
+            </h1>
+            <p className="mb-10 max-w-xl text-pretty text-base leading-relaxed text-white/86 sm:text-lg md:text-xl">{home.heroLead}</p>
+            <div className="home-hero-cta-group flex w-full min-w-0 max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center md:justify-start">
+              <ButtonLink
+                variant="luxuryOutline"
+                to={home.ctaSecondary.to}
+                className="w-full justify-center motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.02] sm:w-auto"
+              >
+                {home.ctaSecondary.label}
+              </ButtonLink>
+              <ButtonLink
+                variant="primary"
+                to={home.ctaPrimary.to}
+                className="w-full justify-center rounded-sm px-8 text-sm uppercase tracking-[0.18em] motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-[1.02] sm:w-auto"
+              >
+                {home.ctaPrimary.label}
+              </ButtonLink>
+            </div>
           </div>
+
+          <HeroHomeVisual src={HERO_VISUAL} interactive />
         </div>
       </section>
 
@@ -99,7 +111,7 @@ export function HomePage() {
       <section
         id="nosotros"
         aria-labelledby="nosotros-heading"
-        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] flex min-h-svh snap-center snap-always flex-col justify-center border-t border-white/5 px-4 py-16 sm:px-6 md:px-10 md:py-24"
+        className="theme-section-soft scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] flex min-h-svh snap-center snap-always flex-col justify-center border-t border-white/5 px-4 py-16 sm:px-6 md:px-10 md:py-24"
       >
         <div className="mx-auto w-full max-w-[72rem]">
           <RevealOnView variant="fadeRight">
@@ -137,8 +149,8 @@ export function HomePage() {
                   loading="lazy"
                   decoding="async"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-luxury-bg/90 via-luxury-bg/20 to-transparent motion-safe:transition-opacity motion-safe:duration-500 group-hover/fig:opacity-95" aria-hidden />
-                <figcaption className="absolute bottom-5 left-5 right-5 m-0 translate-y-0 text-sm leading-snug text-paper/88 motion-safe:transition-transform motion-safe:duration-500 group-hover/fig:-translate-y-1 md:bottom-6 md:left-6 md:right-6">
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent motion-safe:transition-opacity motion-safe:duration-500 group-hover/fig:opacity-95" aria-hidden />
+                <figcaption className="absolute bottom-5 left-5 right-5 m-0 translate-y-0 text-sm leading-snug text-white/90 motion-safe:transition-transform motion-safe:duration-500 group-hover/fig:-translate-y-1 md:bottom-6 md:left-6 md:right-6">
                   Madera, medida y oficio. Calidad y compromiso en cada instalación.
                 </figcaption>
               </figure>
@@ -151,7 +163,7 @@ export function HomePage() {
       <section
         id="servicios"
         aria-labelledby="servicios-heading"
-        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] snap-start border-t border-white/5 bg-luxury-panel px-4 py-16 sm:px-6 md:px-10 md:py-24"
+        className="theme-section-alt scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] snap-start border-t border-white/5 bg-luxury-panel px-4 py-16 sm:px-6 md:px-10 md:py-24"
       >
         <div className="mx-auto w-full max-w-[72rem]">
           <RevealOnView variant="fadeDown">
@@ -183,7 +195,7 @@ export function HomePage() {
                       loading={i < 3 ? 'eager' : 'lazy'}
                     />
                     <div
-                      className="pointer-events-none absolute inset-0 bg-linear-to-t from-luxury-bg/50 to-transparent opacity-70 motion-safe:transition-opacity group-hover/img:opacity-90"
+                      className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-70 motion-safe:transition-opacity group-hover/img:opacity-90"
                       aria-hidden
                     />
                   </div>

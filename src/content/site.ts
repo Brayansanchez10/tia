@@ -26,9 +26,19 @@ export type TrabajoChild = {
   image?: string
 }
 
+/** Agrupa en `/trabajos/portafolio/corporativo` o `/trabajos/portafolio/residencial` (no en la portada de /trabajos). */
+export type TrabajoPortfolioKind = 'corporativo' | 'residencial'
+
 /**
  * Un trabajo del portafolio. Los clientes ven lo que añadas en `site.trabajos.items`
  * (este archivo). Tras editar, vuelve a generar el sitio (`npm run build`) y súbelo.
+ *
+ * Cómo añadir un trabajo nuevo:
+ * 1. Copia un bloque existente (simple o con `children`) y cambia `slug` (único, minúsculas y guiones).
+ * 2. Pon `portfolioKind: 'corporativo'` o `'residencial'` (aparece en `/trabajos/portafolio/{corporativo|residencial}`).
+ * 3. Sube fotos a `public/img/...` y referencia con rutas `/img/...`.
+ * 4. Proyecto simple: `images` o `image` + `paragraphs` → abre en `/trabajos/{slug}`.
+ * 5. Proyecto con varias piezas: define `children[]`; `/trabajos/{slug}` será el índice y cada hijo en `/trabajos/{slug}/{hijo}`.
  */
 export type TrabajoPost = {
   /** Identificador único en URL: solo minúsculas, números y guiones. Ej: `cocina-roble` → /trabajos/cocina-roble */
@@ -36,6 +46,9 @@ export type TrabajoPost = {
   title: string
   /** Línea corta bajo el título (fecha, año o ciudad). */
   dateLabel: string
+  /** Segmentación principal en la vista de trabajos (dos columnas visuales). */
+  portfolioKind: TrabajoPortfolioKind
+  /** Etiqueta en la tarjeta (marca, tipo de mueble, ambiente). */
   category: string
   /** Texto que aparece en la tarjeta del listado y como entradilla en el detalle. */
   excerpt: string
@@ -148,6 +161,7 @@ export const site = {
         slug: 'exhibidores-cruz-verde',
         title: 'Exhibidores para Cruz Verde',
         dateLabel: 'Retail · Colombia',
+        portfolioKind: 'corporativo',
         category: 'Cruz Verde',
         excerpt:
           'Varias exhibiciones de piso para farmacia: entra para ver cada línea (CeraVe, Eucerin) con su propia galería.',
@@ -194,6 +208,7 @@ export const site = {
         slug: 'exibidor-jugos',
         title: 'Exhibidor jugos',
         dateLabel: 'Retail · bebidas',
+        portfolioKind: 'corporativo',
         category: 'Exhibidores POP',
         excerpt: 'Mueble de piso para categoría jugos: líneas limpias y zona de impacto visual para marca.',
         images: [
@@ -206,6 +221,25 @@ export const site = {
         paragraphs: [
           'Proyecto único con galería en una sola página: fotos en taller o punto de venta y vídeo del conjunto.',
           'Edita textos y rutas en `src/content/site.ts` si cambias archivos en `public/img/Exibidor Jugos/`.',
+        ],
+      },
+      /**
+       * Ejemplo residencial: copia este objeto, cambia slug/título/rutas y borra este comentario cuando tengas datos reales.
+       * Usa `portfolioKind: 'residencial'` para que aparezca en la segunda sección de /trabajos.
+       */
+      {
+        slug: 'ejemplo-mueble-residencial',
+        title: 'Mueble a medida — ejemplo residencial',
+        dateLabel: 'Hogar · referencia',
+        portfolioKind: 'residencial',
+        category: 'Sala / comedor',
+        excerpt:
+          'Ejemplo de cómo se ve un proyecto para hogar: una sola pieza con galería y texto. Duplica el bloque y sustituye slug, título e imágenes.',
+        image: '/img/fondoHome.png',
+        images: ['/img/fondoHome.png', '/img/Fondo.jpg'],
+        paragraphs: [
+          'Este bloque es una plantilla. Sustituye el título, el slug (único) y las rutas de `images` o `image` por tus fotos en `public/img/`.',
+          'Si el proyecto tiene varias piezas (p. ej. cocina + estantería), usa `children` como en “Exhibidores para Cruz Verde” y cada pieza tendrá su propia URL.',
         ],
       },
     ] as TrabajoPost[],

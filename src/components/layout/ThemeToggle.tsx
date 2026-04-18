@@ -32,8 +32,8 @@ export function ThemeToggle({ compact }: ThemeToggleProps) {
       onClick={toggleTheme}
       className={
         compact
-          ? 'theme-toggle-btn inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-paper/15 bg-surface/80 text-paper transition-colors motion-safe:duration-200 hover:border-luxury-gold/35 hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/55 md:h-10 md:w-10'
-          : 'theme-toggle-btn theme-toggle-wide flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3.5 text-paper transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/55'
+          ? 'theme-toggle-btn inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-paper/15 bg-surface/80 text-paper transition-colors motion-safe:duration-200 hover:border-brand/40 hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/55 md:h-10 md:w-10'
+          : 'theme-toggle-btn theme-toggle-wide flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3.5 text-paper transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/55'
       }
       aria-pressed={isDark}
       aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}

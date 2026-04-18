@@ -14,13 +14,13 @@ function hashNavActive(pathname: string, hash: string, to: string): boolean {
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'rounded-lg px-2 py-1.5 text-xs uppercase tracking-[0.16em] no-underline transition-colors duration-200 motion-safe:hover:scale-[1.03] hover:no-underline',
-    isActive ? 'font-semibold text-luxury-gold' : 'text-paper/80 hover:text-luxury-gold',
+    isActive ? 'font-semibold text-brand' : 'text-paper/80 hover:text-brand',
   ].join(' ')
 
 const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'block w-full rounded-lg px-4 py-3.5 text-base font-medium uppercase tracking-[0.12em] no-underline transition-colors duration-200 hover:no-underline',
-    isActive ? 'text-luxury-gold' : 'text-paper/85 hover:bg-paper/5 hover:text-luxury-gold',
+    isActive ? 'text-brand' : 'text-paper/85 hover:bg-paper/5 hover:text-brand',
   ].join(' ')
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -89,7 +89,7 @@ export function SiteHeader() {
           <ThemeToggle compact />
           <button
             type="button"
-            className="inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-paper/15 bg-surface/80 text-paper transition-colors hover:border-wood/40 hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/55 md:hidden"
+            className="inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-paper/15 bg-surface/80 text-paper transition-colors hover:border-wood/40 hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/55 md:hidden"
             aria-expanded={menuOpen}
             aria-controls="site-mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
@@ -109,7 +109,7 @@ export function SiteHeader() {
                       to={item.to}
                       className={[
                         'rounded-lg px-3 py-2 text-xs uppercase tracking-[0.16em] no-underline transition-colors duration-200 motion-safe:hover:scale-[1.03] hover:no-underline',
-                        active ? 'font-semibold text-luxury-gold' : 'text-paper/80 hover:text-luxury-gold',
+                        active ? 'font-semibold text-brand' : 'text-paper/80 hover:text-brand',
                       ].join(' ')}
                     >
                       {item.label}
@@ -148,7 +148,7 @@ export function SiteHeader() {
                       to={item.to}
                       className={[
                         'block w-full rounded-lg px-4 py-3.5 text-base font-medium uppercase tracking-[0.12em] no-underline transition-colors duration-200 hover:no-underline',
-                        active ? 'text-luxury-gold' : 'text-paper/85 hover:bg-paper/5 hover:text-luxury-gold',
+                        active ? 'text-brand' : 'text-paper/85 hover:bg-paper/5 hover:text-brand',
                       ].join(' ')}
                     >
                       {item.label}

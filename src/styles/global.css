@@ -6,6 +6,8 @@
  */
 :root,
 html[data-theme='dark'] {
+  /** Rojo marca (logo); si tu hex exacto es otro, cámbialo aquí una sola vez. */
+  --theme-brand-red: #9a0020;
   --theme-paper: #f1f5f9;
   --theme-ink: #16181e;
   --theme-surface: #1e222c;
@@ -19,7 +21,7 @@ html[data-theme='dark'] {
   --theme-body-gradient: linear-gradient(180deg, rgb(28 31 38) 0%, rgb(22 24 30) 38%, rgb(18 20 26) 100%);
   --theme-divider: rgb(255 255 255 / 0.1);
   --theme-shadow-card: 0 16px 48px rgb(0 0 0 / 0.35);
-  --theme-shadow-card-hover: 0 22px 56px rgb(225 29 50 / 0.12);
+  --theme-shadow-card-hover: 0 22px 56px rgb(154 0 32 / 0.16);
   --theme-ambient-grid: rgb(241 245 249);
 }
 
@@ -27,6 +29,7 @@ html[data-theme='dark'] {
  * Modo claro: crema / piedra cálido (sin blanco puro) para no “lavar” la interfaz.
  */
 html[data-theme='light'] {
+  --theme-brand-red: #9a0020;
   --theme-paper: #3a3632;
   --theme-ink: #f6f3ed;
   --theme-surface: #e9e3db;
@@ -58,7 +61,9 @@ html[data-theme='light'] {
   --color-wood-dark: var(--theme-wood-dark);
   --color-cream: var(--theme-cream);
 
-  --color-gold: #e11d32;
+  /** CTAs y acentos “cálidos” alineados al rojo del logo */
+  --color-gold: var(--theme-brand-red);
+  --color-brand: var(--theme-brand-red);
   --color-wood: #38bdf8;
 
   --color-luxury-bg: var(--theme-luxury-bg);
@@ -154,6 +159,55 @@ html[data-theme='light'] {
       animation: none;
     }
   }
+
+  .theme-section-soft {
+    background-color: transparent;
+  }
+
+  .theme-section-alt {
+    background-color: transparent;
+  }
+
+  html[data-theme='light'] .theme-section-soft {
+    background-color: rgb(245 240 232 / 0.72);
+  }
+
+  html[data-theme='light'] .theme-section-alt {
+    background-color: rgb(234 226 214 / 0.64);
+  }
+
+  /** Hero: tilt 3D con variables (--hero-tilt-*) desde puntero en HomePage. */
+  .home-hero-visual-root {
+    perspective: 1200px;
+  }
+
+  .home-hero-visual-tilt {
+    --hero-tilt-x: 0deg;
+    --hero-tilt-y: 0deg;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(var(--hero-tilt-x)) rotateY(var(--hero-tilt-y)) translateZ(0);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-visual-tilt {
+      transition: transform 0.2s cubic-bezier(0.22, 0.9, 0.28, 1);
+    }
+
+    .home-hero-visual-plate {
+      transition:
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+      .home-hero-visual-root:hover .home-hero-visual-plate {
+        box-shadow:
+          0 32px 96px rgb(0 0 0 / 0.55),
+          0 0 0 1px rgb(197 160 89 / 0.18);
+      }
+    }
+  }
 }
 
 @layer base {
@@ -219,16 +273,16 @@ html[data-theme='light'] {
     @apply underline;
   }
 
-  /** Cabecera y menú móvil en modo claro (crema, alineado a --theme-header-*) */
+  /** En modo claro mantenemos navbar oscuro para preservar contraste del logo. */
   html[data-theme='light'] .site-header {
-    border-bottom-color: var(--theme-header-border) !important;
-    background-color: var(--theme-header-bg) !important;
+    border-bottom-color: rgb(255 255 255 / 0.1) !important;
+    background-color: rgb(13 13 13 / 0.88) !important;
   }
 
   html[data-theme='light'] .site-mobile-nav {
-    border-color: var(--theme-header-border) !important;
-    background-color: var(--theme-mobile-nav-bg) !important;
-    box-shadow: 0 16px 40px rgb(40 32 24 / 0.06);
+    border-color: rgb(255 255 255 / 0.1) !important;
+    background-color: rgb(13 13 13 / 0.98) !important;
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
   }
 
   html[data-theme='light'] .theme-toggle-btn {

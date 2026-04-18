@@ -32,7 +32,7 @@ export function GrowLine({ align = 'left', className = '' }: GrowLineProps) {
     <div
       ref={ref}
       className={[
-        'h-0.5 w-14 bg-luxury-gold/90',
+        'h-0.5 w-14 bg-linear-to-r from-brand from-20% to-luxury-gold to-95%',
         align === 'center' ? 'mx-auto origin-center' : 'origin-left',
         'motion-safe:transition-transform motion-safe:duration-[1000ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]',
         shown ? 'motion-safe:scale-x-100' : 'motion-safe:scale-x-0',
