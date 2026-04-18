@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { site } from '@/content/site'
 
 function brandInitials(name: string): string {
@@ -16,9 +16,8 @@ export function BrandLogo() {
 
   if (src) {
     return (
-      <NavLink
-        to="/"
-        end
+      <Link
+        to="/#inicio"
         aria-label={`Ir al inicio — ${site.brand}`}
         className="flex min-w-0 shrink-0 items-center no-underline transition-opacity duration-200 hover:opacity-90 hover:no-underline motion-safe:active:scale-[0.99]"
       >
@@ -29,18 +28,17 @@ export function BrandLogo() {
           loading="eager"
           decoding="async"
         />
-      </NavLink>
+      </Link>
     )
   }
 
   return (
-    <NavLink
-      to="/"
-      end
+    <Link
+      to="/#inicio"
       aria-label="Ir al inicio"
       className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-wood/30 bg-gradient-to-br from-wood-dark to-ink no-underline shadow-sm ring-1 ring-inset ring-gold/25 transition duration-200 hover:border-gold/50 hover:ring-gold/35 motion-safe:hover:scale-[1.04] motion-safe:active:scale-[0.98]"
     >
       <span className="select-none text-sm font-bold tracking-tight text-gold">{initials}</span>
-    </NavLink>
+    </Link>
   )
 }

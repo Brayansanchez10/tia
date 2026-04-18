@@ -3,9 +3,10 @@ import { PortfolioWorkCard } from '@/components/trabajos/PortfolioWorkCard'
 
 export type WorkCardProps = {
   post: TrabajoPost
+  layout?: 'stack' | 'grid'
 }
 
-export function WorkCard({ post }: WorkCardProps) {
+export function WorkCard({ post, layout = 'stack' }: WorkCardProps) {
   const cover = trabajoCoverSrc(post)
 
   return (
@@ -17,6 +18,7 @@ export function WorkCard({ post }: WorkCardProps) {
       excerpt={post.excerpt}
       ctaLabel="Ver proyecto"
       ariaLabel={`Ver proyecto: ${post.title}`}
+      layout={layout}
     />
   )
 }

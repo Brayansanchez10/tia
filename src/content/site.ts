@@ -117,10 +117,10 @@ export const site = {
   logoSrc: '/img/LogoSinFondo.png',
 
   nav: [
-    { to: '/', label: 'Inicio' },
+    { to: '/#inicio', label: 'Inicio' },
     { to: '/trabajos', label: 'Trabajos' },
-    { to: '/servicios', label: 'Servicios' },
-    { to: '/nosotros', label: 'Nosotros' },
+    { to: '/#servicios', label: 'Servicios' },
+    { to: '/#nosotros', label: 'Nosotros' },
     { to: '/contacto', label: 'Contacto' },
   ] satisfies NavItem[],
 
@@ -139,8 +139,6 @@ export const site = {
   trabajos: {
     pageEyebrow: 'Portafolio',
     title: 'Trabajos realizados',
-    intro:
-      'Proyectos sueltos con galería directa, o agrupados por cliente (Cruz Verde) con subpáginas por exhibición.',
     /**
      * Trabajo simple: `images` + detalle en `/trabajos/{slug}`.
      * Trabajo agrupado: `children` + hub en `/trabajos/{slug}` y detalle en `/trabajos/{slug}/{hijo}`.

@@ -9,6 +9,8 @@ type PortfolioWorkCardProps = {
   /** Texto del enlace (ej. «Ver proyecto», «Ver exhibición»). */
   ctaLabel: string
   ariaLabel: string
+  /** `grid`: tarjeta compacta para listados en varias columnas. */
+  layout?: 'stack' | 'grid'
 }
 
 /**
@@ -22,15 +24,21 @@ export function PortfolioWorkCard({
   excerpt,
   ctaLabel,
   ariaLabel,
+  layout = 'stack',
 }: PortfolioWorkCardProps) {
+  const isGrid = layout === 'grid'
+
   return (
-    <article className="mx-auto max-w-3xl">
+    <article className={isGrid ? 'h-full min-w-0' : 'mx-auto max-w-3xl'}>
       <Link
         to={to}
         aria-label={ariaLabel}
-        className="group relative block overflow-hidden rounded-2xl border border-paper/8 bg-wood-dark/30 shadow-[0_4px_32px_rgba(0,0,0,0.35)] transition-[box-shadow,border-color,transform] duration-300 hover:border-wood/35 hover:shadow-[0_16px_48px_rgba(0,0,0,0.45)] motion-safe:hover:-translate-y-0.5 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/55 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+        className={[
+          'group relative block overflow-hidden rounded-sm border border-white/10 bg-luxury-panel/90 shadow-[0_8px_40px_rgba(0,0,0,0.45)] transition-[box-shadow,border-color,transform] duration-500 hover:border-luxury-gold/30 hover:shadow-[0_20px_56px_rgba(0,0,0,0.5)] motion-safe:hover:-translate-y-1 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-luxury-bg',
+          isGrid ? 'flex h-full min-h-0 flex-col' : '',
+        ].join(' ')}
       >
-        <div className="relative aspect-4/3 w-full">
+        <div className={isGrid ? 'relative aspect-[4/3] w-full shrink-0' : 'relative aspect-4/3 w-full'}>
           {coverSrc ? (
             <img
               src={coverSrc}
@@ -40,23 +48,49 @@ export function PortfolioWorkCard({
             />
           ) : (
             <div
-              className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_0%,rgba(56,189,248,0.15),transparent_50%),linear-gradient(160deg,#12151c,#0a0c10)]"
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_0%,rgba(197,160,89,0.08),transparent_55%),linear-gradient(160deg,var(--theme-luxury-panel),var(--theme-luxury-bg))]"
               aria-hidden
             />
           )}
           <div
-            className="absolute inset-0 bg-linear-to-t from-ink via-ink/55 to-ink/10 opacity-[0.97] transition-opacity duration-300 group-hover:opacity-100"
+            className="absolute inset-0 bg-linear-to-t from-luxury-bg via-luxury-bg/65 to-luxury-bg/5 opacity-[0.96] transition-opacity duration-300 group-hover:opacity-100"
             aria-hidden
           />
-          <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end px-4 pb-5 pt-20 sm:px-5 sm:pb-6 sm:pt-24 md:px-7 md:pb-7 md:pt-28">
-            <p className="m-0 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-wood">{category}</p>
-            <h2 className="m-0 mt-2 max-w-[95%] text-balance text-xl font-semibold leading-snug tracking-tight text-paper md:max-w-[90%] md:text-2xl">
+          <div
+            className={
+              isGrid
+                ? 'absolute inset-x-0 bottom-0 flex flex-col justify-end px-3 pb-4 pt-12 sm:px-4 sm:pb-5 sm:pt-16'
+                : 'absolute inset-x-0 bottom-0 flex flex-col justify-end px-4 pb-5 pt-20 sm:px-5 sm:pb-6 sm:pt-24 md:px-7 md:pb-7 md:pt-28'
+            }
+          >
+            <p className="m-0 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold/95 sm:text-[0.65rem]">
+              {category}
+            </p>
+            <h2
+              className={
+                isGrid
+                  ? 'm-0 mt-1 line-clamp-2 max-w-full text-balance font-serif text-base font-semibold leading-snug tracking-wide text-paper sm:mt-1.5 sm:text-lg md:text-xl'
+                  : 'm-0 mt-2 max-w-[95%] text-balance font-serif text-xl font-semibold leading-snug tracking-wide text-paper md:max-w-[90%] md:text-2xl'
+              }
+            >
               {title}
             </h2>
-            <p className="mt-2 line-clamp-2 max-w-xl text-[0.8125rem] leading-relaxed text-paper/82 md:text-sm">
-              {excerpt}
-            </p>
-            <p className="mt-4 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-gold">
+            {!isGrid ? (
+              <p className="mt-2 line-clamp-2 max-w-xl text-[0.8125rem] leading-relaxed text-paper/80 md:text-sm">
+                {excerpt}
+              </p>
+            ) : (
+              <p className="mt-1.5 line-clamp-2 text-[0.7rem] leading-relaxed text-paper/75 sm:mt-2 sm:text-[0.75rem]">
+                {excerpt}
+              </p>
+            )}
+            <p
+              className={
+                isGrid
+                  ? 'mt-2 inline-flex items-center gap-1 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-luxury-gold sm:mt-3 sm:text-[0.65rem]'
+                  : 'mt-4 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-luxury-gold'
+              }
+            >
               <span>{ctaLabel}</span>
               <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-1">
                 →
