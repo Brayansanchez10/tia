@@ -50,7 +50,7 @@ function ContactBlock({
   children: ReactNode
 }) {
   return (
-    <article className="group rounded-xl border border-white/10 bg-luxury-bg/55 px-4 py-4 motion-safe:transition-[border-color,background-color] motion-safe:duration-300 motion-safe:hover:border-luxury-gold/25 motion-safe:hover:bg-luxury-bg/70 sm:px-5 sm:py-5">
+    <article className="group rounded-xl border border-divider bg-surface/45 px-4 py-4 motion-safe:transition-[border-color,background-color] motion-safe:duration-300 motion-safe:hover:border-luxury-gold/25 motion-safe:hover:bg-surface/60 sm:px-5 sm:py-5">
       <div className="flex items-center gap-2.5">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand/25 bg-brand/[0.08] text-brand/90 motion-safe:transition-colors motion-safe:duration-300 group-hover:border-brand/40 group-hover:bg-brand/[0.12]">
           {icon}

@@ -11,16 +11,17 @@ function hashNavActive(pathname: string, hash: string, to: string): boolean {
   return hash === to.slice(1)
 }
 
+/** La barra es oscura en ambos temas (ver `global.css`); no usar `text-paper` del tema claro aquí. */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'rounded-lg px-2 py-1.5 text-xs uppercase tracking-[0.16em] no-underline transition-colors duration-200 motion-safe:hover:scale-[1.03] hover:no-underline',
-    isActive ? 'font-semibold text-brand' : 'text-paper/80 hover:text-brand',
+    isActive ? 'font-semibold text-brand' : 'text-zinc-200/88 hover:text-brand',
   ].join(' ')
 
 const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'block w-full rounded-lg px-4 py-3.5 text-base font-medium uppercase tracking-[0.12em] no-underline transition-colors duration-200 hover:no-underline',
-    isActive ? 'text-brand' : 'text-paper/85 hover:bg-paper/5 hover:text-brand',
+    isActive ? 'text-brand' : 'text-zinc-200/90 hover:bg-white/[0.06] hover:text-brand',
   ].join(' ')
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -99,7 +100,7 @@ export function SiteHeader() {
           </button>
 
           <nav aria-label="Principal" className="hidden flex-wrap justify-end gap-x-1 gap-y-1 md:flex md:flex-none">
-          <ul className="m-0 flex list-none flex-wrap justify-end gap-x-1 gap-y-1 p-0">
+          <ul className="m-0 flex list-none flex-wrap items-center justify-end gap-x-1 gap-y-1 p-0">
             {site.nav.map((item) => {
               if (item.to.startsWith('/#')) {
                 const active = hashNavActive(location.pathname, location.hash, item.to)
@@ -109,7 +110,7 @@ export function SiteHeader() {
                       to={item.to}
                       className={[
                         'rounded-lg px-3 py-2 text-xs uppercase tracking-[0.16em] no-underline transition-colors duration-200 motion-safe:hover:scale-[1.03] hover:no-underline',
-                        active ? 'font-semibold text-brand' : 'text-paper/80 hover:text-brand',
+                        active ? 'font-semibold text-brand' : 'text-zinc-200/88 hover:text-brand',
                       ].join(' ')}
                     >
                       {item.label}
@@ -125,6 +126,15 @@ export function SiteHeader() {
                 </li>
               )
             })}
+            <li className="ml-1 hidden shrink-0 md:block">
+              <Link
+                to="/admin/login"
+                className="rounded-lg px-2 py-2 text-[0.58rem] font-medium uppercase tracking-[0.22em] text-zinc-400/40 no-underline transition-colors hover:text-zinc-200/75 hover:no-underline focus-visible:text-zinc-200/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/40"
+                aria-label="Iniciar sesión como administrador"
+              >
+                Acceso
+              </Link>
+            </li>
           </ul>
         </nav>
         </div>
@@ -148,7 +158,7 @@ export function SiteHeader() {
                       to={item.to}
                       className={[
                         'block w-full rounded-lg px-4 py-3.5 text-base font-medium uppercase tracking-[0.12em] no-underline transition-colors duration-200 hover:no-underline',
-                        active ? 'text-brand' : 'text-paper/85 hover:bg-paper/5 hover:text-brand',
+                        active ? 'text-brand' : 'text-zinc-200/90 hover:bg-white/[0.06] hover:text-brand',
                       ].join(' ')}
                     >
                       {item.label}
@@ -164,6 +174,14 @@ export function SiteHeader() {
                 </li>
               )
             })}
+            <li className="mt-4 border-t border-white/10 pt-4">
+              <Link
+                to="/admin/login"
+                className="block w-full rounded-lg px-4 py-3 text-center text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-zinc-400/55 no-underline transition-colors hover:bg-white/[0.06] hover:text-luxury-gold/90 hover:no-underline"
+              >
+                Administración
+              </Link>
+            </li>
           </ul>
         </div>
       ) : null}

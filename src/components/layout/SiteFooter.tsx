@@ -1,13 +1,25 @@
 import { site } from '@/content/site'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 
-export function SiteFooter() {
+type Props = {
+  /** En viewport menor a `lg`, oculta el bloque CTA “¿Listo para empezar?” (p. ej. detalle de trabajo con barra propia). */
+  hideMobileLeadCta?: boolean
+}
+
+export function SiteFooter({ hideMobileLeadCta = false }: Props) {
   const year = new Date().getFullYear()
   const { footer } = site
 
   return (
     <footer className="relative z-10 mt-auto border-t border-white/10 bg-luxury-panel text-paper">
-      <div className="border-b border-white/5">
+      <div
+        className={[
+          'border-b border-white/5',
+          hideMobileLeadCta ? 'max-lg:hidden' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
         <div className="mx-auto max-w-[72rem] px-4 py-12 text-center sm:px-5 sm:py-14 md:py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-luxury-gold">{footer.ctaEyebrow}</p>
           <p className="mx-auto mt-4 max-w-lg text-pretty text-base leading-relaxed text-paper/88 md:text-lg">

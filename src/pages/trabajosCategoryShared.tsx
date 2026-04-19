@@ -75,3 +75,27 @@ export function parseTrabajoPortfolioKindParam(param: string | undefined): Traba
   if (param === 'corporativo' || param === 'residencial') return param
   return undefined
 }
+
+/** Pasa esto en `Link state` para que el detalle sepa a dónde «volver». */
+export type TrabajosVolverState = {
+  trabajosVolver?: string
+}
+
+export function resolveTrabajosVolverHref(state: unknown, fallbackHref: string): string {
+  const s = state as TrabajosVolverState | null | undefined
+  if (s?.trabajosVolver && typeof s.trabajosVolver === 'string' && s.trabajosVolver.startsWith('/')) {
+    return s.trabajosVolver
+  }
+  return fallbackHref
+}
+
+export function trabajosVolverBackLineLabel(href: string): string {
+  if (href.includes('/portafolio/')) return '← Volver al portafolio'
+  if (href === '/trabajos') return '← Volver a trabajos'
+  return '← Volver'
+}
+
+export function trabajosVolverCrumbLabel(href: string): string {
+  if (href.includes('/portafolio/')) return 'Portafolio'
+  return 'Trabajos'
+}

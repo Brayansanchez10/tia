@@ -6,6 +6,7 @@ import { RevealOnView } from '@/components/motion/RevealOnView'
 import { WorkCard } from '@/components/trabajos/WorkCard'
 import {
   parseTrabajoPortfolioKindParam,
+  trabajoPortfolioHref,
   TRABAJO_CATEGORY_META,
 } from '@/pages/trabajosCategoryShared'
 
@@ -63,7 +64,11 @@ export function TrabajosPortfolioPage() {
             {items.map((post, i) => (
               <li key={post.slug} className="min-w-0">
                 <RevealOnView delayMs={Math.min(i * 70, 420)} variant="scale">
-                  <WorkCard post={post} layout="grid" />
+                  <WorkCard
+                    post={post}
+                    layout="grid"
+                    linkState={{ trabajosVolver: trabajoPortfolioHref(kind) }}
+                  />
                 </RevealOnView>
               </li>
             ))}

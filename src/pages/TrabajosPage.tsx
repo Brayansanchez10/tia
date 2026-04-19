@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { site, type TrabajoPortfolioKind } from '@/content/site'
+import { site, trabajoCoverSrc, type TrabajoPortfolioKind } from '@/content/site'
 import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { PageHeader } from '@/components/ui/PageShell'
@@ -25,7 +25,7 @@ function CategoryPortalCard({
       <Link
         to={href}
         className={[
-          'group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-luxury-panel/95 via-black/60 to-black/80 shadow-[0_16px_48px_rgba(0,0,0,0.35)] outline-none ring-0',
+          'category-portal-card group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-luxury-panel/95 via-black/60 to-black/80 shadow-[0_16px_48px_rgba(0,0,0,0.35)] outline-none ring-0',
           'no-underline hover:no-underline focus:no-underline',
           'transition-[border-color,box-shadow,transform] motion-safe:duration-300',
           'motion-safe:hover:-translate-y-1 motion-safe:hover:border-luxury-gold/35 motion-safe:hover:shadow-[0_24px_56px_rgba(0,0,0,0.45)]',
@@ -124,6 +124,59 @@ export function TrabajosPage() {
             </li>
           ))}
         </ul>
+
+        {total > 0 ? (
+          <RevealOnView delayMs={120} variant="fadeUp" className="mt-14 md:mt-16">
+            <p className="m-0 text-center text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold/90">
+              Vista rápida
+            </p>
+            <h2 className="m-0 mt-3 text-center font-serif text-xl font-semibold tracking-tight text-paper sm:text-2xl">
+              Todos los proyectos
+            </h2>
+            <p className="mx-auto mt-2 max-w-xl text-center text-sm text-luxury-muted">
+              Pulsa una imagen para abrir la galería completa.
+            </p>
+            <ul className="m-0 mt-8 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 md:gap-4 lg:grid-cols-5">
+              {trabajos.items.map((post, i) => {
+                const cover = trabajoCoverSrc(post)
+                return (
+                  <li key={post.slug} className="min-w-0">
+                    <RevealOnView delayMs={Math.min(i * 35, 280)} variant="scale">
+                      <Link
+                        to={`/trabajos/${post.slug}`}
+                        state={{ trabajosVolver: '/trabajos' }}
+                        className="group/img relative block aspect-[4/3] overflow-hidden rounded-sm border border-white/10 bg-luxury-panel/80 outline-none ring-0 transition-[border-color,box-shadow,transform] motion-safe:duration-300 motion-safe:hover:-translate-y-0.5 motion-safe:hover:border-luxury-gold/30 motion-safe:hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)] focus-visible:ring-2 focus-visible:ring-luxury-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-luxury-bg"
+                        aria-label={`${post.title}, ver galería`}
+                      >
+                        {cover ? (
+                          <img
+                            src={cover}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            className="absolute inset-0 h-full w-full object-cover transition-[transform,filter] motion-safe:duration-500 motion-safe:group-hover/img:scale-105 motion-safe:group-hover/img:brightness-105"
+                          />
+                        ) : (
+                          <div
+                            className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_0%,rgba(197,160,89,0.12),transparent_55%),linear-gradient(160deg,var(--theme-luxury-panel),var(--theme-luxury-bg))]"
+                            aria-hidden
+                          />
+                        )}
+                        <div
+                          className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent opacity-95 transition-opacity motion-safe:duration-300 motion-safe:group-hover/img:opacity-100"
+                          aria-hidden
+                        />
+                        <span className="absolute inset-x-0 bottom-0 px-2 pb-2 pt-10 text-center text-[0.65rem] font-semibold leading-tight text-white/95 sm:px-2.5 sm:pb-2.5 sm:text-xs">
+                          <span className="line-clamp-2">{post.title}</span>
+                        </span>
+                      </Link>
+                    </RevealOnView>
+                  </li>
+                )
+              })}
+            </ul>
+          </RevealOnView>
+        ) : null}
       </div>
     </div>
   )

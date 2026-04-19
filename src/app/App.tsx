@@ -5,6 +5,7 @@ import { AdminLayout } from '@/layouts/AdminLayout'
 import { MainLayout } from '@/layouts/MainLayout'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '@/pages/admin/AdminLoginPage'
+import { AdminRecibosPage } from '@/pages/admin/AdminRecibosPage'
 import { ContactoPage } from '@/pages/ContactoPage'
 import { HomePage } from '@/pages/HomePage'
 import { HomePageMovil } from '@/pages/movil/homePageMovil'
@@ -51,6 +52,7 @@ export function App() {
           <Route element={<RequireAuth />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="recibos" element={<AdminRecibosPage />} />
           </Route>
         </Route>
         <Route element={<MainLayout />}>

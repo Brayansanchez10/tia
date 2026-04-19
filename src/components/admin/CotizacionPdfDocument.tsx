@@ -14,10 +14,22 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
+    alignItems: 'stretch',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    gap: 18,
+  },
+  headerLogoColumn: {
+    width: 172,
+    minHeight: 58,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: 22,
-    gap: 16,
+    alignSelf: 'center',
+  },
+  headerLogoImage: {
+    width: 168,
+    height: 54,
+    objectFit: 'contain',
   },
   headerAccentBar: {
     height: 4,
@@ -27,6 +39,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     gap: 4,
+    justifyContent: 'center',
+    paddingVertical: 4,
   },
   issuerName: {
     fontSize: 9,
@@ -194,19 +208,24 @@ export function CotizacionPdfDocument({ data }: Props) {
       <Page size="A4" style={[styles.page, { backgroundColor: b.paperBgColor, color: b.textColor }]} wrap>
         <View style={[styles.headerRow, { backgroundColor: b.headerBgColor }]}>
           {logoSrc ? (
-            <Image src={logoSrc} style={{ width: 64, height: 64 }} />
+            <View style={[styles.headerLogoColumn, { backgroundColor: b.headerBgColor }]}>
+              <Image
+                src={logoSrc}
+                style={[styles.headerLogoImage, { backgroundColor: b.headerBgColor }]}
+              />
+            </View>
           ) : (
             <View
-              style={{
-                width: 64,
-                height: 64,
-                borderWidth: 1,
-                borderColor: b.accentColor,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              style={[
+                styles.headerLogoColumn,
+                {
+                  backgroundColor: b.headerBgColor,
+                  borderWidth: 1,
+                  borderColor: b.accentColor,
+                },
+              ]}
             >
-              <Text style={{ color: b.accentColor, fontSize: 7, fontFamily: 'Helvetica', fontWeight: 'bold' }}>
+              <Text style={{ color: b.accentColor, fontSize: 8, fontFamily: 'Helvetica', fontWeight: 'bold' }}>
                 LOGO
               </Text>
             </View>
@@ -255,33 +274,44 @@ export function CotizacionPdfDocument({ data }: Props) {
         >
           <Text style={[styles.valueLabel, { color: b.mutedColor }]}>VALOR</Text>
           <Text style={[styles.valueAmount, { color: b.textColor }]}>{formatCOP(data.totalAmount)}</Text>
-          <Text style={[styles.valueWords, { color: b.mutedColor }]}>({inWords})</Text>
+          {data.totalAmount > 0 ? (
+            <Text style={[styles.valueWords, { color: b.mutedColor }]}>({inWords})</Text>
+          ) : null}
         </View>
 
         <Text style={[styles.sectionEyebrow, { color: b.textColor }]}>POR CONCEPTO DE:</Text>
-        <Text style={[styles.conceptLine, { color: b.textColor }]}>{data.conceptSummary}</Text>
+        <Text style={[styles.conceptLine, { color: b.textColor }]}>
+          {data.conceptSummary.trim() ? data.conceptSummary : '—'}
+        </Text>
 
-        <Text style={[styles.descHeading, { color: b.accentColor }]}>Descripción</Text>
+        {data.descriptionBlocks.length > 0 ? (
+          <>
+            <Text style={[styles.descHeading, { color: b.accentColor }]}>Descripción</Text>
+            {data.descriptionBlocks.map((block) => (
+              <View key={block.id}>
+                <Text style={[styles.blockTitle, { color: b.textColor }]}>{block.title}</Text>
+                {splitLines(block.body).map((line, i) => (
+                  <Text key={i} style={[styles.bulletLine, { borderLeftColor: b.accentColor, color: b.textColor }]}>
+                    {line}
+                  </Text>
+                ))}
+              </View>
+            ))}
+          </>
+        ) : null}
 
-        {data.descriptionBlocks.map((block) => (
-          <View key={block.id}>
-            <Text style={[styles.blockTitle, { color: b.textColor }]}>{block.title}</Text>
-            {splitLines(block.body).map((line, i) => (
+        {data.closingSectionTitle.trim() || data.closingSectionBody.trim() ? (
+          <>
+            <Text style={[styles.blockTitle, { color: b.textColor, marginTop: 14 }]}>
+              {data.closingSectionTitle}
+            </Text>
+            {splitLines(data.closingSectionBody).map((line, i) => (
               <Text key={i} style={[styles.bulletLine, { borderLeftColor: b.accentColor, color: b.textColor }]}>
                 {line}
               </Text>
             ))}
-          </View>
-        ))}
-
-        <Text style={[styles.blockTitle, { color: b.textColor, marginTop: 14 }]}>
-          {data.closingSectionTitle}
-        </Text>
-        {splitLines(data.closingSectionBody).map((line, i) => (
-          <Text key={i} style={[styles.bulletLine, { borderLeftColor: b.accentColor, color: b.textColor }]}>
-            {line}
-          </Text>
-        ))}
+          </>
+        ) : null}
         {data.unitCost != null && Number.isFinite(data.unitCost) ? (
           <Text style={[styles.closingUnit, { color: b.textColor }]}>
             <Text style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>Costo unidad </Text>
@@ -290,13 +320,15 @@ export function CotizacionPdfDocument({ data }: Props) {
           </Text>
         ) : null}
 
-        <View style={[styles.notesBlock, { borderTopColor: b.mutedColor }]}>
-          {footerLines.map((line, i) => (
-            <Text key={i} style={[styles.noteLine, { color: b.mutedColor }]}>
-              {line}
-            </Text>
-          ))}
-        </View>
+        {footerLines.length > 0 ? (
+          <View style={[styles.notesBlock, { borderTopColor: b.mutedColor }]}>
+            {footerLines.map((line, i) => (
+              <Text key={i} style={[styles.noteLine, { color: b.mutedColor }]}>
+                {line}
+              </Text>
+            ))}
+          </View>
+        ) : null}
 
         <View style={styles.signOff}>
           <Text style={{ color: b.textColor }}>Atentamente,</Text>

@@ -305,4 +305,23 @@ html[data-theme='light'] {
   html[data-theme='light'] [class*='border-white'] {
     border-color: rgb(55 48 42 / 0.1);
   }
+
+  /**
+   * Portafolio (categorías): en claro evitamos el “cine” negro sobre crema y sombras muy duras.
+   * El gradiente base sigue en el componente para modo oscuro.
+   */
+  html[data-theme='light'] .category-portal-card {
+    border-color: rgb(55 48 42 / 0.12);
+    background-image: linear-gradient(
+      to bottom,
+      rgb(237 231 222 / 0.98),
+      rgb(220 210 196 / 0.96),
+      rgb(206 195 180 / 0.94)
+    ) !important;
+    box-shadow: var(--theme-shadow-card) !important;
+  }
+
+  html[data-theme='light'] .category-portal-card:hover {
+    box-shadow: var(--theme-shadow-card-hover) !important;
+  }
 }

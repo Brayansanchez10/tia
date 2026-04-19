@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom'
+import { Link, type LinkProps } from 'react-router-dom'
 
 type PortfolioWorkCardProps = {
   to: string
+  state?: LinkProps['state']
   coverSrc?: string
   category: string
   title: string
@@ -18,6 +19,7 @@ type PortfolioWorkCardProps = {
  */
 export function PortfolioWorkCard({
   to,
+  state,
   coverSrc,
   category,
   title,
@@ -32,6 +34,7 @@ export function PortfolioWorkCard({
     <article className={isGrid ? 'h-full min-w-0' : 'mx-auto max-w-3xl'}>
       <Link
         to={to}
+        state={state}
         aria-label={ariaLabel}
         className={[
           'group relative block overflow-hidden rounded-sm border border-white/10 bg-luxury-panel/90 shadow-[0_8px_40px_rgba(0,0,0,0.45)] transition-[box-shadow,border-color,transform] duration-500 hover:border-luxury-gold/30 hover:shadow-[0_20px_56px_rgba(0,0,0,0.5)] motion-safe:hover:-translate-y-1 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-luxury-bg',

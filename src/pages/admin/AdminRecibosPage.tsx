@@ -1,21 +1,26 @@
-import { useCallback, useState, type ReactNode } from 'react'
+import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { AdminPdfPreviewPane } from '@/components/admin/AdminPdfPreviewPane'
-import { CotizacionPdfDocument } from '@/components/admin/CotizacionPdfDocument'
+import { ReciboPdfDocument } from '@/components/admin/ReciboPdfDocument'
 import { COMPANY_LOGO_SRC } from '@/lib/branding'
-import { createDefaultCotizacion, defaultBranding } from '@/lib/cotizacion/defaults'
-import { downloadCotizacionPdf } from '@/lib/cotizacion/downloadCotizacionPdf'
+import { defaultReciboBranding } from '@/lib/recibo/defaults'
 import { formatCOP } from '@/lib/cotizacion/format'
-import type { CotizacionBranding, CotizacionData } from '@/types/cotizacion'
+import { createDefaultRecibo } from '@/lib/recibo/defaults'
+import { downloadReciboPdf } from '@/lib/recibo/downloadReciboPdf'
+import { computeReciboTotals } from '@/lib/recibo/reciboTotals'
+import type { CotizacionBranding } from '@/types/cotizacion'
+import type { ReciboData, ReciboLine } from '@/types/recibo'
 
-function newBlockId(): string {
+function newLineId(): string {
   return crypto.randomUUID()
 }
 
-export function AdminDashboardPage() {
-  const [data, setData] = useState<CotizacionData>(() => createDefaultCotizacion())
+export function AdminRecibosPage() {
+  const [data, setData] = useState<ReciboData>(() => createDefaultRecibo())
   const [exporting, setExporting] = useState(false)
 
-  const update = useCallback((patch: Partial<CotizacionData>) => {
+  const totals = useMemo(() => computeReciboTotals(data), [data])
+
+  const update = useCallback((patch: Partial<ReciboData>) => {
     setData((d) => ({ ...d, ...patch }))
   }, [])
 
@@ -27,8 +32,12 @@ export function AdminDashboardPage() {
     setExporting(true)
     try {
       const safe =
-        data.clientName.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-') || 'cotizacion'
-      await downloadCotizacionPdf(data, `COTIZACION-${safe}.pdf`)
+        (data.receiptNumber || data.toAddress || 'recibo')
+          .replace(/[^\w\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-')
+          .slice(0, 40) || 'recibo'
+      await downloadReciboPdf(data, `RECIBO-${safe}.pdf`)
     } finally {
       setExporting(false)
     }
@@ -38,28 +47,24 @@ export function AdminDashboardPage() {
     <div className="mx-auto min-w-0 max-w-[72rem] px-3 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
       <div className="flex flex-col gap-4 border-b border-luxury-gold/20 pb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
         <div className="min-w-0">
-          <h1 className="font-[family-name:var(--font-serif)] text-xl text-paper sm:text-2xl lg:text-3xl">
-            Cotizaciones
-          </h1>
+          <h1 className="font-[family-name:var(--font-serif)] text-xl text-paper sm:text-2xl lg:text-3xl">Recibos</h1>
           <p className="mt-2 text-pretty text-sm leading-relaxed text-luxury-muted sm:mt-1">
-            PDF con <strong className="font-medium text-paper/90">@react-pdf/renderer</strong>. Marca y vista previa
-            abajo en móvil. Total:{' '}
-            <span className="tabular-nums text-luxury-gold">{formatCOP(data.totalAmount)}</span>
+            <strong className="font-medium text-paper/90">Marca y colores</strong> iguales que en cotizaciones. Tabla
+            descripción + importe; total:{' '}
+            <span className="tabular-nums text-luxury-gold">{formatCOP(totals.total)}</span>
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
           <button
             type="button"
-            onClick={() => setData(createDefaultCotizacion())}
+            onClick={() => setData(createDefaultRecibo())}
             className="min-h-11 w-full rounded-sm border border-luxury-gold/35 px-4 py-2.5 text-sm text-luxury-muted transition-colors hover:border-luxury-gold hover:text-paper sm:w-auto sm:py-2"
           >
             Restaurar plantilla
           </button>
           <button
             type="button"
-            onClick={() => {
-              patchBranding(defaultBranding())
-            }}
+            onClick={() => patchBranding(defaultReciboBranding())}
             className="min-h-11 w-full rounded-sm border border-luxury-gold/25 px-4 py-2.5 text-sm text-luxury-muted transition-colors hover:border-luxury-gold hover:text-paper sm:w-auto sm:py-2"
           >
             Reset diseño
@@ -77,54 +82,30 @@ export function AdminDashboardPage() {
 
       <div className="mt-6 grid min-w-0 items-start gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">
         <div className="min-w-0 space-y-5 text-sm sm:space-y-6">
-          <FieldGroup title="Encabezado">
+          <FieldGroup title="Documento">
             <label className="block text-luxury-muted">
-              Ciudad
+              N.º de recibo
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.city}
-                onChange={(e) => update({ city: e.target.value })}
+                value={data.receiptNumber}
+                onChange={(e) => update({ receiptNumber: e.target.value })}
+                placeholder="Ej. 1993"
               />
             </label>
             <label className="block text-luxury-muted">
-              Fecha (texto libre)
+              Fecha (texto en la barra oscura)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.dateLabel}
-                onChange={(e) => update({ dateLabel: e.target.value })}
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Empresa / emisor
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.issuerName}
-                onChange={(e) => update({ issuerName: e.target.value })}
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              NIT
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.issuerNit}
-                onChange={(e) => update({ issuerNit: e.target.value })}
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Cliente (nombre en la cotización)
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.clientName}
-                onChange={(e) => update({ clientName: e.target.value })}
+                value={data.dateDisplay}
+                onChange={(e) => update({ dateDisplay: e.target.value })}
               />
             </label>
           </FieldGroup>
 
           <FieldGroup title="Marca y diseño del PDF">
             <p className="text-xs text-luxury-muted">
-              Por defecto se usa el logo corporativo. Puedes colocar otro archivo en{' '}
-              <code className="text-luxury-gold/90">public/img/</code> y referenciar{' '}
-              <code className="text-luxury-gold/90">/img/…</code>, o pegar una URL https.
+              Igual que en cotizaciones: logo en <code className="text-luxury-gold/90">public/img/</code> como{' '}
+              <code className="text-luxury-gold/90">/img/…</code> o URL https. Los colores se aplican al recibo en vivo.
             </p>
             <label className="block text-luxury-muted">
               Logo (ruta o URL)
@@ -136,7 +117,7 @@ export function AdminDashboardPage() {
               />
             </label>
             <label className="block text-luxury-muted">
-              Título del documento
+              Título del documento (metadatos PDF / referencia interna)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.branding.documentTitle}
@@ -144,7 +125,7 @@ export function AdminDashboardPage() {
               />
             </label>
             <label className="block text-luxury-muted">
-              Línea de marca (opcional, bajo el NIT en el encabezado)
+              Línea de marca (opcional, bajo el n.º de recibo en la franja oscura)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.branding.tagline}
@@ -177,49 +158,48 @@ export function AdminDashboardPage() {
               onChange={(v) => patchBranding({ mutedColor: v })}
             />
             <ColorField
-              label="Fondo de cajas (valor, cliente)"
+              label="Fondo de cajas (cabecera tabla, pie)"
               value={data.branding.panelBgColor}
               onChange={(v) => patchBranding({ panelBgColor: v })}
             />
           </FieldGroup>
 
-          <FieldGroup title="Totales">
+          <FieldGroup title="De / A">
             <label className="block text-luxury-muted">
-              Valor total (COP, número)
-              <input
-                type="number"
-                min={0}
-                step={1000}
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={Number.isFinite(data.totalAmount) ? data.totalAmount : 0}
-                onChange={(e) => update({ totalAmount: Number(e.target.value) || 0 })}
+              De (emisor, una línea por renglón)
+              <textarea
+                rows={4}
+                className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                value={data.fromAddress}
+                onChange={(e) => update({ fromAddress: e.target.value })}
               />
             </label>
             <label className="block text-luxury-muted">
-              Resumen del concepto (ej. &quot;10 muebles&quot;)
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.conceptSummary}
-                onChange={(e) => update({ conceptSummary: e.target.value })}
+              A (cliente, una línea por renglón)
+              <textarea
+                rows={4}
+                className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                value={data.toAddress}
+                onChange={(e) => update({ toAddress: e.target.value })}
               />
             </label>
           </FieldGroup>
 
-          <FieldGroup title="Descripción (bloques)">
-            {data.descriptionBlocks.map((block, index) => (
+          <FieldGroup title="Conceptos (descripción + importe)">
+            {data.lines.map((line, index) => (
               <div
-                key={block.id}
+                key={line.id}
                 className="rounded-sm border border-luxury-gold/20 bg-luxury-panel/50 p-3"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-luxury-gold">Bloque {index + 1}</span>
+                  <span className="text-xs text-luxury-gold">Línea {index + 1}</span>
                   <button
                     type="button"
                     className="text-xs text-red-300/90 hover:text-red-200"
                     onClick={() =>
                       setData((d) => ({
                         ...d,
-                        descriptionBlocks: d.descriptionBlocks.filter((b) => b.id !== block.id),
+                        lines: d.lines.length > 1 ? d.lines.filter((l) => l.id !== line.id) : d.lines,
                       }))
                     }
                   >
@@ -227,34 +207,32 @@ export function AdminDashboardPage() {
                   </button>
                 </div>
                 <label className="mt-2 block text-luxury-muted">
-                  Título
+                  Descripción
                   <input
                     className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-bg px-2 py-1.5 text-sm text-paper outline-none focus:border-luxury-gold"
-                    value={block.title}
+                    value={line.description}
                     onChange={(e) => {
-                      const title = e.target.value
+                      const description = e.target.value
                       setData((d) => ({
                         ...d,
-                        descriptionBlocks: d.descriptionBlocks.map((b) =>
-                          b.id === block.id ? { ...b, title } : b,
-                        ),
+                        lines: d.lines.map((l) => (l.id === line.id ? { ...l, description } : l)),
                       }))
                     }}
                   />
                 </label>
                 <label className="mt-2 block text-luxury-muted">
-                  Detalle (una línea por ítem)
-                  <textarea
-                    rows={5}
-                    className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-bg px-2 py-1.5 text-sm text-paper outline-none focus:border-luxury-gold"
-                    value={block.body}
+                  Importe (COP)
+                  <input
+                    type="number"
+                    min={0}
+                    step={1000}
+                    className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-bg px-2 py-1.5 text-sm text-paper outline-none focus:border-luxury-gold"
+                    value={Number.isFinite(line.amount) ? line.amount : 0}
                     onChange={(e) => {
-                      const body = e.target.value
+                      const amount = Number(e.target.value) || 0
                       setData((d) => ({
                         ...d,
-                        descriptionBlocks: d.descriptionBlocks.map((b) =>
-                          b.id === block.id ? { ...b, body } : b,
-                        ),
+                        lines: d.lines.map((l) => (l.id === line.id ? { ...l, amount } : l)),
                       }))
                     }}
                   />
@@ -267,71 +245,61 @@ export function AdminDashboardPage() {
               onClick={() =>
                 setData((d) => ({
                   ...d,
-                  descriptionBlocks: [
-                    ...d.descriptionBlocks,
-                    { id: newBlockId(), title: 'Nuevo ítem', body: '' },
-                  ],
+                  lines: [...d.lines, { id: newLineId(), description: '', amount: 0 } satisfies ReciboLine],
                 }))
               }
             >
-              + Añadir bloque
+              + Añadir línea
             </button>
           </FieldGroup>
 
-          <FieldGroup title="Cierre (Base / costo unitario)">
+          <FieldGroup title="Impuestos">
             <label className="block text-luxury-muted">
-              Título de la sección final
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.closingSectionTitle}
-                onChange={(e) => update({ closingSectionTitle: e.target.value })}
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Detalle
-              <textarea
-                rows={4}
-                className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.closingSectionBody}
-                onChange={(e) => update({ closingSectionBody: e.target.value })}
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Costo unitario (COP, vacío = ocultar)
+              Porcentaje (0 = ocultar línea de impuestos en el PDF)
               <input
                 type="number"
                 min={0}
-                step={1000}
+                max={100}
+                step={0.1}
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.unitCost ?? ''}
-                onChange={(e) => {
-                  const v = e.target.value
-                  update({ unitCost: v === '' ? null : Number(v) || null })
-                }}
+                value={data.taxRatePercent}
+                onChange={(e) => update({ taxRatePercent: Number(e.target.value) || 0 })}
+              />
+            </label>
+            <p className="text-xs text-luxury-muted">
+              Subtotal: <span className="tabular-nums text-paper/90">{formatCOP(totals.subtotal)}</span>
+              {data.taxRatePercent > 0 ? (
+                <>
+                  {' '}
+                  · IVA: <span className="tabular-nums text-paper/90">{formatCOP(totals.tax)}</span>
+                </>
+              ) : null}
+            </p>
+          </FieldGroup>
+
+          <FieldGroup title="Pie del recibo">
+            <label className="block text-luxury-muted">
+              Título (banda inferior, color «cajas»)
+              <input
+                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                value={data.footerTermsTitle}
+                onChange={(e) => update({ footerTermsTitle: e.target.value })}
               />
             </label>
             <label className="block text-luxury-muted">
-              Texto tras el monto (ej. &quot;por mueble&quot;)
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.unitCostSuffix}
-                onChange={(e) => update({ unitCostSuffix: e.target.value })}
+              Texto (una o varias líneas)
+              <textarea
+                rows={3}
+                className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                value={data.footerTermsBody}
+                onChange={(e) => update({ footerTermsBody: e.target.value })}
               />
             </label>
           </FieldGroup>
 
-          <FieldGroup title="Notas y firma">
+          <FieldGroup title="Firma">
             <label className="block text-luxury-muted">
-              Notas (una por línea)
-              <textarea
-                rows={4}
-                className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.footerNotes}
-                onChange={(e) => update({ footerNotes: e.target.value })}
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Nombre (firma)
+              Nombre (aparece bajo la línea de firma)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.signerName}
@@ -339,7 +307,7 @@ export function AdminDashboardPage() {
               />
             </label>
             <label className="block text-luxury-muted">
-              Teléfono
+              Teléfono (como en cotización)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.signerPhone}
@@ -351,7 +319,7 @@ export function AdminDashboardPage() {
 
         <AdminPdfPreviewPane
           title="Vista previa (mismo PDF)"
-          document={<CotizacionPdfDocument data={data} />}
+          document={<ReciboPdfDocument data={data} />}
         />
       </div>
     </div>
@@ -361,9 +329,7 @@ export function AdminDashboardPage() {
 function FieldGroup({ title, children }: { title: string; children: ReactNode }) {
   return (
     <fieldset className="min-w-0 space-y-3 rounded-sm border border-luxury-gold/15 bg-luxury-bg/40 p-3 sm:p-4">
-      <legend className="px-1 text-xs font-medium tracking-wide text-luxury-gold uppercase">
-        {title}
-      </legend>
+      <legend className="px-1 text-xs font-medium tracking-wide text-luxury-gold uppercase">{title}</legend>
       {children}
     </fieldset>
   )

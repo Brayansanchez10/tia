@@ -79,15 +79,21 @@ export type TrabajoMediaSource = {
 
 /** Portada de un hijo (tarjeta en el hub). */
 export function trabajoChildCoverSrc(child: TrabajoChild): string | undefined {
+  const fromImages = child.images?.find((s) => !trabajoMediaIsVideo(s))
+  if (fromImages) return fromImages
+  if (child.image && !trabajoMediaIsVideo(child.image)) return child.image
   return child.images?.[0] ?? child.image
 }
 
-/** Primera imagen para tarjetas del listado: `images[0]`, `image` o primera portada de un hijo. */
+/** Primera imagen para tarjetas del listado: prioriza foto sobre vídeo. */
 export function trabajoCoverSrc(post: TrabajoPost): string | undefined {
-  if (post.images?.[0]) return post.images[0]
-  if (post.image) return post.image
+  if (post.images?.length) {
+    const img = post.images.find((s) => !trabajoMediaIsVideo(s))
+    if (img) return img
+  }
+  if (post.image && !trabajoMediaIsVideo(post.image)) return post.image
   if (post.children?.[0]) return trabajoChildCoverSrc(post.children[0])
-  return undefined
+  return post.images?.[0] ?? post.image
 }
 
 /** Galería de imágenes/vídeos para un trabajo simple o un hijo. */
@@ -158,88 +164,297 @@ export const site = {
      */
     items: [
       {
-        slug: 'exhibidores-cruz-verde',
-        title: 'Exhibidores para Cruz Verde',
+        slug: 'almacen',
+        title: 'Mobiliario y zona de almacén',
+        dateLabel: 'Retail · cadena',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Instalación de mobiliario y recorridos para espacio de almacén y exhibición.',
+        images: [
+          '/img/trabajos/comerciales/Almacen/M2.jpeg',
+          '/img/trabajos/comerciales/Almacen/M3.jpeg',
+          '/img/trabajos/comerciales/Almacen/M4.jpeg',
+          '/img/trabajos/comerciales/Almacen/M5.jpeg',
+          '/img/trabajos/comerciales/Almacen/M6.jpeg',
+          '/img/trabajos/comerciales/Almacen/M7.jpeg',
+          '/img/trabajos/comerciales/Almacen/M8.jpeg',
+          '/img/trabajos/comerciales/Almacen/M1.mp4',
+        ],
+        paragraphs: [
+          'Proyecto comercial con registro fotográfico y vídeo del conjunto montado.',
+          'Las imágenes viven en `public/img/trabajos/comerciales/Almacen/`.',
+        ],
+      },
+      {
+        slug: 'almacenes-ara',
+        title: 'Almacenes Ara',
         dateLabel: 'Retail · Colombia',
         portfolioKind: 'corporativo',
-        category: 'Cruz Verde',
-        excerpt:
-          'Varias exhibiciones de piso para farmacia: entra para ver cada línea (CeraVe, Eucerin) con su propia galería.',
-        image: '/img/cruzverde/Exibidor.jpeg',
-        paragraphs: [
-          'Agrupamos aquí los exhibidores fabricados para puntos Cruz Verde. Cada tarjeta abre la galería y texto de esa exhibición concreta.',
-        ],
-        children: [
-          {
-            slug: 'cerave',
-            title: 'Exhibición CeraVe',
-            dateLabel: 'POP · vitrina',
-            category: 'Cruz Verde',
-            excerpt: 'Display vertical con estantes por tipo de piel, gráfica CeraVe y pieza de espuma en base.',
-            images: [
-              '/img/cruzverde/Exibidor.jpeg',
-              '/img/cruzverde/exibidor1.jpeg',
-              '/img/cruzverde/ExibidorVideo.mp4',
-            ],
-            paragraphs: [
-              'Exhibidor de piso con jerarquía visual clara: cabecera de marca, surtido por segmentos y refuerzo de “nuevo” en estantería.',
-              'Vídeo en taller / montaje para ver escala y acabados antes de tienda.',
-            ],
-          },
-          {
-            slug: 'eucerin',
-            title: 'Exhibición Eucerin',
-            dateLabel: 'POP · rutina',
-            category: 'Cruz Verde',
-            excerpt: 'Torre blanca con bins por paso (limpia / trata / protege) y gráfica de rutina Eucerin.',
-            images: [
-              '/img/cruzverde/Exibidor2.jpeg',
-              '/img/cruzverde/Exibidor3.jpeg',
-              '/img/cruzverde/ExibidorVideo2.mp4',
-            ],
-            paragraphs: [
-              'Segundo frente para la misma cadena: piezas acrílicas, espejo oval y gráfica de agua para la línea de dermocosmética.',
-              'Segundo clip en vídeo para ver el conjunto armado y detalle de cajones.',
-            ],
-          },
-        ],
-      },
-      {
-        slug: 'exibidor-jugos',
-        title: 'Exhibidor jugos',
-        dateLabel: 'Retail · bebidas',
-        portfolioKind: 'corporativo',
-        category: 'Exhibidores POP',
-        excerpt: 'Mueble de piso para categoría jugos: líneas limpias y zona de impacto visual para marca.',
+        category: 'Comercial',
+        excerpt: 'Mobiliario y detalle de punto de venta para la cadena.',
         images: [
-          '/img/Exibidor Jugos/Jugos2.jpeg',
-          '/img/Exibidor Jugos/jugos5.jpeg',
-          '/img/Exibidor Jugos/Jugos6.jpeg',
-          '/img/Exibidor Jugos/juegos7.jpeg',
-          '/img/Exibidor Jugos/Video.mp4',
+          '/img/trabajos/comerciales/AlmacenesAra/M1.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M2.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/m3.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M4.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M5.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M7.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M8.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M9.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M10.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M11.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M12.jpeg',
+          '/img/trabajos/comerciales/AlmacenesAra/M6.mp4',
         ],
         paragraphs: [
-          'Proyecto único con galería en una sola página: fotos en taller o punto de venta y vídeo del conjunto.',
-          'Edita textos y rutas en `src/content/site.ts` si cambias archivos en `public/img/Exibidor Jugos/`.',
+          'Galería completa del despliegue: recorrido en foto y clip en vídeo.',
         ],
       },
-      /**
-       * Ejemplo residencial: copia este objeto, cambia slug/título/rutas y borra este comentario cuando tengas datos reales.
-       * Usa `portfolioKind: 'residencial'` para que aparezca en la segunda sección de /trabajos.
-       */
       {
-        slug: 'ejemplo-mueble-residencial',
-        title: 'Mueble a medida — ejemplo residencial',
-        dateLabel: 'Hogar · referencia',
-        portfolioKind: 'residencial',
-        category: 'Sala / comedor',
-        excerpt:
-          'Ejemplo de cómo se ve un proyecto para hogar: una sola pieza con galería y texto. Duplica el bloque y sustituye slug, título e imágenes.',
-        image: '/img/fondoHome.png',
-        images: ['/img/fondoHome.png', '/img/Fondo.jpg'],
+        slug: 'cali',
+        title: 'Proyecto Cali',
+        dateLabel: 'Retail · Cali',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Instalación y acabados en punto de venta.',
+        images: [
+          '/img/trabajos/comerciales/Cali/M1.jpeg',
+          '/img/trabajos/comerciales/Cali/M2.jpeg',
+          '/img/trabajos/comerciales/Cali/M3.jpeg',
+          '/img/trabajos/comerciales/Cali/M4.jpeg',
+          '/img/trabajos/comerciales/Cali/M5.jpeg',
+          '/img/trabajos/comerciales/Cali/M6.jpeg',
+          '/img/trabajos/comerciales/Cali/M7.jpeg',
+          '/img/trabajos/comerciales/Cali/M8.jpeg',
+          '/img/trabajos/comerciales/Cali/V1.mp4',
+        ],
         paragraphs: [
-          'Este bloque es una plantilla. Sustituye el título, el slug (único) y las rutas de `images` o `image` por tus fotos en `public/img/`.',
-          'Si el proyecto tiene varias piezas (p. ej. cocina + estantería), usa `children` como en “Exhibidores para Cruz Verde” y cada pieza tendrá su propia URL.',
+          'Referencia visual del trabajo realizado, con recorrido en vídeo al final de la galería.',
+        ],
+      },
+      {
+        slug: 'cruz-estanteria',
+        title: 'Estantería Cruz Verde',
+        dateLabel: 'Farmacia · POP',
+        portfolioKind: 'corporativo',
+        category: 'Cruz Verde',
+        excerpt: 'Mueble de estantería y material de piso para farmacia.',
+        images: [
+          '/img/trabajos/comerciales/CruzEstanteria/mueble1.jpeg',
+          '/img/trabajos/comerciales/CruzEstanteria/Mueble2.jpeg',
+          '/img/trabajos/comerciales/CruzEstanteria/Mueble3.jpeg',
+          '/img/trabajos/comerciales/CruzEstanteria/Mueble6.jpeg',
+          '/img/trabajos/comerciales/CruzEstanteria/Mueble Video.mp4',
+          '/img/trabajos/comerciales/CruzEstanteria/Mueble4.mp4',
+        ],
+        paragraphs: [
+          'Línea de estantería con piezas en foto y vídeos de conjunto en taller o tienda.',
+        ],
+      },
+      {
+        slug: 'dermocenter',
+        title: 'Dermocenter',
+        dateLabel: 'Retail · dermocosmética',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Mobiliario y frentes para espacio de dermocosmética.',
+        images: [
+          '/img/trabajos/comerciales/dermocenter/M2.jpeg',
+          '/img/trabajos/comerciales/dermocenter/M3.jpeg',
+          '/img/trabajos/comerciales/dermocenter/M1.mp4',
+          '/img/trabajos/comerciales/dermocenter/M4.mp4',
+          '/img/trabajos/comerciales/dermocenter/M5.mp4',
+        ],
+        paragraphs: [
+          'Documentación en imagen y varios clips para ver escala y detalle.',
+        ],
+      },
+      {
+        slug: 'estanterias',
+        title: 'Estanterías',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Sistema de estantería y exhibición.',
+        images: [
+          '/img/trabajos/comerciales/Estanterias/M1.jpeg',
+          '/img/trabajos/comerciales/Estanterias/m2.jpeg',
+          '/img/trabajos/comerciales/Estanterias/M3.jpeg',
+          '/img/trabajos/comerciales/Estanterias/M4.jpeg',
+        ],
+        paragraphs: [
+          'Cuatro referencias del montaje final.',
+        ],
+      },
+      {
+        slug: 'falabella',
+        title: 'Falabella',
+        dateLabel: 'Retail · gran tienda',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Piezas y zona de exhibición para departamental.',
+        images: [
+          '/img/trabajos/comerciales/falabella/M1.jpeg',
+          '/img/trabajos/comerciales/falabella/M2.jpeg',
+          '/img/trabajos/comerciales/falabella/M3.jpeg',
+          '/img/trabajos/comerciales/falabella/M4.jpeg',
+          '/img/trabajos/comerciales/falabella/M5.jpeg',
+          '/img/trabajos/comerciales/falabella/M6.jpeg',
+          '/img/trabajos/comerciales/falabella/m7.mp4',
+        ],
+        paragraphs: [
+          'Secuencia fotográfica y vídeo de cierre.',
+        ],
+      },
+      {
+        slug: 'lorel',
+        title: 'Lorel',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Mobiliario y frente de marca.',
+        images: [
+          '/img/trabajos/comerciales/Lorel/M1.jpeg',
+          '/img/trabajos/comerciales/Lorel/M2.jpeg',
+          '/img/trabajos/comerciales/Lorel/M3.jpeg',
+          '/img/trabajos/comerciales/Lorel/M4.mp4',
+        ],
+        paragraphs: [
+          'Galería con vídeo del conjunto.',
+        ],
+      },
+      {
+        slug: 'popsy',
+        title: 'Popsy',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Exhibición y mobiliario de punto de venta.',
+        images: [
+          '/img/trabajos/comerciales/popsy/M1.jpeg',
+          '/img/trabajos/comerciales/popsy/M2.jpeg',
+          '/img/trabajos/comerciales/popsy/M3.jpeg',
+        ],
+        paragraphs: [
+          'Tres vistas del trabajo terminado.',
+        ],
+      },
+      {
+        slug: 'tiendas-metro',
+        title: 'Tiendas Metro',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Instalación en cadena de supermercados.',
+        images: [
+          '/img/trabajos/comerciales/tiendasMetro/M1.jpeg',
+          '/img/trabajos/comerciales/tiendasMetro/M2.jpeg',
+          '/img/trabajos/comerciales/tiendasMetro/M4.jpeg',
+          '/img/trabajos/comerciales/tiendasMetro/M5.jpeg',
+          '/img/trabajos/comerciales/tiendasMetro/M6.jpeg',
+          '/img/trabajos/comerciales/tiendasMetro/M3.mp4',
+        ],
+        paragraphs: [
+          'Recorrido fotográfico y vídeo del montaje.',
+        ],
+      },
+      {
+        slug: 'cocina-integral',
+        title: 'Cocina integral',
+        dateLabel: 'Hogar · cocina',
+        portfolioKind: 'residencial',
+        category: 'Cocina',
+        excerpt: 'Cocina integral a medida: frentes, zona de trabajo y almacenaje.',
+        images: [
+          '/img/trabajos/residenciales/cocinaIntegral/M1.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegral/M2.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegral/M3.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegral/M4.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegral/M5.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegral/M6.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegral/M7.jpeg',
+        ],
+        paragraphs: [
+          'Proyecto residencial con varias vistas del espacio terminado.',
+        ],
+      },
+      {
+        slug: 'cocina-integral-negra',
+        title: 'Cocina integral — acabado oscuro',
+        dateLabel: 'Hogar · cocina',
+        portfolioKind: 'residencial',
+        category: 'Cocina',
+        excerpt: 'Línea sobria con contraste y detalle en negro o tonos profundos.',
+        images: [
+          '/img/trabajos/residenciales/cocinaIntegralNegra/M1.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegralNegra/M3.jpeg',
+          '/img/trabajos/residenciales/cocinaIntegralNegra/m4.png',
+          '/img/trabajos/residenciales/cocinaIntegralNegra/M2.mp4',
+        ],
+        paragraphs: [
+          'Fotografías del resultado y vídeo del ambiente.',
+        ],
+      },
+      {
+        slug: 'diseno-oculto',
+        title: 'Diseño oculto',
+        dateLabel: 'Hogar · solución a medida',
+        portfolioKind: 'residencial',
+        category: 'Mobiliario',
+        excerpt: 'Solución de almacenaje o vano con acabado integrado al muro.',
+        images: [
+          '/img/trabajos/residenciales/DiseñoOculto/M5.jpeg',
+          '/img/trabajos/residenciales/DiseñoOculto/M1.mp4',
+          '/img/trabajos/residenciales/DiseñoOculto/M2.mp4',
+          '/img/trabajos/residenciales/DiseñoOculto/M3.mp4',
+          '/img/trabajos/residenciales/DiseñoOculto/M4.mp4',
+        ],
+        paragraphs: [
+          'Imagen fija del detalle y varios vídeos del funcionamiento y acabados.',
+        ],
+      },
+      {
+        slug: 'mueble-lavadero',
+        title: 'Mueble de lavadero',
+        dateLabel: 'Hogar · zona húmeda',
+        portfolioKind: 'residencial',
+        category: 'Lavadero',
+        excerpt: 'Mueble auxiliar para área de lavado con almacenaje.',
+        images: [
+          '/img/trabajos/residenciales/muebleLavadero/M3.jpeg',
+          '/img/trabajos/residenciales/muebleLavadero/M4.jpeg',
+          '/img/trabajos/residenciales/muebleLavadero/M5.jpeg',
+          '/img/trabajos/residenciales/muebleLavadero/M1.mp4',
+          '/img/trabajos/residenciales/muebleLavadero/M2.mp4',
+        ],
+        paragraphs: [
+          'Vistas del mueble instalado y vídeos de detalle.',
+        ],
+      },
+      {
+        slug: 'puertas',
+        title: 'Puertas interior',
+        dateLabel: 'Hogar · carpintería',
+        portfolioKind: 'residencial',
+        category: 'Puertas',
+        excerpt: 'Juego de puertas interiores con acabados de carpintería.',
+        images: [
+          '/img/trabajos/residenciales/puertas/M1.jpeg',
+          '/img/trabajos/residenciales/puertas/M2.jpeg',
+          '/img/trabajos/residenciales/puertas/M3.jpeg',
+          '/img/trabajos/residenciales/puertas/M4.jpeg',
+          '/img/trabajos/residenciales/puertas/M5.jpeg',
+          '/img/trabajos/residenciales/puertas/M6.jpeg',
+          '/img/trabajos/residenciales/puertas/M7.jpeg',
+          '/img/trabajos/residenciales/puertas/M8.jpeg',
+          '/img/trabajos/residenciales/puertas/M9.jpeg',
+          '/img/trabajos/residenciales/puertas/M10.jpeg',
+          '/img/trabajos/residenciales/puertas/M11.jpeg',
+          '/img/trabajos/residenciales/puertas/M12.jpeg',
+          '/img/trabajos/residenciales/puertas/M13.mp4',
+        ],
+        paragraphs: [
+          'Secuencia ordenada de vanos y detalle de carpintería; cierre con vídeo.',
         ],
       },
     ] as TrabajoPost[],

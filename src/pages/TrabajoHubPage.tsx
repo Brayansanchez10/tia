@@ -1,15 +1,30 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { TrabajoChild, TrabajoPost } from '@/content/site'
 import { trabajoChildCoverSrc } from '@/content/site'
 import { PortfolioWorkCard } from '@/components/trabajos/PortfolioWorkCard'
 import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
+import {
+  resolveTrabajosVolverHref,
+  trabajoPortfolioHref,
+  trabajosVolverBackLineLabel,
+  type TrabajosVolverState,
+} from '@/pages/trabajosCategoryShared'
 
-function HubChildCard({ parentSlug, child }: { parentSlug: string; child: TrabajoChild }) {
+function HubChildCard({
+  parentSlug,
+  child,
+  linkState,
+}: {
+  parentSlug: string
+  child: TrabajoChild
+  linkState?: TrabajosVolverState
+}) {
   const cover = trabajoChildCoverSrc(child)
   return (
     <PortfolioWorkCard
       to={`/trabajos/${parentSlug}/${child.slug}`}
+      state={linkState}
       coverSrc={cover}
       category={child.category}
       title={child.title}
@@ -25,15 +40,18 @@ const backLinkClass =
   'inline-flex text-sm font-medium text-luxury-muted no-underline transition-colors hover:text-luxury-gold hover:underline'
 
 export function TrabajoHubPage({ post }: { post: TrabajoPost }) {
+  const location = useLocation()
   const children = post.children!
+  const volverHref = resolveTrabajosVolverHref(location.state, trabajoPortfolioHref(post.portfolioKind))
+  const volverLine = trabajosVolverBackLineLabel(volverHref)
 
   return (
     <div className="min-h-[50vh] w-full bg-luxury-bg">
       <div className="mx-auto max-w-[72rem] px-4 pb-16 pt-8 sm:px-5 sm:pb-20 sm:pt-10 md:px-6 md:pt-12">
         <RevealOnView>
           <nav className="mb-8" aria-label="Ruta">
-            <Link to="/trabajos" className={backLinkClass}>
-              ← Trabajos
+            <Link to={volverHref} className={backLinkClass}>
+              {volverLine}
             </Link>
           </nav>
         </RevealOnView>
@@ -67,7 +85,7 @@ export function TrabajoHubPage({ post }: { post: TrabajoPost }) {
             {children.map((child, i) => (
               <li key={child.slug} className="min-w-0">
                 <RevealOnView delayMs={Math.min(i * 70, 280)} variant="scale">
-                  <HubChildCard parentSlug={post.slug} child={child} />
+                  <HubChildCard parentSlug={post.slug} child={child} linkState={location.state as TrabajosVolverState | undefined} />
                 </RevealOnView>
               </li>
             ))}
@@ -76,8 +94,8 @@ export function TrabajoHubPage({ post }: { post: TrabajoPost }) {
 
         <RevealOnView delayMs={100}>
           <div className="mx-auto mt-14 max-w-2xl border-t border-white/10 pt-10 text-center md:text-left">
-            <Link to="/trabajos" className={backLinkClass}>
-              ← Volver a todos los trabajos
+            <Link to={volverHref} className={backLinkClass}>
+              {volverLine}
             </Link>
           </div>
         </RevealOnView>
