@@ -42,8 +42,7 @@ export function AdminDashboardPage() {
             Cotizaciones
           </h1>
           <p className="mt-2 text-pretty text-sm leading-relaxed text-luxury-muted sm:mt-1">
-            PDF con <strong className="font-medium text-paper/90">@react-pdf/renderer</strong>. Marca y vista previa
-            abajo en móvil. Total:{' '}
+            Generación de cotizaciones en PDF. Total: {}
             <span className="tabular-nums text-luxury-gold">{formatCOP(data.totalAmount)}</span>
           </p>
         </div>
@@ -79,16 +78,18 @@ export function AdminDashboardPage() {
         <div className="min-w-0 space-y-5 text-sm sm:space-y-6">
           <FieldGroup title="Encabezado">
             <label className="block text-luxury-muted">
-              Ciudad
+              Ciudad (ej. Medellín)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.city}
                 onChange={(e) => update({ city: e.target.value })}
+                placeholder="Medellín"
               />
             </label>
             <label className="block text-luxury-muted">
-              Fecha (texto libre)
+              Fecha
               <input
+                disabled
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.dateLabel}
                 onChange={(e) => update({ dateLabel: e.target.value })}
@@ -100,6 +101,7 @@ export function AdminDashboardPage() {
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.issuerName}
                 onChange={(e) => update({ issuerName: e.target.value })}
+                disabled
               />
             </label>
             <label className="block text-luxury-muted">
@@ -108,31 +110,29 @@ export function AdminDashboardPage() {
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.issuerNit}
                 onChange={(e) => update({ issuerNit: e.target.value })}
+                disabled
               />
             </label>
             <label className="block text-luxury-muted">
-              Cliente (nombre en la cotización)
+              Cliente (nombre en la cotización) (ej. &quot;Inversiones del Valle S.A.S.&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.clientName}
                 onChange={(e) => update({ clientName: e.target.value })}
+                placeholder="Razón social o nombre del cliente"
               />
             </label>
           </FieldGroup>
 
           <FieldGroup title="Marca y diseño del PDF">
-            <p className="text-xs text-luxury-muted">
-              Por defecto se usa el logo corporativo. Puedes colocar otro archivo en{' '}
-              <code className="text-luxury-gold/90">public/img/</code> y referenciar{' '}
-              <code className="text-luxury-gold/90">/img/…</code>, o pegar una URL https.
-            </p>
             <label className="block text-luxury-muted">
-              Logo (ruta o URL)
+              Logo
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 font-mono text-xs text-paper outline-none focus:border-luxury-gold"
                 value={data.branding.logoUrl}
                 onChange={(e) => patchBranding({ logoUrl: e.target.value })}
                 placeholder={COMPANY_LOGO_SRC}
+                disabled
               />
             </label>
             <label className="block text-luxury-muted">
@@ -185,7 +185,7 @@ export function AdminDashboardPage() {
 
           <FieldGroup title="Totales">
             <label className="block text-luxury-muted">
-              Valor total (COP, número)
+              Valor total (COP, número sin puntos ni comas; ej. 12500000)
               <input
                 type="number"
                 min={0}
@@ -193,14 +193,16 @@ export function AdminDashboardPage() {
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={Number.isFinite(data.totalAmount) ? data.totalAmount : 0}
                 onChange={(e) => update({ totalAmount: Number(e.target.value) || 0 })}
+                placeholder="12500000"
               />
             </label>
             <label className="block text-luxury-muted">
-              Resumen del concepto (ej. &quot;10 muebles&quot;)
+              Resumen del concepto (ej. &quot;10 muebles a medida&quot;, &quot;remodelación integral cocina&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.conceptSummary}
                 onChange={(e) => update({ conceptSummary: e.target.value })}
+                placeholder="10 muebles a medida"
               />
             </label>
           </FieldGroup>
@@ -227,7 +229,7 @@ export function AdminDashboardPage() {
                   </button>
                 </div>
                 <label className="mt-2 block text-luxury-muted">
-                  Título
+                  Título (ej. &quot;Alcance&quot;, &quot;Materiales&quot;, &quot;Tiempos de entrega&quot;)
                   <input
                     className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-bg px-2 py-1.5 text-sm text-paper outline-none focus:border-luxury-gold"
                     value={block.title}
@@ -240,10 +242,11 @@ export function AdminDashboardPage() {
                         ),
                       }))
                     }}
+                    placeholder="Alcance del proyecto"
                   />
                 </label>
                 <label className="mt-2 block text-luxury-muted">
-                  Detalle (una línea por ítem)
+                  Detalle (una línea por ítem; ej. &quot;Cocina integral roble — 4,2 m&quot;)
                   <textarea
                     rows={5}
                     className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-bg px-2 py-1.5 text-sm text-paper outline-none focus:border-luxury-gold"
@@ -257,6 +260,7 @@ export function AdminDashboardPage() {
                         ),
                       }))
                     }}
+                    placeholder={"Cocina integral en roble\nClóset principal 3 puertas\nEscritorio flotante 1,4 m"}
                   />
                 </label>
               </div>
@@ -280,24 +284,26 @@ export function AdminDashboardPage() {
 
           <FieldGroup title="Cierre (Base / costo unitario)">
             <label className="block text-luxury-muted">
-              Título de la sección final
+              Título de la sección final (ej. &quot;Inversión por unidad&quot;, &quot;Referencia de costo&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.closingSectionTitle}
                 onChange={(e) => update({ closingSectionTitle: e.target.value })}
+                placeholder="Inversión por unidad"
               />
             </label>
             <label className="block text-luxury-muted">
-              Detalle
+              Detalle (ej. condiciones comerciales, forma de pago o aclaraciones finales)
               <textarea
                 rows={4}
                 className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.closingSectionBody}
                 onChange={(e) => update({ closingSectionBody: e.target.value })}
+                placeholder="Valores antes de impuestos. Incluye instalación en sitio."
               />
             </label>
             <label className="block text-luxury-muted">
-              Costo unitario (COP, vacío = ocultar)
+              Costo unitario (COP, sin puntos; vacío = ocultar; ej. 850000)
               <input
                 type="number"
                 min={0}
@@ -308,42 +314,47 @@ export function AdminDashboardPage() {
                   const v = e.target.value
                   update({ unitCost: v === '' ? null : Number(v) || null })
                 }}
+                placeholder="850000"
               />
             </label>
             <label className="block text-luxury-muted">
-              Texto tras el monto (ej. &quot;por mueble&quot;)
+              Texto tras el monto (ej. &quot;por mueble&quot;, &quot;por m²&quot;, &quot;más IVA&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.unitCostSuffix}
                 onChange={(e) => update({ unitCostSuffix: e.target.value })}
+                placeholder="por mueble"
               />
             </label>
           </FieldGroup>
 
           <FieldGroup title="Notas y firma">
             <label className="block text-luxury-muted">
-              Notas (una por línea)
+              Notas (una por línea; ej. vigencia, visita técnica, exclusiones)
               <textarea
                 rows={4}
                 className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.footerNotes}
                 onChange={(e) => update({ footerNotes: e.target.value })}
+                placeholder={"Vigencia de la oferta: 15 días calendario\nIncluye una visita de medición previa"}
               />
             </label>
             <label className="block text-luxury-muted">
-              Nombre (firma)
+              Nombre (firma) (ej. nombre y cargo quien representa a la empresa)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.signerName}
                 onChange={(e) => update({ signerName: e.target.value })}
+                placeholder="Laura Gómez — Directora comercial"
               />
             </label>
             <label className="block text-luxury-muted">
-              Teléfono
+              Teléfono (ej. +57 300 123 4567)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.signerPhone}
                 onChange={(e) => update({ signerPhone: e.target.value })}
+                placeholder="+57 300 123 4567"
               />
             </label>
           </FieldGroup>

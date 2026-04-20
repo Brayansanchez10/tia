@@ -49,9 +49,7 @@ export function AdminRecibosPage() {
         <div className="min-w-0">
           <h1 className="font-[family-name:var(--font-serif)] text-xl text-paper sm:text-2xl lg:text-3xl">Recibos</h1>
           <p className="mt-2 text-pretty text-sm leading-relaxed text-luxury-muted sm:mt-1">
-            <strong className="font-medium text-paper/90">Marca y colores</strong> iguales que en cotizaciones. Tabla
-            descripción + importe; total:{' '}
-            <span className="tabular-nums text-luxury-gold">{formatCOP(totals.total)}</span>
+            <strong className="font-medium text-paper/90">Recibos en PDF</strong>
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
@@ -84,17 +82,18 @@ export function AdminRecibosPage() {
         <div className="min-w-0 space-y-5 text-sm sm:space-y-6">
           <FieldGroup title="Documento">
             <label className="block text-luxury-muted">
-              N.º de recibo
+              N.º de recibo (ej. &quot;R-2025-014&quot;, &quot;1993&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.receiptNumber}
                 onChange={(e) => update({ receiptNumber: e.target.value })}
-                placeholder="Ej. 1993"
+                placeholder="R-2025-014"
               />
             </label>
             <label className="block text-luxury-muted">
-              Fecha (texto en la barra oscura)
+              Fecha (texto en la barra oscura; se fija al cargar o al restaurar plantilla)
               <input
+                disabled
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.dateDisplay}
                 onChange={(e) => update({ dateDisplay: e.target.value })}
@@ -103,13 +102,10 @@ export function AdminRecibosPage() {
           </FieldGroup>
 
           <FieldGroup title="Marca y diseño del PDF">
-            <p className="text-xs text-luxury-muted">
-              Igual que en cotizaciones: logo en <code className="text-luxury-gold/90">public/img/</code> como{' '}
-              <code className="text-luxury-gold/90">/img/…</code> o URL https. Los colores se aplican al recibo en vivo.
-            </p>
             <label className="block text-luxury-muted">
-              Logo (ruta o URL)
+              Logo
               <input
+                disabled
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 font-mono text-xs text-paper outline-none focus:border-luxury-gold"
                 value={data.branding.logoUrl}
                 onChange={(e) => patchBranding({ logoUrl: e.target.value })}
@@ -117,19 +113,21 @@ export function AdminRecibosPage() {
               />
             </label>
             <label className="block text-luxury-muted">
-              Título del documento (metadatos PDF / referencia interna)
+              Título del documento (metadatos PDF / referencia interna; ej. &quot;Recibo de caja — Taller&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.branding.documentTitle}
                 onChange={(e) => patchBranding({ documentTitle: e.target.value })}
+                placeholder="Recibo de caja"
               />
             </label>
             <label className="block text-luxury-muted">
-              Línea de marca (opcional, bajo el n.º de recibo en la franja oscura)
+              Línea de marca (opcional, bajo el n.º en la franja; ej. nombre comercial o eslogan corto)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.branding.tagline}
                 onChange={(e) => patchBranding({ tagline: e.target.value })}
+                placeholder="Muebles y carpintería a medida"
               />
             </label>
             <ColorField
@@ -166,21 +164,23 @@ export function AdminRecibosPage() {
 
           <FieldGroup title="De / A">
             <label className="block text-luxury-muted">
-              De (emisor, una línea por renglón)
+              De (emisor, una línea por renglón; ej. razón social, NIT, dirección, ciudad)
               <textarea
                 rows={4}
                 className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.fromAddress}
                 onChange={(e) => update({ fromAddress: e.target.value })}
+                placeholder={"Carpintería El Roble S.A.S.\nNIT 900.123.456-7\nCalle 10 # 43-12, Medellín"}
               />
             </label>
             <label className="block text-luxury-muted">
-              A (cliente, una línea por renglón)
+              A (cliente, una línea por renglón; ej. nombre o empresa, documento, dirección)
               <textarea
                 rows={4}
                 className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.toAddress}
                 onChange={(e) => update({ toAddress: e.target.value })}
+                placeholder={"María López\nCC 43.215.698\nCarrera 80 # 45-20, Bello"}
               />
             </label>
           </FieldGroup>
@@ -207,7 +207,7 @@ export function AdminRecibosPage() {
                   </button>
                 </div>
                 <label className="mt-2 block text-luxury-muted">
-                  Descripción
+                  Descripción (ej. &quot;Anticipo 40% proyecto cocina&quot;, &quot;Transporte e instalación&quot;)
                   <input
                     className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-bg px-2 py-1.5 text-sm text-paper outline-none focus:border-luxury-gold"
                     value={line.description}
@@ -218,10 +218,11 @@ export function AdminRecibosPage() {
                         lines: d.lines.map((l) => (l.id === line.id ? { ...l, description } : l)),
                       }))
                     }}
+                    placeholder="Anticipo 40% — proyecto cocina integral"
                   />
                 </label>
                 <label className="mt-2 block text-luxury-muted">
-                  Importe (COP)
+                  Importe (COP, número sin puntos ni comas; ej. 2500000)
                   <input
                     type="number"
                     min={0}
@@ -235,6 +236,7 @@ export function AdminRecibosPage() {
                         lines: d.lines.map((l) => (l.id === line.id ? { ...l, amount } : l)),
                       }))
                     }}
+                    placeholder="2500000"
                   />
                 </label>
               </div>
@@ -255,7 +257,7 @@ export function AdminRecibosPage() {
 
           <FieldGroup title="Impuestos">
             <label className="block text-luxury-muted">
-              Porcentaje (0 = ocultar línea de impuestos en el PDF)
+              Porcentaje IVA u otro impuesto (0 = ocultar línea en el PDF; en Colombia suele ser 19)
               <input
                 type="number"
                 min={0}
@@ -264,6 +266,7 @@ export function AdminRecibosPage() {
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.taxRatePercent}
                 onChange={(e) => update({ taxRatePercent: Number(e.target.value) || 0 })}
+                placeholder="19"
               />
             </label>
             <p className="text-xs text-luxury-muted">
@@ -279,39 +282,43 @@ export function AdminRecibosPage() {
 
           <FieldGroup title="Pie del recibo">
             <label className="block text-luxury-muted">
-              Título (banda inferior, color «cajas»)
+              Título (banda inferior; ej. &quot;Condiciones&quot;, &quot;Observaciones&quot;)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.footerTermsTitle}
                 onChange={(e) => update({ footerTermsTitle: e.target.value })}
+                placeholder="Condiciones de pago"
               />
             </label>
             <label className="block text-luxury-muted">
-              Texto (una o varias líneas)
+              Texto (una o varias líneas; ej. forma de pago, vigencia, datos bancarios)
               <textarea
                 rows={3}
                 className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.footerTermsBody}
                 onChange={(e) => update({ footerTermsBody: e.target.value })}
+                placeholder="Consignación en cuenta de ahorros Bancolombia…"
               />
             </label>
           </FieldGroup>
 
           <FieldGroup title="Firma">
             <label className="block text-luxury-muted">
-              Nombre (aparece bajo la línea de firma)
+              Nombre (aparece bajo la línea de firma; ej. nombre y cargo)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.signerName}
                 onChange={(e) => update({ signerName: e.target.value })}
+                placeholder="Carlos Ruiz — Tesorería"
               />
             </label>
             <label className="block text-luxury-muted">
-              Teléfono (como en cotización)
+              Teléfono (ej. +57 300 123 4567)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
                 value={data.signerPhone}
                 onChange={(e) => update({ signerPhone: e.target.value })}
+                placeholder="+57 300 123 4567"
               />
             </label>
           </FieldGroup>
