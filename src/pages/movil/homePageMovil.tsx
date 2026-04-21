@@ -7,10 +7,13 @@ import { ButtonLink } from '@/components/ui/ButtonLink'
 const HERO_VISUAL = '/img/fondoHome.png'
 
 const MOBILE_GALLERY = [
-  '/img/Fondo.jpg',
-  '/img/cruzverde/Exibidor.jpeg',
-  '/img/Exibidor Jugos/Jugos2.jpeg',
-  '/img/cruzverde/exibidor1.jpeg',
+  '/img/trabajos/comerciales/Cali/M2.jpeg',
+  '/img/trabajos/comerciales/Lorel/M3.jpeg',
+  '/img/trabajos/comerciales/popsy/M1.jpeg',
+  '/img/trabajos/comerciales/Estanterias/m2.jpeg',
+  '/img/trabajos/comerciales/Cali/M1.jpeg',
+  '/img/trabajos/residenciales/cocinaIntegral/M7.jpeg',
+  '/img/trabajos/residenciales/cocinaIntegralNegra/m4.png',
 ] as const
 
 export function HomePageMovil() {
