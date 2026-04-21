@@ -7,6 +7,7 @@ import { ButtonLink } from '@/components/ui/ButtonLink'
 const HERO_VISUAL = '/img/fondoHome.png'
 
 const MOBILE_GALLERY = [
+   '/img/Fondo.jpg',
   '/img/trabajos/comerciales/Cali/M2.jpeg',
   '/img/trabajos/comerciales/Lorel/M3.jpeg',
   '/img/trabajos/comerciales/popsy/M1.jpeg',
