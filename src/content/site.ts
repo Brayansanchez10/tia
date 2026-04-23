@@ -187,6 +187,23 @@ export const site = {
         ],
       },
       {
+        slug: 'Organización de espacios',
+        title: 'Organización de espacios',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: 'Servicio especializado de reorganización optimización de espacios comerciales, bajo estándares de seguridad según resolución 4271-2021',
+        images: [
+          '/img/trabajos/comerciales/ordenyespacio/M2.jpeg',
+          '/img/trabajos/comerciales/ordenyespacio/M1.jpeg',
+          '/img/trabajos/comerciales/ordenyespacio/M3.jpeg',
+          '/img/trabajos/comerciales/ordenyespacio/M4.mp4',
+        ],
+        paragraphs: [
+          'Responsabildiades asumidas: Coordinación del personal y seguridad para trabajos en alturas, gestión de permisos de trabajo y ATS diarios, Verificación de EPP y sistemas de protección contra caídas, Aseguramiento de la correcta implementación del layout entregado por el cliente.',
+        ],
+      },
+      {
         slug: 'almacen',
         title: 'Mobiliario fabricado e instaldo por nosotros',
         dateLabel: 'Retail · cadena',
