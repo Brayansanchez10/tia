@@ -1,5 +1,12 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { AdminPdfPreviewPane } from '@/components/admin/AdminPdfPreviewPane'
+import { AdminSavedLibrarySection } from '@/components/admin/AdminSavedLibrarySection'
+import {
+  cloneReciboData,
+  readSavedRecibosLibrary,
+  writeSavedRecibosLibrary,
+  type SavedReciboEntry,
+} from '@/lib/admin/adminSavedDocuments'
 import { ReciboPdfDocument } from '@/components/admin/ReciboPdfDocument'
 import { COMPANY_LOGO_SRC } from '@/lib/branding'
 import { defaultReciboBranding } from '@/lib/recibo/defaults'
@@ -16,9 +23,16 @@ function newLineId(): string {
 
 export function AdminRecibosPage() {
   const [data, setData] = useState<ReciboData>(() => createDefaultRecibo())
+  const [savedList, setSavedList] = useState<SavedReciboEntry[]>(() => readSavedRecibosLibrary())
+  const [editingSavedId, setEditingSavedId] = useState<string | null>(null)
+  const [saveNameDraft, setSaveNameDraft] = useState('')
   const [exporting, setExporting] = useState(false)
 
   const totals = useMemo(() => computeReciboTotals(data), [data])
+
+  useEffect(() => {
+    writeSavedRecibosLibrary(savedList)
+  }, [savedList])
 
   const update = useCallback((patch: Partial<ReciboData>) => {
     setData((d) => ({ ...d, ...patch }))
@@ -43,6 +57,62 @@ export function AdminRecibosPage() {
     }
   }, [data])
 
+  const saveToLibrary = useCallback(() => {
+    const label =
+      saveNameDraft.trim() ||
+      data.receiptNumber.trim() ||
+      data.toAddress.split('\n')[0]?.trim() ||
+      'Recibo sin título'
+    const updatedAt = new Date().toISOString()
+    const payload = cloneReciboData(data)
+    if (editingSavedId) {
+      setSavedList((list) =>
+        list.map((e) =>
+          e.id === editingSavedId ? { ...e, label, updatedAt, data: payload } : e,
+        ),
+      )
+    } else {
+      const id = crypto.randomUUID()
+      setSavedList((list) => [{ id, label, updatedAt, data: payload }, ...list])
+      setEditingSavedId(id)
+    }
+    setSaveNameDraft(label)
+  }, [data, editingSavedId, saveNameDraft])
+
+  const loadSaved = useCallback(
+    (id: string) => {
+      const entry = savedList.find((e) => e.id === id)
+      if (!entry) return
+      setData(cloneReciboData(entry.data))
+      setEditingSavedId(id)
+      setSaveNameDraft(entry.label)
+    },
+    [savedList],
+  )
+
+  const deleteSaved = useCallback(
+    (id: string) => {
+      if (!window.confirm('¿Eliminar este guardado? No se puede deshacer.')) return
+      setSavedList((list) => list.filter((e) => e.id !== id))
+      if (editingSavedId === id) {
+        setEditingSavedId(null)
+        setSaveNameDraft('')
+      }
+    },
+    [editingSavedId],
+  )
+
+  const savedCards = savedList.map((e) => {
+    const t = computeReciboTotals(e.data)
+    const head = e.data.receiptNumber.trim() || 'Sin n.º'
+    return {
+      id: e.id,
+      label: e.label,
+      updatedAt: e.updatedAt,
+      summary: `${head} · Total ${formatCOP(t.total)}`,
+    }
+  })
+
   return (
     <div className="mx-auto min-w-0 max-w-[72rem] px-3 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
       <div className="flex flex-col gap-4 border-b border-luxury-gold/20 pb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
@@ -55,7 +125,11 @@ export function AdminRecibosPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
           <button
             type="button"
-            onClick={() => setData(createDefaultRecibo())}
+            onClick={() => {
+              setEditingSavedId(null)
+              setSaveNameDraft('')
+              setData(createDefaultRecibo())
+            }}
             className="min-h-11 w-full rounded-sm border border-luxury-gold/35 px-4 py-2.5 text-sm text-luxury-muted transition-colors hover:border-luxury-gold hover:text-paper sm:w-auto sm:py-2"
           >
             Restaurar plantilla
@@ -76,6 +150,21 @@ export function AdminRecibosPage() {
             {exporting ? 'Generando…' : 'Descargar PDF'}
           </button>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <AdminSavedLibrarySection
+          title="Recibos guardados"
+          description="Guarda versiones con un nombre. Editar carga el recibo en el formulario; Actualizar guardado sustituye la tarjeta activa."
+          items={savedCards}
+          editingId={editingSavedId}
+          nameDraft={saveNameDraft}
+          onNameDraftChange={setSaveNameDraft}
+          onSave={saveToLibrary}
+          onEdit={loadSaved}
+          onDelete={deleteSaved}
+          onDetachEditing={() => setEditingSavedId(null)}
+        />
       </div>
 
       <div className="mt-6 grid min-w-0 items-start gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">

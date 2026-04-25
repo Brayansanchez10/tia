@@ -155,9 +155,50 @@ const styles = StyleSheet.create({
     fontSize: 9,
     lineHeight: 1.5,
   },
-  closingUnit: {
-    marginTop: 10,
+  closingProseWrap: {
+    marginTop: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderLeftWidth: 2,
+    width: '100%',
+  },
+  closingProseTitle: {
+    fontSize: 10,
+    fontFamily: 'Helvetica',
+    fontWeight: 'bold',
+  },
+  closingProseLine: {
+    marginTop: 4,
     fontSize: 9,
+    lineHeight: 1.45,
+  },
+  unitCostPanel: {
+    marginTop: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderWidth: 1,
+    borderLeftWidth: 4,
+    width: '100%',
+    alignItems: 'center',
+  },
+  unitCostPanelTitle: {
+    marginTop: 2,
+    fontSize: 12,
+    fontFamily: 'Helvetica',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  unitCostPanelAmount: {
+    marginTop: 10,
+    fontSize: 18,
+    fontFamily: 'Helvetica',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  unitCostPanelSuffix: {
+    marginTop: 6,
+    fontSize: 9,
+    textAlign: 'center',
   },
   notesBlock: {
     marginTop: 16,
@@ -301,23 +342,46 @@ export function CotizacionPdfDocument({ data }: Props) {
         ) : null}
 
         {data.closingSectionTitle.trim() || data.closingSectionBody.trim() ? (
-          <>
-            <Text style={[styles.blockTitle, { color: b.textColor, marginTop: 14 }]}>
-              {data.closingSectionTitle}
-            </Text>
+          <View
+            style={[
+              styles.closingProseWrap,
+              {
+                backgroundColor: b.panelBgColor,
+                borderLeftColor: b.accentColor,
+              },
+            ]}
+          >
+            {data.closingSectionTitle.trim() ? (
+              <Text style={[styles.closingProseTitle, { color: b.textColor }]}>
+                {data.closingSectionTitle.trim()}
+              </Text>
+            ) : null}
             {splitLines(data.closingSectionBody).map((line, i) => (
-              <Text key={i} style={[styles.bulletLine, { borderLeftColor: b.accentColor, color: b.textColor }]}>
+              <Text key={i} style={[styles.closingProseLine, { color: b.textColor }]}>
                 {line}
               </Text>
             ))}
-          </>
+          </View>
         ) : null}
         {data.unitCost != null && Number.isFinite(data.unitCost) ? (
-          <Text style={[styles.closingUnit, { color: b.textColor }]}>
-            <Text style={{ fontFamily: 'Helvetica', fontWeight: 'bold' }}>Costo unidad </Text>
-            {formatCOP(data.unitCost)}
-            {data.unitCostSuffix.trim() ? ` ${data.unitCostSuffix}` : ''}
-          </Text>
+          <View
+            style={[
+              styles.unitCostPanel,
+              {
+                backgroundColor: b.panelBgColor,
+                borderColor: b.accentColor,
+                borderLeftColor: b.accentColor,
+              },
+            ]}
+          >
+            <Text style={[styles.unitCostPanelTitle, { color: b.textColor }]}>
+              {(data.unitCostHeading || '').trim() || 'Costo unitario'}
+            </Text>
+            <Text style={[styles.unitCostPanelAmount, { color: b.accentColor }]}>{formatCOP(data.unitCost)}</Text>
+            {data.unitCostSuffix.trim() ? (
+              <Text style={[styles.unitCostPanelSuffix, { color: b.mutedColor }]}>{data.unitCostSuffix.trim()}</Text>
+            ) : null}
+          </View>
         ) : null}
 
         {footerLines.length > 0 ? (

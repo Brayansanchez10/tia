@@ -34,6 +34,7 @@ export function createDefaultCotizacion(): CotizacionData {
     closingSectionTitle: '',
     closingSectionBody: '',
     unitCost: null,
+    unitCostHeading: '',
     unitCostSuffix: '',
     footerNotes: '',
     signerName: 'MARY LUZ CORTES RIVERA',

@@ -1,5 +1,12 @@
-import { useCallback, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { AdminPdfPreviewPane } from '@/components/admin/AdminPdfPreviewPane'
+import { AdminSavedLibrarySection } from '@/components/admin/AdminSavedLibrarySection'
+import {
+  cloneCotizacionData,
+  readSavedCotizacionesLibrary,
+  writeSavedCotizacionesLibrary,
+  type SavedCotizacionEntry,
+} from '@/lib/admin/adminSavedDocuments'
 import { CotizacionPdfDocument } from '@/components/admin/CotizacionPdfDocument'
 import { COMPANY_LOGO_SRC } from '@/lib/branding'
 import { createDefaultCotizacion, defaultBranding } from '@/lib/cotizacion/defaults'
@@ -13,7 +20,14 @@ function newBlockId(): string {
 
 export function AdminDashboardPage() {
   const [data, setData] = useState<CotizacionData>(() => createDefaultCotizacion())
+  const [savedList, setSavedList] = useState<SavedCotizacionEntry[]>(() => readSavedCotizacionesLibrary())
+  const [editingSavedId, setEditingSavedId] = useState<string | null>(null)
+  const [saveNameDraft, setSaveNameDraft] = useState('')
   const [exporting, setExporting] = useState(false)
+
+  useEffect(() => {
+    writeSavedCotizacionesLibrary(savedList)
+  }, [savedList])
 
   const update = useCallback((patch: Partial<CotizacionData>) => {
     setData((d) => ({ ...d, ...patch }))
@@ -34,6 +48,52 @@ export function AdminDashboardPage() {
     }
   }, [data])
 
+  const saveToLibrary = useCallback(() => {
+    const label =
+      saveNameDraft.trim() || data.clientName.trim() || 'Cotización sin título'
+    const updatedAt = new Date().toISOString()
+    const payload = cloneCotizacionData(data)
+    if (editingSavedId) {
+      setSavedList((list) =>
+        list.map((e) =>
+          e.id === editingSavedId ? { ...e, label, updatedAt, data: payload } : e,
+        ),
+      )
+    } else {
+      const id = crypto.randomUUID()
+      setSavedList((list) => [{ id, label, updatedAt, data: payload }, ...list])
+      setEditingSavedId(id)
+    }
+    setSaveNameDraft(label)
+  }, [data, editingSavedId, saveNameDraft])
+
+  const loadSaved = useCallback((id: string) => {
+    const entry = savedList.find((e) => e.id === id)
+    if (!entry) return
+    setData(cloneCotizacionData(entry.data))
+    setEditingSavedId(id)
+    setSaveNameDraft(entry.label)
+  }, [savedList])
+
+  const deleteSaved = useCallback(
+    (id: string) => {
+      if (!window.confirm('¿Eliminar este guardado? No se puede deshacer.')) return
+      setSavedList((list) => list.filter((e) => e.id !== id))
+      if (editingSavedId === id) {
+        setEditingSavedId(null)
+        setSaveNameDraft('')
+      }
+    },
+    [editingSavedId],
+  )
+
+  const savedCards = savedList.map((e) => ({
+    id: e.id,
+    label: e.label,
+    updatedAt: e.updatedAt,
+    summary: [formatCOP(e.data.totalAmount), e.data.conceptSummary || e.data.city].filter(Boolean).join(' · '),
+  }))
+
   return (
     <div className="mx-auto min-w-0 max-w-[72rem] px-3 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
       <div className="flex flex-col gap-4 border-b border-luxury-gold/20 pb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
@@ -49,7 +109,11 @@ export function AdminDashboardPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
           <button
             type="button"
-            onClick={() => setData(createDefaultCotizacion())}
+            onClick={() => {
+              setEditingSavedId(null)
+              setSaveNameDraft('')
+              setData(createDefaultCotizacion())
+            }}
             className="min-h-11 w-full rounded-sm border border-luxury-gold/35 px-4 py-2.5 text-sm text-luxury-muted transition-colors hover:border-luxury-gold hover:text-paper sm:w-auto sm:py-2"
           >
             Restaurar plantilla
@@ -72,6 +136,21 @@ export function AdminDashboardPage() {
             {exporting ? 'Generando…' : 'Descargar PDF'}
           </button>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <AdminSavedLibrarySection
+          title="Cotizaciones guardadas"
+          description="Guarda versiones con un nombre. Editar carga los datos en el formulario; Actualizar guardado sustituye la entrada activa."
+          items={savedCards}
+          editingId={editingSavedId}
+          nameDraft={saveNameDraft}
+          onNameDraftChange={setSaveNameDraft}
+          onSave={saveToLibrary}
+          onEdit={loadSaved}
+          onDelete={deleteSaved}
+          onDetachEditing={() => setEditingSavedId(null)}
+        />
       </div>
 
       <div className="mt-6 grid min-w-0 items-start gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">
@@ -282,50 +361,77 @@ export function AdminDashboardPage() {
             </button>
           </FieldGroup>
 
-          <FieldGroup title="Cierre (Base / costo unitario)">
-            <label className="block text-luxury-muted">
-              Título de la sección final (ej. &quot;Inversión por unidad&quot;, &quot;Referencia de costo&quot;)
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.closingSectionTitle}
-                onChange={(e) => update({ closingSectionTitle: e.target.value })}
-                placeholder="Inversión por unidad"
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Detalle (ej. condiciones comerciales, forma de pago o aclaraciones finales)
-              <textarea
-                rows={4}
-                className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.closingSectionBody}
-                onChange={(e) => update({ closingSectionBody: e.target.value })}
-                placeholder="Valores antes de impuestos. Incluye instalación en sitio."
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Costo unitario (COP, sin puntos; vacío = ocultar; ej. 850000)
-              <input
-                type="number"
-                min={0}
-                step={1000}
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.unitCost ?? ''}
-                onChange={(e) => {
-                  const v = e.target.value
-                  update({ unitCost: v === '' ? null : Number(v) || null })
-                }}
-                placeholder="850000"
-              />
-            </label>
-            <label className="block text-luxury-muted">
-              Texto tras el monto (ej. &quot;por mueble&quot;, &quot;por m²&quot;, &quot;más IVA&quot;)
-              <input
-                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
-                value={data.unitCostSuffix}
-                onChange={(e) => update({ unitCostSuffix: e.target.value })}
-                placeholder="por mueble"
-              />
-            </label>
+          <FieldGroup title="Cierre y precio unitario (PDF)">
+            <p className="text-xs leading-relaxed text-luxury-muted">
+              El <strong className="font-medium text-paper/80">precio unitario</strong> va en un recuadro aparte al
+              final del cuerpo, para que el cliente lo vea al instante. El bloque de arriba es opcional: texto o
+              condiciones que quieras justo antes de ese recuadro.
+            </p>
+
+            <div className="space-y-3 rounded-sm border border-luxury-gold/20 bg-luxury-panel/30 p-3 sm:p-4">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-luxury-gold">Texto previo (opcional)</p>
+              <label className="block text-luxury-muted">
+                Título del párrafo
+                <input
+                  className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-bg px-3 py-2 text-sm text-paper outline-none focus:border-luxury-gold"
+                  value={data.closingSectionTitle}
+                  onChange={(e) => update({ closingSectionTitle: e.target.value })}
+                  placeholder="Ej. Condiciones comerciales"
+                />
+              </label>
+              <label className="block text-luxury-muted">
+                Detalle (varias líneas)
+                <textarea
+                  rows={4}
+                  className="mt-1 w-full resize-y rounded-sm border border-luxury-gold/25 bg-luxury-bg px-3 py-2 text-sm text-paper outline-none focus:border-luxury-gold"
+                  value={data.closingSectionBody}
+                  onChange={(e) => update({ closingSectionBody: e.target.value })}
+                  placeholder="Aclaraciones, exclusiones o forma de pago que van antes del recuadro del precio."
+                />
+              </label>
+            </div>
+
+            <div className="space-y-3 rounded-sm border border-luxury-gold/40 bg-luxury-gold/10 p-3 sm:p-4">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-luxury-gold">
+                Recuadro destacado en el PDF
+              </p>
+              <label className="block text-luxury-muted">
+                Título del precio unitario
+                <input
+                  className="mt-1 w-full rounded-sm border border-luxury-gold/35 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                  value={data.unitCostHeading}
+                  onChange={(e) => update({ unitCostHeading: e.target.value })}
+                  placeholder="Precio unitario"
+                />
+                <span className="mt-1 block text-[11px] text-luxury-muted/90">
+                  Si lo dejas vacío, en el PDF aparece «Costo unitario».
+                </span>
+              </label>
+              <label className="block text-luxury-muted">
+                Monto en COP (sin puntos; vacío = no se muestra el recuadro)
+                <input
+                  type="number"
+                  min={0}
+                  step={1000}
+                  className="mt-1 w-full rounded-sm border border-luxury-gold/35 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                  value={data.unitCost ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    update({ unitCost: v === '' ? null : Number(v) || null })
+                  }}
+                  placeholder="595000"
+                />
+              </label>
+              <label className="block text-luxury-muted">
+                Texto debajo del monto
+                <input
+                  className="mt-1 w-full rounded-sm border border-luxury-gold/35 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                  value={data.unitCostSuffix}
+                  onChange={(e) => update({ unitCostSuffix: e.target.value })}
+                  placeholder="por mueble · más IVA"
+                />
+              </label>
+            </div>
           </FieldGroup>
 
           <FieldGroup title="Notas y firma">

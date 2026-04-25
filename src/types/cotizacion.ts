@@ -40,8 +40,10 @@ export type CotizacionData = {
   descriptionBlocks: CotizacionDescriptionBlock[]
   closingSectionTitle: string
   closingSectionBody: string
-  /** Si es null, no se muestra línea de costo unitario. */
+  /** Si es null, no se muestra el recuadro de costo unitario en el PDF. */
   unitCost: number | null
+  /** Título visible encima del monto unitario en el PDF (ej. «Precio unitario»). Vacío = «Costo unitario». */
+  unitCostHeading: string
   unitCostSuffix: string
   /** Notas finales (transporte, exclusiones, forma de pago…), una por línea en el textarea. */
   footerNotes: string
