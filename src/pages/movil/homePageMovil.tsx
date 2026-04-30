@@ -5,6 +5,12 @@ import { site } from '@/content/site'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 
 const HERO_VISUAL = '/img/fondoHome.png'
+const MARKETING_IMAGE = '/img/homeMarketing.jpeg'
+const MARKETING_POINTS = [
+  'Pensado en tu cliente final',
+  'Instalado con personal asegurado',
+  'Entregado con garantia real',
+] as const
 
 const MOBILE_GALLERY = [
    '/img/Fondo.jpg',
@@ -59,6 +65,43 @@ export function HomePageMovil() {
 
             <div className="relative left-1/2 mt-5 w-screen max-w-[100vw] -translate-x-1/2 px-2 sm:mt-6 sm:px-4">
               <HeroHomeVisual src={HERO_VISUAL} interactive={false} />
+            </div>
+          </div>
+        </RevealOnView>
+      </section>
+
+      <section className="theme-section-alt mt-3 border-t border-white/10 bg-luxury-panel/80 px-4 py-10">
+        <RevealOnView variant="fadeUp">
+          <div className="overflow-hidden border border-white/12 bg-luxury-bg/90 shadow-[0_18px_45px_rgba(0,0,0,0.34)]">
+            <img
+              src={MARKETING_IMAGE}
+              alt="Mostrador comercial instalado por CS Carpinteria"
+              className="aspect-[4/5] w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="border-t border-white/10 px-4 py-5">
+              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-luxury-gold">Seccion comercial</p>
+              <h2 className="mt-2 font-serif text-[1.45rem] leading-tight text-paper">
+                CS Carpinteria: Fabricamos muebles que trabajan pa&apos; ti
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-paper/86">
+                Sabemos que tu local es tu vitrina. Por eso cada proyecto lo hacemos para que se vea bien, funcione mejor y te ayude a vender.
+              </p>
+              <ul className="m-0 mt-4 list-none space-y-2.5 p-0">
+                {MARKETING_POINTS.map((point) => (
+                  <li key={point} className="flex items-start gap-2.5 text-sm text-paper/90">
+                    <span className="mt-0.5 inline-flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-sm border border-luxury-gold/45 bg-luxury-gold/20 text-[0.72rem] text-luxury-gold">
+                      ✓
+                    </span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-lg leading-snug text-paper">Trabajos bien hechos, a precio justo. Asi de simple.</p>
+              <ButtonLink variant="primary" to="/contacto" className="mt-5 w-full justify-center rounded-sm py-3 uppercase tracking-[0.14em]">
+                Quiero cotizar mi proyecto
+              </ButtonLink>
             </div>
           </div>
         </RevealOnView>

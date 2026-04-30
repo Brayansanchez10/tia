@@ -9,6 +9,12 @@ import { RevealOnView } from '@/components/motion/RevealOnView'
 const HERO_BG = '/img/Fondo.jpg'
 /** Hero principal (render 3D con fondo negro integrado). */
 const HERO_VISUAL = '/img/fondoHome.png'
+const MARKETING_IMAGE = '/img/homeMarketing.jpeg'
+const MARKETING_POINTS = [
+  'Pensado en tu cliente final',
+  'Instalado con personal asegurado',
+  'Entregado con garantia real',
+] as const
 
 /** Solo imágenes (sin repetir textos de servicios): taller + proyectos. */
 const VISUAL_STRIP_IMAGES = [
@@ -104,6 +110,60 @@ export function HomePage() {
           </div>
 
           <HeroHomeVisual src={HERO_VISUAL} interactive />
+        </div>
+      </section>
+
+      {/* Marketing */}
+      <section
+        aria-labelledby="home-marketing-heading"
+        className="theme-section-alt scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] flex min-h-svh snap-center snap-always flex-col justify-center border-t border-white/5 bg-luxury-panel px-4 py-16 sm:px-6 md:px-10 md:py-24"
+      >
+        <div className="mx-auto grid w-full max-w-[72rem] items-center gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-14">
+          <RevealOnView variant="fadeRight">
+            <div className="border-l border-luxury-gold/45 pl-5 sm:pl-7 md:pl-9">
+              <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">Nuestro compromiso</p>
+              <h2 id="home-marketing-heading" className="mt-3 max-w-[24ch] font-serif text-3xl font-semibold leading-tight text-paper md:text-4xl">
+                CS Carpinteria: Fabricamos muebles que trabajan pa&apos; ti
+              </h2>
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-paper/88 md:text-[1.2rem]">
+                Sabemos que tu local es tu vitrina. Por eso cada proyecto lo hacemos para que se vea bien, funcione mejor y te ayude a vender.
+              </p>
+              <ul className="m-0 mt-6 list-none space-y-3 p-0">
+                {MARKETING_POINTS.map((point) => (
+                  <li key={point} className="flex items-start gap-3 text-base text-paper/92 md:text-lg">
+                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-luxury-gold/45 bg-luxury-gold/20 text-sm text-luxury-gold">
+                      ✓
+                    </span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-xl font-medium leading-snug text-paper md:text-[1.42rem]">
+                Trabajos bien hechos, a precio justo. Asi de simple.
+              </p>
+              <div className="mt-8">
+                <ButtonLink variant="primary" to="/contacto" className="rounded-sm px-8 text-sm uppercase tracking-[0.16em]">
+                  Quiero cotizar mi proyecto
+                </ButtonLink>
+              </div>
+            </div>
+          </RevealOnView>
+
+          <RevealOnView delayMs={100} variant="fadeUp">
+            <figure className="group/marketing relative m-0 overflow-hidden border border-white/15 bg-black/20 shadow-[0_25px_60px_rgba(0,0,0,0.35)]">
+              <img
+                src={MARKETING_IMAGE}
+                alt="Mostrador de carpinteria comercial instalado por CS Carpinteria"
+                className="aspect-[4/5] w-full object-cover motion-safe:transition-transform motion-safe:duration-[1.3s] motion-safe:ease-out motion-safe:group-hover/marketing:scale-[1.03] lg:aspect-[4/4.4]"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" aria-hidden />
+              <figcaption className="absolute bottom-4 left-4 right-4 m-0 border border-white/20 bg-black/45 px-3 py-2 text-xs uppercase tracking-[0.14em] text-white/88 backdrop-blur-sm sm:bottom-5 sm:left-5 sm:right-auto sm:max-w-[20rem]">
+                Muebles comerciales para espacios que venden mejor
+              </figcaption>
+            </figure>
+          </RevealOnView>
         </div>
       </section>
 
