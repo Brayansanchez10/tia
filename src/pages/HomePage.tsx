@@ -123,7 +123,7 @@ export function HomePage() {
             <div className="border-l border-luxury-gold/45 pl-5 sm:pl-7 md:pl-9">
               <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">Nuestro compromiso</p>
               <h2 id="home-marketing-heading" className="mt-3 max-w-[24ch] font-serif text-3xl font-semibold leading-tight text-paper md:text-4xl">
-                CS Carpinteria: Fabricamos muebles que trabajan pa&apos; ti
+                CS Carpinteria: Fabricamos muebles que trabajan para ti
               </h2>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-paper/88 md:text-[1.2rem]">
                 Sabemos que tu local es tu vitrina. Por eso cada proyecto lo hacemos para que se vea bien, funcione mejor y te ayude a vender.

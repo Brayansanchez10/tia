@@ -164,6 +164,51 @@ export const site = {
      */
     items: [
       {
+        slug: 'exhibidores de alto impacto',
+        title: 'exhibidores de alto impacto',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: ['En CS MARKETING - POP ensamblamos con precisión cada componente. Porque el producto de nuestros clientes merece una exhibición a la altura de su calidad. ',
+        ],
+        images: [
+          '/img/trabajos/comerciales/griferia/m2.jpeg',
+          '/img/trabajos/comerciales/griferia/m3.jpeg',
+          '/img/trabajos/comerciales/griferia/m1.jpeg',
+          '/img/trabajos/comerciales/griferia/m4.jpeg',
+          '/img/trabajos/comerciales/griferia/m6.jpeg',
+          '/img/trabajos/comerciales/griferia/m5.jpeg',
+          '/img/trabajos/comerciales/griferia/v1.mp4',
+        ],
+        paragraphs: [
+          'Exibidores con ensamble técnico y verificación funcional pieza a pieza. La misma disciplina que aplicamos en farma la llevamos a todos los sectores',
+        ],
+      },
+      {
+        slug: 'Islas exhibición',
+        title: 'Islas Exhibición',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: [' Mismo equipo. Misma calidad. Listos para su proyecto de 360 unidades.',
+        ],
+        images: [
+          '/img/trabajos/comerciales/azules/m2.jpeg',
+          '/img/trabajos/comerciales/azules/m4.jpeg',
+          '/img/trabajos/comerciales/azules/m6.jpeg',
+          '/img/trabajos/comerciales/azules/m1.jpeg',
+          '/img/trabajos/comerciales/azules/m3.jpeg',
+          '/img/trabajos/comerciales/azules/m7.jpeg',
+          '/img/trabajos/comerciales/azules/m5.jpeg',
+          '/img/trabajos/comerciales/azules/m8.jpeg',
+          '/img/trabajos/comerciales/azules/m9.jpeg',
+          '/img/trabajos/comerciales/azules/v1.mp4',
+        ],
+        paragraphs: [
+          'CS MARKETING - POP: Su aliado estratégico en POP.',
+        ],
+      },
+      {
         slug: 'Muebles para exibición',
         title: 'Muebles para exibición',
         dateLabel: 'Retail',
@@ -396,6 +441,22 @@ export const site = {
         ],
         paragraphs: [
           'Recorrido fotográfico y vídeo del montaje.',
+        ],
+      },
+      {
+        slug: 'escritorio',
+        title: 'Escritorio',
+        dateLabel: 'Hogar · solución a medida',
+        portfolioKind: 'residencial',
+        category: 'Mobiliario',
+        excerpt: 'Aquí se cotiza, se diseña, se aprueba y se celebra cada proyecto. Gracias a los clientes que confian en nuestro trabajo.',
+        images: [
+          '/img/trabajos/residenciales/escritorio/m1.jpeg',
+          '/img/trabajos/residenciales/escritorio/v1.mp4',
+          '/img/trabajos/residenciales/escritorio/v2.mp4',
+        ],
+        paragraphs: [
+          'DEJANDO HUELLA desde el escritorio hasta el punto de venta.',
         ],
       },
       {

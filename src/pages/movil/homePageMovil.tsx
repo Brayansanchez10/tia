@@ -83,7 +83,7 @@ export function HomePageMovil() {
             <div className="border-t border-white/10 px-4 py-5">
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-luxury-gold">Seccion comercial</p>
               <h2 className="mt-2 font-serif text-[1.45rem] leading-tight text-paper">
-                CS Carpinteria: Fabricamos muebles que trabajan pa&apos; ti
+                CS Carpinteria: Fabricamos muebles que trabajan para ti
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-paper/86">
                 Sabemos que tu local es tu vitrina. Por eso cada proyecto lo hacemos para que se vea bien, funcione mejor y te ayude a vender.
