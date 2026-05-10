@@ -36,9 +36,9 @@ export function createDefaultCotizacion(): CotizacionData {
     unitCost: null,
     unitCostHeading: '',
     unitCostSuffix: '',
-    footerNotes: '',
-    signerName: 'MARY LUZ CORTES RIVERA',
-    signerPhone: '323 201 99 74 (Nequi/Daviplata)',
+    footerNotes: 'CS MARKETING no es responsable de iva segun Art 43 del Estado tributario, por tanto no se genera iva en esta operación. El valor cotizado corresponde al precio ante retencion de ley, el valor neto a Recibir por CS MARKETING estará sujeto a los descuentos y retención en la fuente y retención de iva que practique el pagador con forme a la norma tributaria vigente.',
+    signerName: 'MARY LUZ CORTES RIVERA (Gerente General)',
+    signerPhone: '323 201 99 74',
     branding: defaultBranding(),
   }
 }
