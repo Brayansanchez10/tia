@@ -26,5 +26,6 @@ export type ReciboData = {
   footerTermsTitle: string
   footerTermsBody: string
   signerName: string
+  signerTitle: string
   signerPhone: string
 }

@@ -29,6 +29,7 @@ export function createDefaultRecibo(): ReciboData {
     footerTermsTitle: 'Condiciones y forma de pago',
     footerTermsBody: 'El pago debe realizarse en un plazo de 15 días hábiles.',
     signerName: 'MARY LUZ CORTES RIVERA',
-    signerPhone: '323 201 99 74 (Nequi/Daviplata)',
+    signerTitle: 'Gerente general',
+    signerPhone: '323 201 99 74',
   }
 }

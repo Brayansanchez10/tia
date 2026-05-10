@@ -345,6 +345,9 @@ export function ReciboPdfDocument({ data }: Props) {
           <View style={styles.signatureBlock}>
             <View style={[styles.signatureLine, { borderBottomColor: b.mutedColor }]} />
             <Text style={[styles.signatureName, { color: b.textColor }]}>{data.signerName}</Text>
+            {data.signerTitle.trim() ? (
+              <Text style={[styles.signaturePhone, { color: b.mutedColor }]}> {data.signerTitle}</Text>
+            ) : null}
             {data.signerPhone.trim() ? (
               <Text style={[styles.signaturePhone, { color: b.mutedColor }]}>Tel: {data.signerPhone}</Text>
             ) : null}

@@ -48,6 +48,7 @@ export type CotizacionData = {
   /** Notas finales (transporte, exclusiones, forma de pago…), una por línea en el textarea. */
   footerNotes: string
   signerName: string
+  signerTitle: string
   signerPhone: string
   branding: CotizacionBranding
 }

@@ -455,6 +455,15 @@ export function AdminDashboardPage() {
               />
             </label>
             <label className="block text-luxury-muted">
+              Cargo / posición (ej. Gerente general, Directora comercial)
+              <input
+                className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"
+                value={data.signerTitle}
+                onChange={(e) => update({ signerTitle: e.target.value })}
+                placeholder="Gerente general, Directora comercial"
+              />
+            </label>
+            <label className="block text-luxury-muted">
               Teléfono (ej. +57 300 123 4567)
               <input
                 className="mt-1 w-full rounded-sm border border-luxury-gold/25 bg-luxury-panel px-3 py-2 text-paper outline-none focus:border-luxury-gold"

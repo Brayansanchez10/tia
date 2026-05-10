@@ -82,6 +82,7 @@ function reviveCotizacion(raw: unknown): CotizacionData | null {
     unitCostSuffix: typeof raw.unitCostSuffix === 'string' ? raw.unitCostSuffix : base.unitCostSuffix,
     footerNotes: typeof raw.footerNotes === 'string' ? raw.footerNotes : base.footerNotes,
     signerName: typeof raw.signerName === 'string' ? raw.signerName : base.signerName,
+    signerTitle: typeof raw.signerTitle === 'string' ? raw.signerTitle : base.signerTitle,
     signerPhone: typeof raw.signerPhone === 'string' ? raw.signerPhone : base.signerPhone,
     branding: reviveBranding(raw.branding, base.branding),
   }
@@ -123,6 +124,7 @@ function reviveRecibo(raw: unknown): ReciboData | null {
     footerTermsBody:
       typeof raw.footerTermsBody === 'string' ? raw.footerTermsBody : base.footerTermsBody,
     signerName: typeof raw.signerName === 'string' ? raw.signerName : base.signerName,
+    signerTitle: typeof raw.signerTitle === 'string' ? raw.signerTitle : base.signerTitle,
     signerPhone: typeof raw.signerPhone === 'string' ? raw.signerPhone : base.signerPhone,
   }
 }

@@ -37,7 +37,8 @@ export function createDefaultCotizacion(): CotizacionData {
     unitCostHeading: '',
     unitCostSuffix: '',
     footerNotes: 'CS MARKETING no es responsable de iva segun Art 43 del Estado tributario, por tanto no se genera iva en esta operación. El valor cotizado corresponde al precio ante retencion de ley, el valor neto a Recibir por CS MARKETING estará sujeto a los descuentos y retención en la fuente y retención de iva que practique el pagador con forme a la norma tributaria vigente.',
-    signerName: 'MARY LUZ CORTES RIVERA (Gerente General)',
+    signerName: 'MARY LUZ CORTES RIVERA',
+    signerTitle: 'Gerente general',
     signerPhone: '323 201 99 74',
     branding: defaultBranding(),
   }

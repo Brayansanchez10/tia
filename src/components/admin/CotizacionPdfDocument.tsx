@@ -397,6 +397,11 @@ export function CotizacionPdfDocument({ data }: Props) {
         <View style={styles.signOff}>
           <Text style={{ color: b.textColor }}>Atentamente,</Text>
           <Text style={[styles.signName, { color: b.textColor }]}>{data.signerName}</Text>
+          {data.signerTitle.trim() ? (
+            <Text style={{ marginTop: 2, fontSize: 9, color: b.mutedColor }}>
+              {data.signerTitle}
+            </Text>
+          ) : null}
           <Text style={{ marginTop: 6, fontSize: 9, color: b.mutedColor }}>TEL: {data.signerPhone}</Text>
         </View>
 
