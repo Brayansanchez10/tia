@@ -228,6 +228,36 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 1,
   },
+  referenceSection: {
+    marginTop: 24,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    gap: 10,
+  },
+  referenceHeading: {
+    fontSize: 9,
+    fontFamily: 'Helvetica',
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  referenceImageWrap: {
+    marginTop: 8,
+    alignItems: 'center',
+    width: '100%',
+  },
+  referenceImage: {
+    maxWidth: '100%',
+    maxHeight: 220,
+    objectFit: 'contain',
+  },
+  referenceCaption: {
+    marginTop: 4,
+    fontSize: 8,
+    textAlign: 'center',
+    lineHeight: 1.4,
+  },
 })
 
 type Props = {
@@ -239,6 +269,9 @@ export function CotizacionPdfDocument({ data }: Props) {
   const inWords = amountInWordsEs(data.totalAmount)
   const footerLines = splitLines(data.footerNotes)
   const logoSrc = b.logoUrl.trim() ? resolveAssetUrl(b.logoUrl) : ''
+  const referenceImages = data.referenceImages.filter((img) => img.url.trim())
+  const referenceTitle =
+    data.referenceSectionTitle.trim() || 'Referencias'
 
   return (
     <Document
@@ -404,6 +437,26 @@ export function CotizacionPdfDocument({ data }: Props) {
           ) : null}
           <Text style={{ marginTop: 6, fontSize: 9, color: b.mutedColor }}>TEL: {data.signerPhone}</Text>
         </View>
+
+        {referenceImages.length > 0 ? (
+          <View style={[styles.referenceSection, { borderTopColor: b.mutedColor }]}>
+            <Text style={[styles.referenceHeading, { color: b.accentColor }]}>{referenceTitle}</Text>
+            {referenceImages.map((img) => {
+              const src = resolveAssetUrl(img.url)
+              if (!src) return null
+              return (
+                <View key={img.id} style={styles.referenceImageWrap} wrap={false}>
+                  <Image src={src} style={styles.referenceImage} />
+                  {img.caption.trim() ? (
+                    <Text style={[styles.referenceCaption, { color: b.mutedColor }]}>
+                      {img.caption.trim()}
+                    </Text>
+                  ) : null}
+                </View>
+              )
+            })}
+          </View>
+        ) : null}
 
         <Text style={[styles.footerBrand, { color: b.mutedColor, borderTopColor: b.mutedColor }]}>
           {data.issuerName} · NIT {data.issuerNit}

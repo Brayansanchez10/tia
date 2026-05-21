@@ -554,6 +554,12 @@ export const site = {
           '/img/trabajos/residenciales/puertas/M11.jpeg',
           '/img/trabajos/residenciales/puertas/M12.jpeg',
           '/img/trabajos/residenciales/puertas/M13.mp4',
+          '/img/trabajos/residenciales/puertas/m14.jpeg',
+          '/img/trabajos/residenciales/puertas/m16.jpeg',
+          '/img/trabajos/residenciales/puertas/m17.jpeg',
+          '/img/trabajos/residenciales/puertas/m18.jpeg',
+          '/img/trabajos/residenciales/puertas/m15.jpeg',
+          '/img/trabajos/residenciales/puertas/m19.mp4',
         ],
         paragraphs: [
           'Secuencia ordenada de vanos y detalle de carpintería; cierre con vídeo.',

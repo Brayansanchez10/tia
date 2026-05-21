@@ -8,6 +8,7 @@ import {
   type SavedCotizacionEntry,
 } from '@/lib/admin/adminSavedDocuments'
 import { CotizacionPdfDocument } from '@/components/admin/CotizacionPdfDocument'
+import { CotizacionReferenceImagesField } from '@/components/admin/CotizacionReferenceImagesField'
 import { COMPANY_LOGO_SRC } from '@/lib/branding'
 import { createDefaultCotizacion, defaultBranding } from '@/lib/cotizacion/defaults'
 import { downloadCotizacionPdf } from '@/lib/cotizacion/downloadCotizacionPdf'
@@ -91,7 +92,13 @@ export function AdminDashboardPage() {
     id: e.id,
     label: e.label,
     updatedAt: e.updatedAt,
-    summary: [formatCOP(e.data.totalAmount), e.data.conceptSummary || e.data.city].filter(Boolean).join(' · '),
+    summary: [
+      formatCOP(e.data.totalAmount),
+      e.data.conceptSummary || e.data.city,
+      e.data.referenceImages.length > 0 ? `${e.data.referenceImages.length} ref.` : '',
+    ]
+      .filter(Boolean)
+      .join(' · '),
   }))
 
   return (
@@ -432,6 +439,19 @@ export function AdminDashboardPage() {
                 />
               </label>
             </div>
+          </FieldGroup>
+
+          <FieldGroup title="Imágenes de referencia (final del PDF)">
+            <p className="text-xs leading-relaxed text-luxury-muted">
+              Fotos de producto, renders o trabajos previos. Se suben a Cloudinary y aparecen al final del
+              documento, después de la firma. La vista previa a la derecha se actualiza al instante.
+            </p>
+            <CotizacionReferenceImagesField
+              images={data.referenceImages}
+              sectionTitle={data.referenceSectionTitle}
+              onSectionTitleChange={(referenceSectionTitle) => update({ referenceSectionTitle })}
+              onChange={(referenceImages) => update({ referenceImages })}
+            />
           </FieldGroup>
 
           <FieldGroup title="Notas y firma">

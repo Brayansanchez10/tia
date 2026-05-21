@@ -40,6 +40,8 @@ export function createDefaultCotizacion(): CotizacionData {
     signerName: 'MARY LUZ CORTES RIVERA',
     signerTitle: 'Gerente general',
     signerPhone: '323 201 99 74',
+    referenceImages: [],
+    referenceSectionTitle: '',
     branding: defaultBranding(),
   }
 }

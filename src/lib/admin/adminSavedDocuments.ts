@@ -1,6 +1,11 @@
 import { createDefaultCotizacion } from '@/lib/cotizacion/defaults'
 import { createDefaultRecibo } from '@/lib/recibo/defaults'
-import type { CotizacionBranding, CotizacionData, CotizacionDescriptionBlock } from '@/types/cotizacion'
+import type {
+  CotizacionBranding,
+  CotizacionData,
+  CotizacionDescriptionBlock,
+  CotizacionReferenceImage,
+} from '@/types/cotizacion'
 import type { ReciboData, ReciboLine } from '@/types/recibo'
 
 const LEGACY_COTIZACION_KEY = 'tia-admin-cotizacion-draft'
@@ -36,6 +41,22 @@ function reviveBranding(raw: unknown, base: CotizacionBranding): CotizacionBrand
   return next
 }
 
+function reviveReferenceImages(raw: unknown): CotizacionReferenceImage[] | null {
+  if (!Array.isArray(raw)) return null
+  const out: CotizacionReferenceImage[] = []
+  for (const item of raw) {
+    if (!isRecord(item)) continue
+    const url = typeof item.url === 'string' ? item.url.trim() : ''
+    if (!url) continue
+    out.push({
+      id: typeof item.id === 'string' && item.id ? item.id : crypto.randomUUID(),
+      url,
+      caption: typeof item.caption === 'string' ? item.caption : '',
+    })
+  }
+  return out
+}
+
 function reviveDescriptionBlocks(raw: unknown): CotizacionDescriptionBlock[] | null {
   if (!Array.isArray(raw)) return null
   const out: CotizacionDescriptionBlock[] = []
@@ -54,6 +75,7 @@ function reviveCotizacion(raw: unknown): CotizacionData | null {
   if (!isRecord(raw)) return null
   const base = createDefaultCotizacion()
   const blocks = reviveDescriptionBlocks(raw.descriptionBlocks)
+  const referenceImages = reviveReferenceImages(raw.referenceImages)
   const unitRaw = raw.unitCost
   const unitCost =
     unitRaw === null || unitRaw === undefined
@@ -84,6 +106,11 @@ function reviveCotizacion(raw: unknown): CotizacionData | null {
     signerName: typeof raw.signerName === 'string' ? raw.signerName : base.signerName,
     signerTitle: typeof raw.signerTitle === 'string' ? raw.signerTitle : base.signerTitle,
     signerPhone: typeof raw.signerPhone === 'string' ? raw.signerPhone : base.signerPhone,
+    referenceImages: referenceImages ?? base.referenceImages,
+    referenceSectionTitle:
+      typeof raw.referenceSectionTitle === 'string'
+        ? raw.referenceSectionTitle
+        : base.referenceSectionTitle,
     branding: reviveBranding(raw.branding, base.branding),
   }
 }

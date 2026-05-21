@@ -12,6 +12,9 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.5.0",
     "@tailwindcss/vite": "^4.2.2",
+    "cloudinary": "^2.10.0",
+    "formidable": "^3.5.4",
+    "lambda-multipart-parser": "^1.0.1",
     "n2words": "^4.0.0",
     "pako": "^2.1.0",
     "react": "^19.2.4",
@@ -21,6 +24,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@netlify/functions": "^5.2.2",
+    "@types/formidable": "^3.5.1",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

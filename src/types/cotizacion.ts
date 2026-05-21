@@ -7,6 +7,14 @@ export type CotizacionDescriptionBlock = {
   body: string
 }
 
+/** Imagen de referencia al final del PDF (URL pública, p. ej. Cloudinary). */
+export type CotizacionReferenceImage = {
+  id: string
+  url: string
+  /** Pie opcional bajo la imagen en el PDF. */
+  caption: string
+}
+
 /** Apariencia del PDF: logo y paleta de la empresa. */
 export type CotizacionBranding = {
   /** Ruta bajo `public/` (ej. `/img/logo.png`) o URL `https://…`. Vacío = sin logo. */
@@ -50,5 +58,9 @@ export type CotizacionData = {
   signerName: string
   signerTitle: string
   signerPhone: string
+  /** Imágenes de referencia al final del documento (después de la firma). */
+  referenceImages: CotizacionReferenceImage[]
+  /** Título de la sección de referencias en el PDF; vacío = «Referencias». */
+  referenceSectionTitle: string
   branding: CotizacionBranding
 }
