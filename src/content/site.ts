@@ -164,6 +164,28 @@ export const site = {
      */
     items: [
       {
+        slug: 'Stand La Instrumentadora JOX',
+        title: 'Stand La Instrumentadora JOX',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: ['Feria de Cirujanos - Medellín 2026   🧠 Cerebro LED + Columna iluminada,⚡ Panel circuito retroiluminado , 🎯 Diseñado para impactar',
+        ],
+        images: [
+          '/img/trabajos/comerciales/JOX/M1.jpeg',
+          '/img/trabajos/comerciales/JOX/M2.jpeg',
+          '/img/trabajos/comerciales/JOX/M3.jpeg',
+          '/img/trabajos/comerciales/JOX/V1.mp4',
+          '/img/trabajos/comerciales/JOX/V2.mp4',
+          '/img/trabajos/comerciales/JOX/V3.mp4',
+          '/img/trabajos/comerciales/JOX/M4.jpeg',
+          '/img/trabajos/comerciales/JOX/M5.jpeg',
+        ],
+        paragraphs: [
+          'Porque en cirugía los detalles salvan vidas... y en ferias los detalles llenan el stand 😉',
+        ],
+      },
+      {
         slug: 'exhibidores de alto impacto',
         title: 'exhibidores de alto impacto',
         dateLabel: 'Retail',
