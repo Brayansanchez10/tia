@@ -13,6 +13,30 @@ export type ServiceItem = {
   description: string
 }
 
+/** Una pieza de galería: ruta simple o objeto con etiqueta opcional (ej. Antes / Después). */
+export type TrabajoMediaItem =
+  | string
+  | {
+      src: string
+      /** Etiqueta visible sobre la imagen o el vídeo en la galería. */
+      badge?: string
+    }
+
+export type TrabajoGallerySlide = {
+  src: string
+  badge?: string
+}
+
+export function trabajoMediaSrc(item: TrabajoMediaItem): string {
+  return typeof item === 'string' ? item : item.src
+}
+
+export function trabajoMediaBadge(item: TrabajoMediaItem): string | undefined {
+  if (typeof item === 'string') return undefined
+  const b = item.badge?.trim()
+  return b || undefined
+}
+
 /** Una exhibición dentro de un trabajo agrupado (ej. líneas distintas para Cruz Verde). */
 export type TrabajoChild = {
   /** Slug único dentro del padre → `/trabajos/{padre}/{slug}` */
@@ -22,7 +46,7 @@ export type TrabajoChild = {
   category: string
   excerpt: string
   paragraphs: readonly string[]
-  images?: readonly string[]
+  images?: readonly TrabajoMediaItem[]
   image?: string
 }
 
@@ -57,9 +81,10 @@ export type TrabajoPost = {
   /**
    * Galería del detalle (orden = orden de apilado en la columna visual).
    * Rutas bajo `public/`: imágenes (jpg, png, webp…) o vídeo (mp4, webm).
+   * Cada entrada puede ser una ruta o `{ src, badge }` (ej. badge: «Antes» / «Después»).
    * No uses a la vez `children` y esta galería en el mismo ítem: con `children`, el detalle es el hub.
    */
-  images?: readonly string[]
+  images?: readonly TrabajoMediaItem[]
   /**
    * Opcional. Portada en el listado y única imagen en el detalle si no usas `images`.
    * Ej.: `public/fotos/cocina.jpg` → `image: '/fotos/cocina.jpg'`.
@@ -73,33 +98,40 @@ export type TrabajoPost = {
 }
 
 export type TrabajoMediaSource = {
-  images?: readonly string[]
+  images?: readonly TrabajoMediaItem[]
   image?: string
 }
 
 /** Portada de un hijo (tarjeta en el hub). */
 export function trabajoChildCoverSrc(child: TrabajoChild): string | undefined {
-  const fromImages = child.images?.find((s) => !trabajoMediaIsVideo(s))
-  if (fromImages) return fromImages
+  const fromImages = child.images?.find((item) => !trabajoMediaIsVideo(trabajoMediaSrc(item)))
+  if (fromImages) return trabajoMediaSrc(fromImages)
   if (child.image && !trabajoMediaIsVideo(child.image)) return child.image
-  return child.images?.[0] ?? child.image
+  const first = child.images?.[0]
+  return first ? trabajoMediaSrc(first) : child.image
 }
 
 /** Primera imagen para tarjetas del listado: prioriza foto sobre vídeo. */
 export function trabajoCoverSrc(post: TrabajoPost): string | undefined {
   if (post.images?.length) {
-    const img = post.images.find((s) => !trabajoMediaIsVideo(s))
-    if (img) return img
+    const img = post.images.find((item) => !trabajoMediaIsVideo(trabajoMediaSrc(item)))
+    if (img) return trabajoMediaSrc(img)
   }
   if (post.image && !trabajoMediaIsVideo(post.image)) return post.image
   if (post.children?.[0]) return trabajoChildCoverSrc(post.children[0])
-  return post.images?.[0] ?? post.image
+  const first = post.images?.[0]
+  return first ? trabajoMediaSrc(first) : post.image
 }
 
 /** Galería de imágenes/vídeos para un trabajo simple o un hijo. */
-export function trabajoGallerySrcs(media: TrabajoMediaSource): readonly string[] {
-  if (media.images?.length) return media.images
-  if (media.image) return [media.image]
+export function trabajoGallerySrcs(media: TrabajoMediaSource): readonly TrabajoGallerySlide[] {
+  if (media.images?.length) {
+    return media.images.map((item) => ({
+      src: trabajoMediaSrc(item),
+      badge: trabajoMediaBadge(item),
+    }))
+  }
+  if (media.image) return [{ src: media.image }]
   return []
 }
 
@@ -163,6 +195,29 @@ export const site = {
      * Trabajo agrupado: `children` + hub en `/trabajos/{slug}` y detalle en `/trabajos/{slug}/{hijo}`.
      */
     items: [
+      {
+        slug: 'Reubicación y Organización de Espacios Comerciales',
+        title: 'Reubicación y Organización de Espacios Comerciales',
+        dateLabel: 'Retail',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt: ['Trabajamos en la nueva ubicación de este espacio para otimizar experiencia de compra y visibilidad de marca. Madera + rojo icónico, iluminación = presencia que enamora. Otro proyecto entregado de calidad y detalle.',
+        ],
+        images: [
+          '/img/trabajos/comerciales/nescafe/M1.jpeg',
+          '/img/trabajos/comerciales/nescafe/M3.jpeg',
+          '/img/trabajos/comerciales/nescafe/M4.jpeg',
+          '/img/trabajos/comerciales/nescafe/M5.jpeg',
+          '/img/trabajos/comerciales/nescafe/M6.jpeg',
+          '/img/trabajos/comerciales/nescafe/V1.mp4',
+          { src: '/img/trabajos/comerciales/nescafe/M7.jpeg', badge: 'Antes' },
+          { src: '/img/trabajos/comerciales/nescafe/V2.mp4', badge: 'Antes' },
+          { src: '/img/trabajos/comerciales/nescafe/V3.mp4', badge: 'Después' },
+        ],
+        paragraphs: [
+          'Antes: Productos escondidos, sin cara. Ahora: Góndola que respira, colores alineados, marca que se ve. Reacomodamos, rotulamos y dejamos cada producto en su lugar. Porque cuando el cliente encuentra fácil, el cliente compra fácil. Así transformamos puntos de venta. Así trabajamos nosotros.',
+        ],
+      },
       {
         slug: 'Stand La Instrumentadora JOX',
         title: 'Stand La Instrumentadora JOX',

@@ -1,6 +1,6 @@
 import { startTransition, useCallback, useEffect, useRef, useState } from 'react'
 import { RevealOnView } from '@/components/motion/RevealOnView'
-import { trabajoMediaIsVideo } from '@/content/site'
+import { trabajoMediaIsVideo, type TrabajoGallerySlide } from '@/content/site'
 
 const SWIPE_PX = 48
 
@@ -278,19 +278,43 @@ function GalleryImage({
   )
 }
 
+function MediaBadge({ label, size = 'md' }: { label: string; size?: 'sm' | 'md' }) {
+  const normalized = label.trim().toLowerCase()
+  const tone =
+    normalized === 'antes'
+      ? 'border-white/30 bg-black/75 text-paper'
+      : normalized === 'después' || normalized === 'despues'
+        ? 'border-luxury-gold/55 bg-luxury-gold/20 text-luxury-gold'
+        : 'border-white/25 bg-black/70 text-paper/95'
+
+  const sizeClass =
+    size === 'sm'
+      ? 'left-1.5 top-1.5 px-1.5 py-0.5 text-[0.45rem] tracking-[0.12em]'
+      : 'left-3 top-3 px-2.5 py-1 text-[0.58rem] tracking-[0.18em] sm:left-4 sm:top-4'
+
+  return (
+    <span
+      className={`pointer-events-none absolute z-20 rounded-full border font-semibold uppercase shadow-md backdrop-blur-sm ${tone} ${sizeClass}`}
+    >
+      {label}
+    </span>
+  )
+}
+
 function GalleryThumbnailButton({
-  src,
+  slide,
   isActive,
   onSelect,
   index,
   total,
 }: {
-  src: string
+  slide: TrabajoGallerySlide
   isActive: boolean
   onSelect: () => void
   index: number
   total: number
 }) {
+  const { src, badge } = slide
   const isVideo = trabajoMediaIsVideo(src)
 
   return (
@@ -338,6 +362,7 @@ function GalleryThumbnailButton({
           decoding="async"
         />
       )}
+      {badge ? <MediaBadge label={badge} size="sm" /> : null}
     </button>
   )
 }
@@ -411,20 +436,22 @@ function GalleryIndexBadge({ index, total }: { index: number; total: number }) {
 }
 
 function GallerySlide({
-  src,
+  slide,
   index,
   total,
   title,
   variant,
 }: {
-  src: string
+  slide: TrabajoGallerySlide
   index: number
   total: number
   title: string
   variant: 'default' | 'detail'
 }) {
+  const { src, badge } = slide
   const label =
     total > 1 ? `Pieza ${index + 1} de ${total} — ${title}` : `Proyecto: ${title}`
+  const badgeOverlay = badge ? <MediaBadge label={badge} /> : null
 
   if (trabajoMediaIsVideo(src)) {
     const ext = src.split('.').pop()?.toLowerCase()
@@ -433,7 +460,8 @@ function GallerySlide({
     if (variant === 'detail') {
       return (
         <figure className="m-0 w-full min-w-0">
-          <div className={detailFrameClass}>
+          <div className={`${detailFrameClass} relative`}>
+            {badgeOverlay}
             <div className={detailInnerClass}>
               <GalleryVideo
                 src={src}
@@ -448,7 +476,8 @@ function GallerySlide({
     }
     return (
       <figure className="m-0 w-full min-w-0">
-        <div className={defaultFrameClass}>
+        <div className={`${defaultFrameClass} relative`}>
+          {badgeOverlay}
           <GalleryVideo
             src={src}
             mime={mime}
@@ -463,7 +492,8 @@ function GallerySlide({
   if (variant === 'detail') {
     return (
       <figure className="m-0 w-full min-w-0">
-        <div className={detailFrameClass}>
+        <div className={`${detailFrameClass} relative`}>
+          {badgeOverlay}
           <div className={detailInnerClass}>
             <GalleryImage src={src} alt={label} layout="detail" />
           </div>
@@ -474,7 +504,8 @@ function GallerySlide({
 
   return (
     <figure className="m-0 w-full min-w-0">
-      <div className={defaultFrameClass}>
+      <div className={`${defaultFrameClass} relative`}>
+        {badgeOverlay}
         <GalleryImage src={src} alt={label} layout="default" />
       </div>
     </figure>
@@ -486,14 +517,14 @@ export function TrabajoGalleryList({
   title,
   variant = 'default',
 }: {
-  sources: readonly string[]
+  sources: readonly TrabajoGallerySlide[]
   title: string
   /** `detail`: columna ancha en vista proyecto (imagen con más peso). */
   variant?: 'default' | 'detail'
 }) {
   const [index, setIndex] = useState(0)
   const touchStartX = useRef<number | null>(null)
-  const sourcesKey = sources.join('|')
+  const sourcesKey = sources.map((s) => `${s.src}|${s.badge ?? ''}`).join(';')
 
   useEffect(() => {
     startTransition(() => {
@@ -561,7 +592,7 @@ export function TrabajoGalleryList({
     )
   }
 
-  const currentSrc = sources[index]!
+  const currentSlide = sources[index]!
 
   const mainStage =
     total > 1 ? (
@@ -583,7 +614,7 @@ export function TrabajoGalleryList({
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            <GallerySlide src={currentSrc} index={index} total={total} title={title} variant={variant} />
+            <GallerySlide slide={currentSlide} index={index} total={total} title={title} variant={variant} />
           </div>
         </div>
         {variant === 'detail' ? (
@@ -607,7 +638,7 @@ export function TrabajoGalleryList({
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        <GallerySlide src={currentSrc} index={index} total={total} title={title} variant={variant} />
+        <GallerySlide slide={currentSlide} index={index} total={total} title={title} variant={variant} />
       </div>
     )
 
@@ -647,10 +678,10 @@ export function TrabajoGalleryList({
                   .join(' ')}
                 aria-label="Miniaturas"
               >
-                {sources.map((src, i) => (
+                {sources.map((slide, i) => (
                   <GalleryThumbnailButton
-                    key={`${src}-${i}`}
-                    src={src}
+                    key={`${slide.src}-${slide.badge ?? ''}-${i}`}
+                    slide={slide}
                     index={i}
                     total={total}
                     isActive={i === index}
