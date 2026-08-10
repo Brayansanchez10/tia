@@ -219,12 +219,12 @@ export const site = {
         ],
       },
       {
-        slug: 'Stand La Instrumentadora JOX',
-        title: 'Stand La Instrumentadora JOX',
+        slug: 'Stand',
+        title: 'Stand ',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: ['Feria de Cirujanos - Medellín 2026   🧠 Cerebro LED + Columna iluminada,⚡ Panel circuito retroiluminado , 🎯 Diseñado para impactar',
+        excerpt: ['Estand de exhibición para feria comercial. Madera, metal y acrílico. Diseño y fabricación de mobiliario para exhibición de productos en ferias comerciales. Creamos stands atractivos y funcionales que destacan la marca y los productos de nuestros clientes.',
         ],
         images: [
           '/img/trabajos/comerciales/JOX/ST1.mp4',
@@ -240,7 +240,6 @@ export const site = {
           '/img/trabajos/comerciales/JOX/ST11.jpeg',
           '/img/trabajos/comerciales/JOX/ST12.jpeg',
           '/img/trabajos/comerciales/JOX/ST13.mp4',
-          '/img/trabajos/comerciales/JOX/ST14.mp4',
           '/img/trabajos/comerciales/JOX/M1.jpeg',
           '/img/trabajos/comerciales/JOX/M2.jpeg',
           '/img/trabajos/comerciales/JOX/M3.jpeg',
@@ -356,6 +355,7 @@ export const site = {
           '/img/trabajos/comerciales/Almacen/M3.jpeg',
           '/img/trabajos/comerciales/Almacen/M4.jpeg',
           '/img/trabajos/comerciales/Almacen/M1.mp4',
+          '/img/trabajos/comerciales/JOX/ST14.mp4',
         ],
         paragraphs: [
           'Proyecto comercial con registro fotográfico y vídeo del conjunto montado.',
