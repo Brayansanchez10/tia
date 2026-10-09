@@ -14,14 +14,14 @@ function hashNavActive(pathname: string, hash: string, to: string): boolean {
 /** La barra es oscura en ambos temas (ver `global.css`); no usar `text-paper` del tema claro aquí. */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    'rounded-lg px-2 py-1.5 text-xs uppercase tracking-[0.16em] no-underline transition-colors duration-200 motion-safe:hover:scale-[1.03] hover:no-underline',
-    isActive ? 'font-semibold text-brand' : 'text-zinc-200/88 hover:text-brand',
+    'rounded-md px-2.5 py-2 text-[0.7rem] font-medium uppercase tracking-[0.14em] no-underline transition-colors duration-200 hover:no-underline',
+    isActive ? 'font-semibold text-brand' : 'text-zinc-200/88 hover:text-paper',
   ].join(' ')
 
 const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    'block w-full rounded-lg px-4 py-3.5 text-base font-medium uppercase tracking-[0.12em] no-underline transition-colors duration-200 hover:no-underline',
-    isActive ? 'text-brand' : 'text-zinc-200/90 hover:bg-white/[0.06] hover:text-brand',
+    'block w-full rounded-md px-4 py-3.5 text-base font-medium tracking-wide no-underline transition-colors duration-200 hover:no-underline',
+    isActive ? 'bg-white/[0.05] font-semibold text-brand' : 'text-zinc-200/90 hover:bg-white/[0.06] hover:text-paper',
   ].join(' ')
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -109,8 +109,8 @@ export function SiteHeader() {
                     <Link
                       to={item.to}
                       className={[
-                        'rounded-lg px-3 py-2 text-xs uppercase tracking-[0.16em] no-underline transition-colors duration-200 motion-safe:hover:scale-[1.03] hover:no-underline',
-                        active ? 'font-semibold text-brand' : 'text-zinc-200/88 hover:text-brand',
+                        'rounded-md px-2.5 py-2 text-[0.7rem] font-medium uppercase tracking-[0.14em] no-underline transition-colors duration-200 hover:no-underline',
+                        active ? 'font-semibold text-brand' : 'text-zinc-200/88 hover:text-paper',
                       ].join(' ')}
                     >
                       {item.label}
@@ -157,8 +157,8 @@ export function SiteHeader() {
                     <Link
                       to={item.to}
                       className={[
-                        'block w-full rounded-lg px-4 py-3.5 text-base font-medium uppercase tracking-[0.12em] no-underline transition-colors duration-200 hover:no-underline',
-                        active ? 'text-brand' : 'text-zinc-200/90 hover:bg-white/[0.06] hover:text-brand',
+                        'block w-full rounded-md px-4 py-3.5 text-base font-medium tracking-wide no-underline transition-colors duration-200 hover:no-underline',
+                        active ? 'bg-white/[0.05] font-semibold text-brand' : 'text-zinc-200/90 hover:bg-white/[0.06] hover:text-paper',
                       ].join(' ')}
                     >
                       {item.label}

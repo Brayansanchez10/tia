@@ -45,6 +45,8 @@ export type TrabajoChild = {
   dateLabel: string
   category: string
   excerpt: string
+  /** Características visibles en la ficha (materiales, alcance, etc.). */
+  highlights?: readonly string[]
   paragraphs: readonly string[]
   images?: readonly TrabajoMediaItem[]
   image?: string
@@ -76,6 +78,8 @@ export type TrabajoPost = {
   category: string
   /** Texto que aparece en la tarjeta del listado y como entradilla en el detalle. */
   excerpt: string
+  /** Características cortas para la ficha (máx. 3–4). Solo datos reales del proyecto. */
+  highlights?: readonly string[]
   /** Cada string es un párrafo en la página del proyecto (orden de lectura). */
   paragraphs: readonly string[]
   /**
@@ -152,6 +156,19 @@ export function trabajoMediaIsVideo(src: string): boolean {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(src)
 }
 
+/** Normaliza excerpt (histórico: a veces llegó como array). */
+export function trabajoExcerptText(excerpt: string | readonly string[]): string {
+  if (typeof excerpt === 'string') return excerpt.trim()
+  return excerpt.map((p) => p.trim()).filter(Boolean).join(' ')
+}
+
+/** Cantidad de piezas en galería (imagen + vídeo). */
+export function trabajoMediaCount(post: TrabajoPost | TrabajoChild): number {
+  if (post.images?.length) return post.images.length
+  if (post.image) return 1
+  return 0
+}
+
 export const site = {
   /** Nombre comercial principal (cabecera y pie). */
   brand: 'Marketing — Pop',
@@ -180,16 +197,32 @@ export const site = {
     heroEyebrow: 'Marketing — Pop',
     /** Chip / icono encima del título en la home (`public/img/...` → `/img/...`). Vacío = solo texto. */
     heroEyebrowImage: '/img/FondoWeb.png',
-    heroTitle: 'Carpintería y ebanistería',
+    /** Marca como señal hero (prioridad visual sobre el subtítulo). */
+    heroBrand: 'Marketing — Pop',
+    heroTitle: 'Mobiliario retail e instalación que deja marca',
     heroLead:
-      'Fabricamos muebles en línea para almacenes de cadena. Servicio de instalación. Nuestro lema: calidad y compromiso — dejando huella en nuestras fabricaciones.',
-    ctaPrimary: { label: 'Ver trabajos', to: '/trabajos' },
-    ctaSecondary: { label: 'Contactar', to: '/contacto' },
+      'Diseñamos, fabricamos e instalamos muebles y exhibidores para puntos de venta, almacenes de cadena y espacios a medida. Calidad, compromiso y acabados que se notan.',
+    ctaPrimary: { label: 'Ver proyectos', to: '/trabajos' },
+    ctaSecondary: { label: 'Solicitar cotización', to: '/contacto' },
+    featuredHeading: 'Proyectos que hablan por nosotros',
+    featuredLead: 'Una selección de trabajos comerciales y residenciales. Entra a cada ficha para ver la galería completa.',
+    featuredCta: { label: 'Ver todo el portafolio', to: '/trabajos' },
+    /** Slugs destacados en la home (orden = orden de aparición). */
+    featuredSlugs: [
+      'Stand 2',
+      'Reubicación y Organización de Espacios Comerciales',
+      'exhibidores de alto impacto',
+      'cocina-integral',
+      'Estanterías',
+      'diseno-oculto',
+    ] as const,
   },
 
   trabajos: {
     pageEyebrow: 'Portafolio',
-    title: 'Trabajos realizados',
+    title: 'Nuestros proyectos',
+    intro:
+      'Explora trabajos comerciales y residenciales: stands, exhibidores, estanterías, cocinas y piezas a medida. Elige una categoría o abre cualquier proyecto.',
     /**
      * Trabajo simple: `images` + detalle en `/trabajos/{slug}`.
      * Trabajo agrupado: `children` + hub en `/trabajos/{slug}` y detalle en `/trabajos/{slug}/{hijo}`.
@@ -197,12 +230,13 @@ export const site = {
     items: [
       {
         slug: 'Reubicación y Organización de Espacios Comerciales',
-        title: 'Reubicación y Organización de Espacios Comerciales',
+        title: 'Reubicación de espacio comercial',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: ['Trabajamos en la nueva ubicación de este espacio para otimizar experiencia de compra y visibilidad de marca. Madera + rojo icónico, iluminación = presencia que enamora. Otro proyecto entregado de calidad y detalle.',
-        ],
+        excerpt:
+          'Reubicamos y organizamos el punto de venta para mejorar la experiencia de compra y la visibilidad de marca: madera, color e iluminación alineados.',
+        highlights: ['Reacomodo de góndola', 'Rotulación y planograma', 'Antes / después documentado'],
         images: [
           '/img/trabajos/comerciales/nescafe/M1.jpeg',
           '/img/trabajos/comerciales/nescafe/M3.jpeg',
@@ -215,17 +249,44 @@ export const site = {
           { src: '/img/trabajos/comerciales/nescafe/V3.mp4', badge: 'Después' },
         ],
         paragraphs: [
-          'Antes: Productos escondidos, sin cara. Ahora: Góndola que respira, colores alineados, marca que se ve. Reacomodamos, rotulamos y dejamos cada producto en su lugar. Porque cuando el cliente encuentra fácil, el cliente compra fácil. Así transformamos puntos de venta. Así trabajamos nosotros.',
+          'Transformamos el espacio para que el producto se vea, se encuentre y se compre con facilidad: reacomodo, rotulación y orden de sala con el mismo cuidado que en cada instalación.',
+        ],
+      },
+      {
+        slug: 'Stand 2',
+        title: 'Stand de exhibición para feria',
+        dateLabel: 'Retail · feria',
+        portfolioKind: 'corporativo',
+        category: 'Comercial',
+        excerpt:
+          'Stand de exhibición para feria comercial en madera, metal y acrílico: diseño, fabricación y montaje pensados para destacar marca y producto.',
+        highlights: ['Diseño y fabricación', 'Madera, metal y acrílico', 'Montaje en sitio'],
+        images: [
+          '/img/trabajos/comerciales/Stan2/ST1.mp4',
+          '/img/trabajos/comerciales/Stan2/ST2.jpeg',
+          '/img/trabajos/comerciales/Stan2/ST3.jpeg',
+          '/img/trabajos/comerciales/Stan2/ST4.jpeg',
+          '/img/trabajos/comerciales/Stan2/ST5.jpeg',
+          '/img/trabajos/comerciales/Stan2/ST6.jpeg',
+          '/img/trabajos/comerciales/Stan2/T2.jpeg',
+          '/img/trabajos/comerciales/Stan2/T3.jpeg',
+          '/img/trabajos/comerciales/Stan2/T4.jpeg',
+          '/img/trabajos/comerciales/Stan2/TP8.mp4',
+          '/img/trabajos/comerciales/Stan2/TS7.jpeg',
+        ],
+        paragraphs: [
+          'Stand de exhibición para feria comercial: diseño, fabricación y montaje en sitio.',
         ],
       },
       {
         slug: 'Stand',
-        title: 'Stand ',
-        dateLabel: 'Retail',
+        title: 'Stand comercial de feria',
+        dateLabel: 'Retail · feria',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: ['Estand de exhibición para feria comercial. Madera, metal y acrílico. Diseño y fabricación de mobiliario para exhibición de productos en ferias comerciales. Creamos stands atractivos y funcionales que destacan la marca y los productos de nuestros clientes.',
-        ],
+        excerpt:
+          'Stand de exhibición para feria en madera, metal y acrílico. Mobiliario atractivo y funcional para destacar la marca en el evento.',
+        highlights: ['Feria comercial', 'Madera, metal y acrílico', 'Detalle de acabados'],
         images: [
           '/img/trabajos/comerciales/JOX/ST1.mp4',
           '/img/trabajos/comerciales/JOX/ST2.jpeg',
@@ -250,17 +311,18 @@ export const site = {
           '/img/trabajos/comerciales/JOX/M5.jpeg',
         ],
         paragraphs: [
-          'Porque en cirugía los detalles salvan vidas... y en ferias los detalles llenan el stand 😉',
+          'Proyecto de stand con atención al detalle en estructura, acabados y presentación en feria.',
         ],
       },
       {
         slug: 'exhibidores de alto impacto',
-        title: 'exhibidores de alto impacto',
+        title: 'Exhibidores de alto impacto',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: ['En CS MARKETING - POP ensamblamos con precisión cada componente. Porque el producto de nuestros clientes merece una exhibición a la altura de su calidad. ',
-        ],
+        excerpt:
+          'Ensamble preciso de cada componente para que el producto se exhiba a la altura de su calidad.',
+        highlights: ['Ensamble técnico', 'Verificación funcional', 'Acabado de exhibición'],
         images: [
           '/img/trabajos/comerciales/griferia/m2.jpeg',
           '/img/trabajos/comerciales/griferia/m3.jpeg',
@@ -271,17 +333,17 @@ export const site = {
           '/img/trabajos/comerciales/griferia/v1.mp4',
         ],
         paragraphs: [
-          'Exibidores con ensamble técnico y verificación funcional pieza a pieza. La misma disciplina que aplicamos en farma la llevamos a todos los sectores',
+          'Exhibidores con ensamble técnico y verificación funcional pieza a pieza. La misma disciplina que aplicamos en farma la llevamos a todos los sectores.',
         ],
       },
       {
         slug: 'Islas exhibición',
-        title: 'Islas Exhibición',
+        title: 'Islas de exhibición',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: [' Mismo equipo. Misma calidad. Listos para su proyecto de 360 unidades.',
-        ],
+        excerpt: 'Islas POP listas para producción en volumen, con el mismo estándar de calidad en cada unidad.',
+        highlights: ['Producción en serie', 'Acabados consistentes', 'Listas para instalación'],
         images: [
           '/img/trabajos/comerciales/azules/m2.jpeg',
           '/img/trabajos/comerciales/azules/m4.jpeg',
@@ -295,18 +357,18 @@ export const site = {
           '/img/trabajos/comerciales/azules/v1.mp4',
         ],
         paragraphs: [
-          'CS MARKETING - POP: Su aliado estratégico en POP.',
+          'Fabricación de islas de exhibición con calidad repetible para campañas POP de alto volumen.',
         ],
       },
       {
         slug: 'Muebles para exibición',
-        title: 'Muebles para exibición',
+        title: 'Montaje de exhibición en gran superficie',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: ['Alcance del servicio: se realizó reubicación de estantería existente y montaje de nueva exhibición en gran superficie. Las actividades incluyeron trabajo en alturas certificado bajo Resolución 4272 de 2021. ',
-          'El diseño del mobiliario y planograma fueron suministrado por el cliente, Nuestro equipo ejecutó el desmontaje, translado, instalación y ubicación del producto, según plano aprobado, garantizando cumplimiento normativo en seguridad, orden de la sala y entrega satisfacción dentro del cronograma establecido.',
-        ],
+        excerpt:
+          'Reubicación de estantería existente y montaje de nueva exhibición en gran superficie, con trabajo en alturas certificado (Res. 4272 de 2021).',
+        highlights: ['Trabajo en alturas certificado', 'Desmontaje y traslado', 'Instalación según plano'],
         images: [
           '/img/trabajos/comerciales/exibicion/M4.jpeg',
           '/img/trabajos/comerciales/exibicion/M5.jpeg',
@@ -316,18 +378,25 @@ export const site = {
           '/img/trabajos/comerciales/exibicion/M3.jpeg',
           '/img/trabajos/comerciales/exibicion/V1.mp4',
           '/img/trabajos/comerciales/exibicion/v2.mp4',
+          '/img/trabajos/comerciales/exibicion/MX1.jpeg',
+          '/img/trabajos/comerciales/exibicion/MX2.jpeg',
+          '/img/trabajos/comerciales/exibicion/MX3.jpeg',
+          '/img/trabajos/comerciales/exibicion/MX4.jpeg',
         ],
         paragraphs: [
-          'Responsabildiades asumidas: Coordinación del personal y seguridad para trabajos en alturas, gestión de permisos de trabajo y ATS diarios, Verificación de EPP y sistemas de protección contra caídas, Aseguramiento de la correcta implementación del layout entregado por el cliente.',
+          'El diseño del mobiliario y el planograma fueron suministrados por el cliente. Nuestro equipo ejecutó el desmontaje, traslado, instalación y ubicación del producto según plano aprobado, con cumplimiento normativo en seguridad y entrega dentro del cronograma.',
+          'Coordinación de personal y seguridad para trabajos en alturas, gestión de permisos y ATS diarios, verificación de EPP y sistemas de protección contra caídas, e implementación del layout entregado por el cliente.',
         ],
       },
       {
         slug: 'Organización de espacios',
-        title: 'Organización de espacios',
+        title: 'Organización de espacios comerciales',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: 'Servicio especializado de reorganización optimización de espacios comerciales, bajo estándares de seguridad según resolución 4271-2021',
+        excerpt:
+          'Reorganización y optimización de espacios comerciales bajo estándares de seguridad (Res. 4272 de 2021).',
+        highlights: ['Optimización de sala', 'Seguridad en alturas', 'Layout del cliente'],
         images: [
           '/img/trabajos/comerciales/ordenyespacio/M2.jpeg',
           '/img/trabajos/comerciales/ordenyespacio/M1.jpeg',
@@ -335,18 +404,18 @@ export const site = {
           '/img/trabajos/comerciales/ordenyespacio/M4.mp4',
         ],
         paragraphs: [
-          'Responsabildiades asumidas: Coordinación del personal y seguridad para trabajos en alturas, gestión de permisos de trabajo y ATS diarios, Verificación de EPP y sistemas de protección contra caídas, Aseguramiento de la correcta implementación del layout entregado por el cliente.',
+          'Coordinación de personal y seguridad para trabajos en alturas, gestión de permisos y ATS diarios, verificación de EPP y sistemas de protección contra caídas, e implementación del layout entregado por el cliente.',
         ],
       },
       {
         slug: 'almacen',
-        title: 'Mobiliario fabricado e instaldo por nosotros',
+        title: 'Mobiliario fabricado e instalado',
         dateLabel: 'Retail · cadena',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: ['Diseño proporcionado por el cliente. Nosotros nos encargamos de hacerlo realidad en almacén de gran formato. ',
-          '¿Necesitas fabricación e instalación, Escribenos.?'
-        ],
+        excerpt:
+          'Diseño del cliente, ejecución nuestra: fabricación e instalación en almacén de gran formato.',
+        highlights: ['Fabricación a medida', 'Instalación en almacén', 'Gran formato'],
         images: [
           '/img/trabajos/comerciales/Almacen/M8.jpeg',
           '/img/trabajos/comerciales/Almacen/M6.jpeg',
@@ -358,7 +427,7 @@ export const site = {
           '/img/trabajos/comerciales/JOX/ST14.mp4',
         ],
         paragraphs: [
-          'Proyecto comercial con registro fotográfico y vídeo del conjunto montado.',
+          'Proyecto comercial con registro fotográfico y vídeo del conjunto montado. Si necesitas fabricación e instalación, escríbenos.',
         ],
       },
       {
@@ -413,7 +482,8 @@ export const site = {
         dateLabel: 'Farmacia · POP',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: 'Desarrollo de campaña de marketing y comunicación para una reconocida cadena de farmacias y droguerías de Colombia. Creamos contenido y estrategias para promover la salud y el bienestar en la comunidad.',
+        excerpt: 'Línea de estantería para cuidado personal: fabricación e instalación pensadas para retail farmacéutico.',
+        highlights: ['Estantería retail', 'Acabados de sala', 'Foto y vídeo de conjunto'],
         images: [
           '/img/trabajos/comerciales/CruzEstanteria/mueble1.jpeg',
           '/img/trabajos/comerciales/CruzEstanteria/Mueble2.jpeg',
@@ -428,11 +498,12 @@ export const site = {
       },
       {
         slug: 'Muebles',
-        title: 'Muebles',
-        dateLabel: 'Retail ',
+        title: 'Mobiliario dermocosmético',
+        dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: 'Desarrollo de campaña de marketing y comunicación para una reconocida cadena de farmacias y droguerías de Colombia. Creamos contenido y estrategias para promover la salud y el bienestar en la comunidad.',
+        excerpt: 'Mobiliario de exhibición para zona dermocosmética: presentación clara del producto en punto de venta.',
+        highlights: ['Exhibición dermocosmética', 'Acabados retail', 'Documentación en imagen y vídeo'],
         images: [
           '/img/trabajos/comerciales/dermocenter/M3.jpeg',
           '/img/trabajos/comerciales/dermocenter/M2.jpeg',
@@ -446,11 +517,12 @@ export const site = {
       },
       {
         slug: 'estanterias',
-        title: 'Estanterías',
+        title: 'Estanterías de sala',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: 'Desarrollo de campaña de marketing y comunicación para una reconocida cadena de farmacias y droguerías de Colombia. Creamos contenido y estrategias para promover la salud y el bienestar en la comunidad.',
+        excerpt: 'Montaje de estanterías para punto de venta: organización, presencia y acabado de sala.',
+        highlights: ['Montaje en sala', 'Organización de producto', 'Acabado final'],
         images: [
           '/img/trabajos/comerciales/Estanterias/m2.jpeg',
           '/img/trabajos/comerciales/Estanterias/M3.jpeg',
@@ -467,7 +539,8 @@ export const site = {
         dateLabel: 'Retail · gran tienda',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: 'Diseño y desarrollo de mobiliario para cadena de tiendas por departamentos líder en Latinoamérica. Creamos soluciones innovadoras y funcionales para mejorar la experiencia de compra en tiendas físicas.',
+        excerpt: 'Mobiliario para cadena de tiendas por departamentos: soluciones funcionales para mejorar la experiencia de compra en piso.',
+        highlights: ['Cadena retail', 'Mobiliario de piso', 'Secuencia foto y vídeo'],
         images: [
           '/img/trabajos/comerciales/falabella/M3.jpeg',
           '/img/trabajos/comerciales/falabella/M6.jpeg',
@@ -483,11 +556,12 @@ export const site = {
       },
       {
         slug: 'Isla',
-        title: 'Isla',
+        title: 'Isla de belleza',
         dateLabel: 'Retail',
         portfolioKind: 'corporativo',
         category: 'Comercial',
-        excerpt: 'Desarrollo de campaña de marketing para una marca líder en la industria de la belleza y el cuidado personal. Creamos contenido y estrategias para promover productios innovadores y de alta calidad.',
+        excerpt: 'Isla de exhibición para marca de belleza y cuidado personal: presencia de producto con impacto visual en sala.',
+        highlights: ['Isla POP', 'Belleza y cuidado', 'Galería con vídeo'],
         images: [
           '/img/trabajos/comerciales/Lorel/M3.jpeg',
           '/img/trabajos/comerciales/Lorel/M2.jpeg',
@@ -532,6 +606,40 @@ export const site = {
         ],
         paragraphs: [
           'Recorrido fotográfico y vídeo del montaje.',
+        ],
+      },
+      {
+        slug: 'Cocina Muebles personalizados',
+        title: 'Cocina Muebles personalizados',
+        dateLabel: 'Hogar · cocina',
+        portfolioKind: 'residencial',
+        category: 'Cocina',
+        excerpt: 'Cocina Muebles personalizados con diseño y funcionalidad.',
+        images: [
+          '/img/trabajos/residenciales/CocinaMueblePer/cm1.mp4',
+          '/img/trabajos/residenciales/CocinaMueblePer/cm2.mp4',
+          '/img/trabajos/residenciales/CocinaMueblePer/cm3.mp4',
+          '/img/trabajos/residenciales/CocinaMueblePer/cm4.jpeg',
+        ],
+        paragraphs: [
+          'Mejora en cocina con diseño y funcionalidad.',
+        ],
+      },
+      {
+        slug: 'Mejora en cocina',
+        title: 'Mejora en cocina',
+        dateLabel: 'Hogar · cocina',
+        portfolioKind: 'residencial',
+        category: 'Cocina',
+        excerpt: 'Mejora en cocina con diseño y funcionalidad.',
+        images: [
+          '/img/trabajos/residenciales/NewCocina/Co3.jpeg',
+          '/img/trabajos/residenciales/NewCocina/Co2.jpeg',
+          '/img/trabajos/residenciales/NewCocina/Co1.jpeg',
+          { src: '/img/trabajos/residenciales/NewCocina/Co4.jpeg', badge: 'Antes' },
+        ],
+        paragraphs: [
+          'Mejora en cocina con diseño y funcionalidad.',
         ],
       },
       {
@@ -676,59 +784,59 @@ export const site = {
   },
 
   services: {
-    pageEyebrow: 'Lo que ofrecemos',
+    pageEyebrow: 'Lo que hacemos',
     title: 'Servicios',
     intro:
-      'Diseño a medida, producción retail, montaje logístico, ebanistería especializada y mantenimiento: un ciclo completo para tu marca.',
+      'Del diseño a la instalación: un ciclo completo para retail, POP y piezas a medida.',
     items: [
       {
-        name: 'Diseño y Proyectos a Medida',
-        tagline: 'Creatividad funcional para espacios únicos.',
+        name: 'Diseño y proyectos a medida',
+        tagline: 'De la idea al plano listo para fabricar.',
         description:
-          'Transformamos conceptos en planos técnicos y visuales. Desarrollamos mobiliario exclusivo que se adapta milimétricamente a las dimensiones y al ADN de tu marca o negocio.',
+          'Convertimos conceptos en planos técnicos y visuales. Mobiliario que se adapta a las medidas del espacio y a la identidad de tu marca.',
       },
       {
-        name: 'Fabricación en Línea y Retail',
-        tagline: 'Escalabilidad con acabados de alta gama.',
+        name: 'Fabricación en línea y retail',
+        tagline: 'Volumen con acabados consistentes.',
         description:
-          'Especialistas en producción para almacenes de cadena. Optimizamos procesos estandarizados para garantizar calidad repetible en grandes volúmenes, sin perder la esencia de la ebanistería fina.',
+          'Producción para almacenes de cadena y campañas POP. Procesos estandarizados para calidad repetible en grandes volúmenes, sin perder el oficio.',
       },
       {
-        name: 'Instalación y Montaje Logístico',
-        tagline: 'Ejecución impecable en el punto de destino.',
+        name: 'Instalación y montaje',
+        tagline: 'Ensamble en sitio, listo para operar.',
         description:
-          'Contamos con un equipo experto para el ensamblaje en sitio. Nos encargamos de la logística y los acabados finales bajo la modalidad de «llave en mano», asegurando que todo quede listo para operar.',
+          'Equipo propio para logística, ensamble y acabados finales. Modalidad llave en mano: dejamos el punto de venta listo.',
       },
       {
-        name: 'Trabajos Especializados y Ebanistería',
-        tagline: 'El arte de los detalles complejos.',
+        name: 'Ebanistería especializada',
+        tagline: 'Detalle donde importa.',
         description:
-          'Abordamos retos técnicos en madera, desde estructuras complejas hasta detalles ornamentales. Aplicamos técnicas de carpintería avanzada para piezas que requieren un nivel de precisión superior.',
+          'Retos técnicos en madera: estructuras complejas, ensambles precisos y acabados que sostienen el tráfico de sala.',
       },
       {
-        name: 'Reparación y Mantenimiento',
-        tagline: 'Protegemos tu inversión a largo plazo.',
+        name: 'Reparación y mantenimiento',
+        tagline: 'Cuidamos lo que ya instalamos.',
         description:
-          'Servicio técnico post-venta para asegurar que el mobiliario mantenga su funcionalidad y estética original. Restauramos y ajustamos piezas para extender su vida útil en entornos de alto tráfico.',
+          'Servicio post-venta para mantener funcionalidad y estética. Ajustes y restauración en entornos de alto uso.',
       },
     ] satisfies readonly ServiceItem[],
   },
 
   about: {
-    pageEyebrow: 'El taller',
-    title: 'Nosotros',
+    pageEyebrow: 'Quiénes somos',
+    title: 'Oficio, precisión e instalación seria',
     paragraphs: [
-      'Nuestra carpintería y ebanistería se especializa en la fabricación de mobiliario de línea premium para almacenes de cadena y retail. Fusionamos la precisión industrial con el oficio tradicional para entregar a tiempo y con la mejor calidad.',
-      'Bajo el sello «Marketing — Pop» y nuestro lema «Dejando huella», nos comprometemos a crear soluciones visibles y de alto impacto, garantizando una instalación seria y relaciones a largo plazo. Nuestra misión es reflejar la excelencia de su marca en cada pieza.',
-      'Desde el primer trazo hasta la instalación final, ofrecemos un servicio integral diseñado para potenciar su presencia en el mercado. Descubra nuestra trayectoria y cómo podemos dar forma a sus ideas.',
+      'Somos carpintería y ebanistería especializada en mobiliario para retail, almacenes de cadena y espacios a medida. Combinamos oficio tradicional con procesos de producción para entregar a tiempo y con calidad.',
+      'Bajo el sello Marketing — Pop y el lema «Dejando huella», fabricamos e instalamos soluciones visibles: stands, exhibidores, estanterías y piezas residenciales que reflejan la marca de nuestros clientes.',
+      'Desde el primer trazo hasta el montaje final, acompañamos el proyecto completo. Si tienes un plano, un local o una idea, podemos darle forma.',
     ],
   },
 
   contact: {
-    pageEyebrow: 'Contáctanos',
+    pageEyebrow: 'Hablemos',
     title: 'Contacto',
     intro:
-      'Mismos números que en la tarjeta de presentación. Pulsa un contacto para abrir WhatsApp.',
+      'Cuéntanos tu proyecto por WhatsApp o correo. Usamos los mismos datos de nuestra tarjeta de presentación.',
     whatsappLines: [
       { display: '323 201 9974', href: 'https://wa.me/573232019974' },
       { display: '302 588 7010', href: 'https://wa.me/573025887010' },
@@ -736,13 +844,13 @@ export const site = {
     ] satisfies readonly WhatsappLine[],
     email: 'csmarketingdejandohuella@gmail.com',
     address: 'KR 14 C NO 93 SUR 02',
-    hours: 'Horarios de 7 a 5 lunes a sabado',
+    hours: 'Lunes a sábado, 7:00 a. m. – 5:00 p. m.',
   },
 
   footer: {
     note: 'Carpintería y ebanistería · Marketing — Pop · Dejando huella.',
-    ctaEyebrow: '¿Listo para empezar?',
-    ctaLead: 'Cuéntanos tu proyecto retail o de instalación y te respondemos.',
-    ctaButton: { label: 'Contacto', to: '/contacto' },
+    ctaEyebrow: '¿Tienes un proyecto en mente?',
+    ctaLead: 'Escríbenos: coordinamos visita o llamada para tu retail, POP o pieza a medida.',
+    ctaButton: { label: 'Ir a contacto', to: '/contacto' },
   },
 } as const

@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { site } from '@/content/site'
-import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { PageHeader } from '@/components/ui/PageShell'
 
@@ -50,14 +49,14 @@ function ContactBlock({
   children: ReactNode
 }) {
   return (
-    <article className="group rounded-xl border border-divider bg-surface/45 px-4 py-4 motion-safe:transition-[border-color,background-color] motion-safe:duration-300 motion-safe:hover:border-luxury-gold/25 motion-safe:hover:bg-surface/60 sm:px-5 sm:py-5">
+    <article className="rounded-md border border-divider bg-surface/40 px-4 py-4 sm:px-5 sm:py-5">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand/25 bg-brand/[0.08] text-brand/90 motion-safe:transition-colors motion-safe:duration-300 group-hover:border-brand/40 group-hover:bg-brand/[0.12]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-brand/25 bg-brand/[0.08] text-brand">
           {icon}
         </span>
-        <p className="m-0 text-[0.64rem] font-semibold uppercase tracking-[0.22em] text-luxury-gold/95">{label}</p>
+        <p className="m-0 text-[0.64rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold">{label}</p>
       </div>
-      <div className="mt-3 pl-[2.625rem] text-lg font-medium leading-snug tracking-tight text-paper sm:text-xl md:text-2xl">
+      <div className="mt-3 pl-[2.85rem] text-lg font-medium leading-snug tracking-tight text-paper sm:text-xl">
         {children}
       </div>
     </article>
@@ -66,28 +65,34 @@ function ContactBlock({
 
 export function ContactoPage() {
   const { contact } = site
+  const primaryWhatsapp = contact.whatsappLines[0]
 
   return (
     <div className="min-h-[50vh] w-full bg-luxury-bg">
       <div className="mx-auto max-w-[72rem] px-4 pb-16 pt-8 sm:px-5 sm:pb-20 sm:pt-10 md:px-6 md:pb-20 md:pt-12">
         <RevealOnView>
           <PageHeader eyebrow={contact.pageEyebrow} title={contact.title} intro={contact.intro} />
-          <GrowLine className="mt-5" />
+          <div className="section-rule mt-5" aria-hidden />
         </RevealOnView>
 
-        <RevealOnView delayMs={100} variant="scale">
-          <div className="relative mt-10 overflow-hidden rounded-2xl border border-white/10 bg-luxury-panel shadow-[0_28px_80px_rgba(0,0,0,0.5)] motion-safe:transition-[border-color,box-shadow] motion-safe:duration-500 motion-safe:hover:border-luxury-gold/20 motion-safe:hover:shadow-[0_32px_90px_rgba(197,160,89,0.06)] md:mt-12">
-            <div
-              className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/12 blur-3xl"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute -bottom-40 -left-20 h-80 w-80 rounded-full bg-luxury-gold/5 blur-3xl"
-              aria-hidden
-            />
+        {primaryWhatsapp ? (
+          <RevealOnView delayMs={60} variant="fadeUp">
+            <a
+              href={primaryWhatsapp.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 flex min-h-14 w-full items-center justify-center gap-2.5 rounded-md bg-brand px-5 text-base font-semibold text-white no-underline transition hover:brightness-110 hover:no-underline sm:hidden"
+            >
+              <IconWhatsapp className="h-5 w-5" />
+              Escribir por WhatsApp
+            </a>
+          </RevealOnView>
+        ) : null}
 
-            <div className="relative grid gap-7 p-5 sm:gap-8 sm:p-8 md:gap-9 md:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,16.5rem)] lg:gap-10 lg:p-12">
-              <div className="min-w-0 space-y-3.5 sm:space-y-4">
+        <RevealOnView delayMs={90} variant="fadeUp">
+          <div className="relative mt-8 overflow-hidden rounded-md border border-white/10 bg-luxury-panel md:mt-10">
+            <div className="relative grid gap-4 p-4 sm:gap-5 sm:p-6 md:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,15rem)] lg:gap-8 lg:p-10">
+              <div className="min-w-0 space-y-3">
                 <ContactBlock label="WhatsApp" icon={<IconWhatsapp className="h-4 w-4" />}>
                   <div className="flex flex-col gap-2.5">
                     {contact.whatsappLines.map((line) => (
@@ -96,9 +101,9 @@ export function ContactoPage() {
                         href={line.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2.5 text-paper no-underline motion-safe:transition-colors motion-safe:duration-300 hover:text-brand"
+                        className="inline-flex min-h-11 items-center gap-2.5 text-paper no-underline transition-colors hover:text-brand hover:no-underline"
                       >
-                        <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand/85" aria-hidden />
+                        <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden />
                         {line.display}
                       </a>
                     ))}
@@ -107,37 +112,43 @@ export function ContactoPage() {
                 <ContactBlock label="Correo" icon={<IconMail className="h-4 w-4" />}>
                   <a
                     href={`mailto:${contact.email}`}
-                    className="break-words text-paper no-underline motion-safe:transition-colors motion-safe:duration-300 hover:text-brand"
+                    className="break-words text-paper no-underline transition-colors hover:text-brand hover:no-underline"
                   >
                     {contact.email}
                   </a>
                 </ContactBlock>
                 <ContactBlock label="Dirección" icon={<IconMapPin className="h-4 w-4" />}>
-                  <span className="text-pretty text-base font-normal leading-relaxed text-paper/88 sm:text-lg md:text-xl">
+                  <span className="text-pretty text-base font-normal leading-relaxed text-paper/88 sm:text-lg">
                     {contact.address}
                   </span>
                 </ContactBlock>
                 <ContactBlock label="Horario" icon={<IconClock className="h-4 w-4" />}>
-                  <span className="text-base font-normal text-paper/90 sm:text-lg md:text-xl">{contact.hours}</span>
+                  <span className="text-base font-normal text-paper/90 sm:text-lg">{contact.hours}</span>
                 </ContactBlock>
               </div>
 
-              <aside className="flex flex-col justify-between gap-7 rounded-xl border border-white/10 bg-black/20 p-4 sm:p-5 lg:min-h-full lg:gap-8">
+              <aside className="flex flex-col justify-between gap-6 rounded-md border border-white/10 bg-black/15 p-4 sm:p-5">
                 <div>
-                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-luxury-gold">Atención</p>
+                  <p className="m-0 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-luxury-gold">
+                    Atención
+                  </p>
                   <p className="mt-3 text-sm leading-relaxed text-luxury-muted">
-                    Coordinamos visita o llamada. Escribenos y te respondemos para avanzar con tu proyecto.
+                    Coordinamos visita o llamada. Escríbenos y te respondemos para avanzar con tu proyecto.
                   </p>
                 </div>
-                <div className="space-y-3">
-                  <div
-                    className="h-px w-full bg-gradient-to-r from-brand/55 via-luxury-gold/35 to-transparent"
-                    aria-hidden
-                  />
-                  <p className="m-0 font-mono text-[0.65rem] uppercase tracking-widest text-paper/45">
-                    Marketing — Pop · Dejando huella
-                  </p>
-                </div>
+                {primaryWhatsapp ? (
+                  <a
+                    href={primaryWhatsapp.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hidden min-h-11 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-white no-underline transition hover:brightness-110 hover:no-underline sm:inline-flex"
+                  >
+                    Abrir WhatsApp
+                  </a>
+                ) : null}
+                <p className="m-0 font-mono text-[0.65rem] uppercase tracking-widest text-paper/45">
+                  Marketing — Pop · Dejando huella
+                </p>
               </aside>
             </div>
           </div>

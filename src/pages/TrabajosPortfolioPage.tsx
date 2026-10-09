@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { site } from '@/content/site'
-import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { WorkCard } from '@/components/trabajos/WorkCard'
 import {
@@ -36,19 +35,28 @@ export function TrabajosPortfolioPage() {
           <Link to="/trabajos" className={backLinkClass}>
             ← Trabajos · categorías
           </Link>
-          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-luxury-gold/30 bg-luxury-gold/10 text-luxury-gold">
-              <Icon className="h-7 w-7" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="font-serif text-2xl font-semibold tracking-tight text-paper sm:text-3xl">{title}</h1>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-luxury-muted">{blurb}</p>
-              <GrowLine align="left" className="mt-5 max-w-xs" />
-              <p className="mt-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-luxury-muted/90">
-                {items.length === 0
-                  ? 'Sin proyectos aún'
-                  : `${items.length} ${items.length === 1 ? 'proyecto' : 'proyectos'}`}
-              </p>
+          <div className="mt-6 min-w-0">
+            <p className="m-0 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-luxury-gold">
+              Portafolio
+            </p>
+            <div className="mt-3 flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-brand/25 bg-brand/10 text-brand">
+                <Icon className="h-6 w-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="font-serif text-2xl font-semibold tracking-tight text-paper sm:text-3xl">
+                  {title}
+                </h1>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-luxury-muted sm:text-base">
+                  {blurb}
+                </p>
+                <div className="section-rule mt-5" aria-hidden />
+                <p className="mt-4 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-luxury-muted/90">
+                  {items.length === 0
+                    ? 'Sin proyectos aún'
+                    : `${items.length} ${items.length === 1 ? 'proyecto' : 'proyectos'}`}
+                </p>
+              </div>
             </div>
           </div>
         </RevealOnView>

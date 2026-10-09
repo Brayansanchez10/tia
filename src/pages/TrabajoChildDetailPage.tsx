@@ -1,7 +1,6 @@
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
-import { findTrabajoChild, trabajoGallerySrcs } from '@/content/site'
+import { findTrabajoChild, trabajoExcerptText, trabajoGallerySrcs } from '@/content/site'
 import { useTheme } from '@/theme/ThemeProvider'
-import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { TrabajoGalleryList } from '@/components/trabajos/TrabajoGallery'
 import { ButtonLink } from '@/components/ui/ButtonLink'
@@ -12,10 +11,10 @@ import {
 } from '@/pages/trabajosCategoryShared'
 
 const crumbLinkClass =
-  'font-medium text-luxury-muted no-underline transition-colors hover:text-luxury-gold hover:underline'
+  'font-medium text-luxury-muted no-underline transition-colors hover:text-brand hover:no-underline'
 
 const backLinkMobileClass =
-  'inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-black/40 px-3.5 text-sm font-medium text-paper no-underline shadow-lg backdrop-blur-md transition-colors active:bg-black/55'
+  'inline-flex min-h-11 items-center gap-2 rounded-md border border-white/15 bg-black/40 px-3.5 text-sm font-medium text-paper no-underline shadow-lg backdrop-blur-md transition-colors active:bg-black/55'
 
 export function TrabajoChildDetailPage() {
   const { theme } = useTheme()
@@ -67,19 +66,26 @@ export function TrabajoChildDetailPage() {
           <div className="min-w-0 max-lg:rounded-t-2xl max-lg:border-t max-lg:border-white/10 max-lg:bg-luxury-panel/85 max-lg:shadow-[0_-12px_40px_rgba(0,0,0,0.5)] max-lg:backdrop-blur-md lg:border-l lg:border-white/10 lg:pl-8 xl:pl-10">
             <RevealOnView delayMs={60} variant="fadeUp">
               <header className="px-5 pb-1 pt-7 text-center max-lg:text-left sm:px-6 sm:pt-8 lg:px-0 lg:pb-0 lg:pt-0 lg:text-left">
-                <p className="m-0 inline-flex rounded-full border border-luxury-gold/30 bg-luxury-gold/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-luxury-gold max-lg:text-[0.62rem] lg:border-transparent lg:bg-transparent lg:px-0 lg:py-0">
-                  {child.category}
+                <p className="m-0 text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-luxury-gold">
+                  {child.category} · {child.dateLabel}
                 </p>
-                <h1 className="m-0 mt-3 font-serif text-2xl font-semibold leading-[1.15] tracking-wide text-paper sm:text-[clamp(1.65rem,4vw,2.1rem)] md:text-4xl lg:text-[clamp(1.5rem,3vw+0.5rem,2.25rem)]">
+                <h1 className="m-0 mt-3 font-serif text-[clamp(1.55rem,4vw,2.15rem)] font-semibold leading-[1.12] tracking-tight text-paper">
                   {child.title}
                 </h1>
-                <GrowLine className="mx-auto mt-4 max-lg:mx-0 max-lg:max-w-[8rem] lg:mx-0 lg:mt-5" />
-                <p className="mt-4 text-xs font-medium uppercase tracking-[0.18em] text-luxury-muted">
-                  {child.dateLabel}
+                <div className="section-rule mx-auto mt-4 max-lg:mx-0 lg:mx-0" aria-hidden />
+                <p className="mt-4 text-base leading-relaxed text-paper/88 sm:text-[1.02rem]">
+                  {trabajoExcerptText(child.excerpt)}
                 </p>
-                <p className="mt-3 text-sm leading-relaxed text-paper/85 sm:mt-4 sm:text-[0.95rem]">
-                  {child.excerpt}
-                </p>
+                {child.highlights && child.highlights.length > 0 ? (
+                  <ul className="m-0 mt-5 list-none space-y-2 p-0 text-left">
+                    {child.highlights.slice(0, 4).map((item) => (
+                      <li key={item} className="flex items-start gap-2.5 text-sm text-paper/85">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </header>
             </RevealOnView>
 
@@ -91,20 +97,20 @@ export function TrabajoChildDetailPage() {
                   </p>
                 ))}
               </div>
-              <div className="hidden flex-wrap gap-4 border-t border-white/10 px-5 pt-8 max-lg:px-6 lg:flex lg:px-0">
+              <div className="mt-8 hidden space-y-3 border-t border-white/10 px-5 pt-8 max-lg:px-6 lg:block lg:px-0">
                 <ButtonLink
-                  variant="luxuryOutline"
-                  to={hubHref}
-                  className="rounded-sm px-6 py-2.5 text-xs uppercase tracking-[0.16em]"
+                  variant="primary"
+                  to="/contacto"
+                  className="w-full justify-center rounded-md px-6 py-3 text-xs uppercase tracking-[0.14em]"
                 >
-                  ← {parent.title}
+                  Solicitar cotización
                 </ButtonLink>
                 <ButtonLink
                   variant="luxuryOutline"
-                  to={listaHref}
-                  className="rounded-sm px-6 py-2.5 text-xs uppercase tracking-[0.16em]"
+                  to={hubHref}
+                  className="w-full justify-center rounded-md px-6 py-2.5 text-xs uppercase tracking-[0.14em]"
                 >
-                  {listaLabel === 'Portafolio' ? 'Volver al portafolio' : 'Todos los trabajos'}
+                  ← {parent.title}
                 </ButtonLink>
               </div>
             </RevealOnView>
@@ -121,11 +127,10 @@ export function TrabajoChildDetailPage() {
         </Link>
         <ButtonLink
           variant="primary"
-          to={hubHref}
-          state={location.state}
-          className="min-h-11 shrink-0 rounded-xl px-3 py-2.5 text-center text-[0.65rem] font-semibold uppercase leading-tight tracking-[0.1em] sm:px-4 sm:text-xs sm:tracking-[0.14em]"
+          to="/contacto"
+          className="min-h-11 shrink-0 rounded-md px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.12em]"
         >
-          Ver proyecto
+          Cotizar
         </ButtonLink>
       </div>
     </div>

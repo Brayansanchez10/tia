@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { RequireAuth } from '@/auth/RequireAuth'
@@ -9,40 +8,10 @@ import { AdminLoginPage } from '@/pages/admin/AdminLoginPage'
 import { AdminRecibosPage } from '@/pages/admin/AdminRecibosPage'
 import { ContactoPage } from '@/pages/ContactoPage'
 import { HomePage } from '@/pages/HomePage'
-import { HomePageMovil } from '@/pages/movil/homePageMovil'
 import { TrabajoChildDetailPage } from '@/pages/TrabajoChildDetailPage'
 import { TrabajoEntryPage } from '@/pages/TrabajoEntryPage'
 import { TrabajosPage } from '@/pages/TrabajosPage'
 import { TrabajosPortfolioPage } from '@/pages/TrabajosPortfolioPage'
-
-function ResponsiveHomePage() {
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 767px)').matches)
-  const [renderMobile, setRenderMobile] = useState(isMobile)
-  const [isVisible, setIsVisible] = useState(true)
-
-  useEffect(() => {
-    const query = window.matchMedia('(max-width: 767px)')
-    const handleChange = (event: MediaQueryListEvent) => setIsMobile(event.matches)
-    query.addEventListener('change', handleChange)
-    return () => query.removeEventListener('change', handleChange)
-  }, [])
-
-  useEffect(() => {
-    if (isMobile === renderMobile) return
-    setIsVisible(false)
-    const timeoutId = window.setTimeout(() => {
-      setRenderMobile(isMobile)
-      setIsVisible(true)
-    }, 140)
-    return () => window.clearTimeout(timeoutId)
-  }, [isMobile, renderMobile])
-
-  return (
-    <div className={`motion-safe:transition-opacity motion-safe:duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-      {renderMobile ? <HomePageMovil /> : <HomePage />}
-    </div>
-  )
-}
 
 export function App() {
   return (
@@ -58,7 +27,7 @@ export function App() {
           </Route>
         </Route>
         <Route element={<MainLayout />}>
-          <Route index element={<ResponsiveHomePage />} />
+          <Route index element={<HomePage />} />
           <Route path="trabajos" element={<TrabajosPage />} />
           <Route path="trabajos/portafolio/:kind" element={<TrabajosPortfolioPage />} />
           <Route path="trabajos/:parentSlug/:childSlug" element={<TrabajoChildDetailPage />} />

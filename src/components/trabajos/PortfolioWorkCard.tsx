@@ -7,6 +7,7 @@ type PortfolioWorkCardProps = {
   category: string
   title: string
   excerpt: string
+  highlights?: readonly string[]
   /** Texto del enlace (ej. «Ver proyecto», «Ver exhibición»). */
   ctaLabel: string
   ariaLabel: string
@@ -15,7 +16,7 @@ type PortfolioWorkCardProps = {
 }
 
 /**
- * Tarjeta de portafolio: foto a 4:3, texto sobre degradado (sin bloque claro aparte).
+ * Tarjeta de portafolio: imagen protagonista + ficha clara debajo (mobile-first).
  */
 export function PortfolioWorkCard({
   to,
@@ -24,11 +25,13 @@ export function PortfolioWorkCard({
   category,
   title,
   excerpt,
+  highlights,
   ctaLabel,
   ariaLabel,
   layout = 'stack',
 }: PortfolioWorkCardProps) {
   const isGrid = layout === 'grid'
+  const chips = highlights?.slice(0, 3)
 
   return (
     <article className={isGrid ? 'h-full min-w-0' : 'mx-auto max-w-3xl'}>
@@ -37,69 +40,73 @@ export function PortfolioWorkCard({
         state={state}
         aria-label={ariaLabel}
         className={[
-          'group relative block overflow-hidden rounded-sm border border-white/10 bg-luxury-panel/90 shadow-[0_8px_40px_rgba(0,0,0,0.45)] transition-[box-shadow,border-color,transform] duration-500 hover:border-luxury-gold/30 hover:shadow-[0_20px_56px_rgba(0,0,0,0.5)] motion-safe:hover:-translate-y-1 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-luxury-bg',
-          isGrid ? 'flex h-full min-h-0 flex-col' : '',
+          'group flex h-full flex-col overflow-hidden rounded-md border border-white/10 bg-luxury-panel no-underline outline-none transition-[border-color,box-shadow,transform] motion-safe:duration-300',
+          'hover:border-brand/35 hover:no-underline focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-luxury-bg',
+          'motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-[0_20px_48px_rgba(0,0,0,0.35)]',
         ].join(' ')}
       >
-        <div className={isGrid ? 'relative aspect-[4/3] w-full shrink-0' : 'relative aspect-4/3 w-full'}>
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-luxury-bg">
           {coverSrc ? (
             <img
               src={coverSrc}
               alt=""
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.03] group-hover:brightness-[1.05]"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover transition-transform motion-safe:duration-700 motion-safe:ease-out motion-safe:group-hover:scale-[1.04]"
             />
           ) : (
             <div
-              className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_0%,rgba(197,160,89,0.08),transparent_55%),linear-gradient(160deg,var(--theme-luxury-panel),var(--theme-luxury-bg))]"
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_0%,rgba(184,149,108,0.1),transparent_55%),linear-gradient(160deg,var(--theme-luxury-panel),var(--theme-luxury-bg))]"
               aria-hidden
             />
           )}
-          <div
-            className="absolute inset-0 bg-linear-to-t from-luxury-bg via-luxury-bg/65 to-luxury-bg/5 opacity-[0.96] transition-opacity duration-300 group-hover:opacity-100"
-            aria-hidden
-          />
-          <div
-            className={
-              isGrid
-                ? 'absolute inset-x-0 bottom-0 flex flex-col justify-end px-3 pb-4 pt-12 sm:px-4 sm:pb-5 sm:pt-16'
-                : 'absolute inset-x-0 bottom-0 flex flex-col justify-end px-4 pb-5 pt-20 sm:px-5 sm:pb-6 sm:pt-24 md:px-7 md:pb-7 md:pt-28'
-            }
+        </div>
+
+        <div
+          className={[
+            'flex min-h-0 flex-1 flex-col border-t border-white/8',
+            isGrid ? 'px-3.5 py-4 sm:px-4 sm:py-5' : 'px-4 py-5 sm:px-5 sm:py-6',
+          ].join(' ')}
+        >
+          <p className="m-0 text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold">
+            {category}
+          </p>
+          <h2
+            className={[
+              'm-0 mt-2 font-serif font-semibold leading-snug tracking-tight text-paper',
+              isGrid ? 'line-clamp-2 text-lg sm:text-xl' : 'text-xl sm:text-2xl',
+            ].join(' ')}
           >
-            <p className="m-0 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold/95 sm:text-[0.65rem]">
-              {category}
-            </p>
-            <h2
-              className={
-                isGrid
-                  ? 'm-0 mt-1 line-clamp-2 max-w-full text-balance font-serif text-base font-semibold leading-snug tracking-wide text-paper sm:mt-1.5 sm:text-lg md:text-xl'
-                  : 'm-0 mt-2 max-w-[95%] text-balance font-serif text-xl font-semibold leading-snug tracking-wide text-paper md:max-w-[90%] md:text-2xl'
-              }
-            >
-              {title}
-            </h2>
-            {!isGrid ? (
-              <p className="mt-2 line-clamp-2 max-w-xl text-[0.8125rem] leading-relaxed text-paper/80 md:text-sm">
-                {excerpt}
-              </p>
-            ) : (
-              <p className="mt-1.5 line-clamp-2 text-[0.7rem] leading-relaxed text-paper/75 sm:mt-2 sm:text-[0.75rem]">
-                {excerpt}
-              </p>
-            )}
-            <p
-              className={
-                isGrid
-                  ? 'mt-2 inline-flex items-center gap-1 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-luxury-gold sm:mt-3 sm:text-[0.65rem]'
-                  : 'mt-4 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-luxury-gold'
-              }
-            >
-              <span>{ctaLabel}</span>
-              <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-1">
-                →
-              </span>
-            </p>
-          </div>
+            {title}
+          </h2>
+          <p
+            className={[
+              'mt-2 leading-relaxed text-luxury-muted',
+              isGrid ? 'line-clamp-2 text-sm' : 'line-clamp-3 text-sm sm:text-base',
+            ].join(' ')}
+          >
+            {excerpt}
+          </p>
+
+          {chips && chips.length > 0 ? (
+            <ul className="m-0 mt-3 flex list-none flex-wrap gap-1.5 p-0">
+              {chips.map((chip) => (
+                <li
+                  key={chip}
+                  className="rounded-sm border border-white/10 bg-black/20 px-2 py-1 text-[0.65rem] font-medium leading-none text-paper/80"
+                >
+                  {chip}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          <p className="mt-auto pt-4 inline-flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-brand">
+            <span>{ctaLabel}</span>
+            <span aria-hidden className="transition-transform motion-safe:duration-200 group-hover:translate-x-1">
+              →
+            </span>
+          </p>
         </div>
       </Link>
     </article>

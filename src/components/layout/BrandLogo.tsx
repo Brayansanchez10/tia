@@ -24,7 +24,7 @@ export function BrandLogo() {
         <img
           src={src}
           alt={site.brand}
-          className="h-12 w-auto max-w-[min(58vw,16rem)] object-contain object-left sm:h-14 sm:max-w-[min(72vw,26rem)] md:h-[4.25rem] md:max-w-[min(78vw,34rem)] lg:h-20 lg:max-w-[min(72vw,40rem)] xl:max-w-[44rem]"
+          className="h-10 w-auto max-w-[min(52vw,12.5rem)] object-contain object-left sm:h-12 sm:max-w-[min(60vw,18rem)] md:h-14 md:max-w-[min(70vw,26rem)] lg:h-16 lg:max-w-[min(72vw,34rem)]"
           loading="eager"
           decoding="async"
         />

@@ -21,15 +21,17 @@ export function SiteFooter({ hideMobileLeadCta = false }: Props) {
           .join(' ')}
       >
         <div className="mx-auto max-w-[72rem] px-4 py-12 text-center sm:px-5 sm:py-14 md:py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-luxury-gold">{footer.ctaEyebrow}</p>
-          <p className="mx-auto mt-4 max-w-lg text-pretty text-base leading-relaxed text-paper/88 md:text-lg">
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-luxury-gold">
+            {footer.ctaEyebrow}
+          </p>
+          <p className="mx-auto mt-4 max-w-lg text-pretty font-serif text-xl font-semibold leading-snug text-paper md:text-2xl">
             {footer.ctaLead}
           </p>
           <div className="mt-8 flex justify-center px-1 sm:px-0">
             <ButtonLink
-              variant="luxuryOutline"
+              variant="primary"
               to={footer.ctaButton.to}
-              className="w-full max-w-sm justify-center px-10 py-3 text-sm uppercase tracking-[0.18em] sm:w-auto sm:max-w-none"
+              className="min-h-12 w-full max-w-sm justify-center rounded-md px-10 py-3 text-sm uppercase tracking-[0.14em] sm:w-auto sm:max-w-none"
             >
               {footer.ctaButton.label}
             </ButtonLink>

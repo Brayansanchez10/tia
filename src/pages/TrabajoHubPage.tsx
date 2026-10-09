@@ -1,8 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import type { TrabajoChild, TrabajoPost } from '@/content/site'
-import { trabajoChildCoverSrc } from '@/content/site'
+import { trabajoChildCoverSrc, trabajoExcerptText } from '@/content/site'
 import { PortfolioWorkCard } from '@/components/trabajos/PortfolioWorkCard'
-import { GrowLine } from '@/components/motion/GrowLine'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import {
   resolveTrabajosVolverHref,
@@ -28,7 +27,8 @@ function HubChildCard({
       coverSrc={cover}
       category={child.category}
       title={child.title}
-      excerpt={child.excerpt}
+      excerpt={trabajoExcerptText(child.excerpt)}
+      highlights={child.highlights}
       ctaLabel="Ver exhibición"
       ariaLabel={`Ver exhibición: ${child.title}`}
       layout="grid"
@@ -37,7 +37,7 @@ function HubChildCard({
 }
 
 const backLinkClass =
-  'inline-flex text-sm font-medium text-luxury-muted no-underline transition-colors hover:text-luxury-gold hover:underline'
+  'inline-flex min-h-11 items-center text-sm font-medium text-luxury-muted no-underline transition-colors hover:text-brand hover:no-underline'
 
 export function TrabajoHubPage({ post }: { post: TrabajoPost }) {
   const location = useLocation()
@@ -62,9 +62,11 @@ export function TrabajoHubPage({ post }: { post: TrabajoPost }) {
             <h1 className="m-0 mt-3 font-serif text-[clamp(1.5rem,3vw+0.5rem,2.25rem)] font-semibold leading-tight tracking-wide text-paper md:text-4xl">
               {post.title}
             </h1>
-            <GrowLine className="mt-5 mx-auto md:mx-0" />
+            <div className="section-rule mx-auto mt-5 md:mx-0" aria-hidden />
             <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-luxury-muted">{post.dateLabel}</p>
-            <p className="mt-4 text-sm leading-relaxed text-paper/85 md:text-[0.95rem]">{post.excerpt}</p>
+            <p className="mt-4 text-sm leading-relaxed text-paper/85 md:text-[0.95rem]">
+              {trabajoExcerptText(post.excerpt)}
+            </p>
             {post.paragraphs.length > 0 ? (
               <div className="mt-6 space-y-3 text-sm leading-relaxed text-luxury-muted">
                 {post.paragraphs.map((p, i) => (

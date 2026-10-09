@@ -54,20 +54,20 @@ export const TRABAJO_CATEGORY_META: Record<
   }
 > = {
   corporativo: {
-    title: 'Proyectos corporativos y comerciales',
-    blurb: 'Muebles y exhibición para empresas, retail y puntos de venta.',
+    title: 'Comercial y retail',
+    blurb: 'Stands, exhibidores, estanterías e instalación para puntos de venta y almacenes.',
     label: 'Empresa & retail',
     icon: IconBuilding,
-    accentBarClass: 'from-luxury-gold via-luxury-gold/50 to-transparent',
-    decoGlowClass: 'bg-luxury-gold/[0.12]',
+    accentBarClass: 'from-brand via-luxury-gold/60 to-transparent',
+    decoGlowClass: 'bg-brand/[0.1]',
   },
   residencial: {
-    title: 'Proyectos residenciales',
-    blurb: 'Piezas a medida para hogar: cocinas, salas, dormitorios y más.',
+    title: 'Residencial a medida',
+    blurb: 'Cocinas, puertas, lavaderos y piezas de hogar fabricadas e instaladas por nosotros.',
     label: 'Hogar',
     icon: IconHome,
-    accentBarClass: 'from-luxury-gold/80 via-amber-200/40 to-transparent',
-    decoGlowClass: 'bg-amber-50/[0.06]',
+    accentBarClass: 'from-luxury-gold via-brand/40 to-transparent',
+    decoGlowClass: 'bg-luxury-gold/[0.08]',
   },
 }
 

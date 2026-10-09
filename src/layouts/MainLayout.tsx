@@ -13,12 +13,18 @@ function hideFooterLeadCtaOnMobile(pathname: string): boolean {
 export function MainLayout() {
   const { pathname } = useLocation()
   const hideMobileFooterLead = hideFooterLeadCtaOnMobile(pathname)
+  const isHome = pathname === '/'
 
   return (
     <div className="relative flex min-h-svh flex-col overflow-x-hidden">
       <AmbientBackdrop />
       <SiteHeader />
-      <main className="relative z-10 w-full flex-1 bg-transparent pb-[env(safe-area-inset-bottom,0px)] pt-[calc(env(safe-area-inset-top,0px)+5rem)]">
+      <main
+        className={[
+          'relative z-10 w-full flex-1 bg-transparent pb-[env(safe-area-inset-bottom,0px)]',
+          isHome ? 'pt-0' : 'pt-[calc(env(safe-area-inset-top,0px)+5rem)]',
+        ].join(' ')}
+      >
         <Outlet />
       </main>
       <SiteFooter hideMobileLeadCta={hideMobileFooterLead} />

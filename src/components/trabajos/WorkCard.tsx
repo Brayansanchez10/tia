@@ -1,5 +1,5 @@
 import type { LinkProps } from 'react-router-dom'
-import { trabajoCoverSrc, type TrabajoPost } from '@/content/site'
+import { trabajoCoverSrc, trabajoExcerptText, type TrabajoPost } from '@/content/site'
 import { PortfolioWorkCard } from '@/components/trabajos/PortfolioWorkCard'
 
 export type WorkCardProps = {
@@ -18,7 +18,8 @@ export function WorkCard({ post, layout = 'stack', linkState }: WorkCardProps) {
       coverSrc={cover}
       category={post.category}
       title={post.title}
-      excerpt={post.excerpt}
+      excerpt={trabajoExcerptText(post.excerpt)}
+      highlights={post.highlights}
       ctaLabel="Ver proyecto"
       ariaLabel={`Ver proyecto: ${post.title}`}
       layout={layout}
