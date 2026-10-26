@@ -23,6 +23,8 @@
   "include": [
     "vite.config.ts",
     "vite-plugin-cloudinary-api.ts",
+    "vite-plugin-postgres-api.ts",
+    "neon.ts",
     "server/**/*.ts",
     "netlify/functions/**/*.ts"
   ]

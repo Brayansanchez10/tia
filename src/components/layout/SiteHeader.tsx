@@ -76,7 +76,7 @@ export function SiteHeader() {
   }, [menuOpen])
 
   const headerSurface = isHome
-    ? 'border-b border-white/10 bg-luxury-bg/45 backdrop-blur-md supports-[backdrop-filter]:bg-luxury-bg/35'
+    ? 'border-b border-white/10 bg-luxury-bg/92 backdrop-blur-md supports-[backdrop-filter]:bg-luxury-bg/88 md:bg-luxury-bg/45 md:supports-[backdrop-filter]:bg-luxury-bg/35'
     : 'border-b border-wood/15 bg-ink/95 backdrop-blur-md supports-[backdrop-filter]:bg-ink/88'
 
   return (

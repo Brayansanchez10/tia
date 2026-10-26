@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { site, trabajoCoverSrc, type TrabajoPortfolioKind } from '@/content/site'
+import { usePortfolio } from '@/lib/portfolio/PortfolioProvider'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { PageHeader } from '@/components/ui/PageShell'
 import { TRABAJO_CATEGORY_META, trabajoPortfolioHref } from '@/pages/trabajosCategoryShared'
@@ -83,14 +84,15 @@ function CategoryPortalCard({
 
 export function TrabajosPage() {
   const { trabajos } = site
+  const { items } = usePortfolio()
 
   const counts = useMemo(() => {
     const c: Record<TrabajoPortfolioKind, number> = { corporativo: 0, residencial: 0 }
-    for (const p of trabajos.items) {
+    for (const p of items) {
       c[p.portfolioKind] += 1
     }
     return c
-  }, [trabajos.items])
+  }, [items])
 
   const covers = useMemo(() => {
     const result: Record<TrabajoPortfolioKind, string | undefined> = {
@@ -98,13 +100,13 @@ export function TrabajosPage() {
       residencial: undefined,
     }
     for (const kind of KIND_ORDER) {
-      const first = trabajos.items.find((p) => p.portfolioKind === kind)
+      const first = items.find((p) => p.portfolioKind === kind)
       result[kind] = first ? trabajoCoverSrc(first) : undefined
     }
     return result
-  }, [trabajos.items])
+  }, [items])
 
-  const total = trabajos.items.length
+  const total = items.length
 
   return (
     <div className="min-h-[50vh] w-full bg-luxury-bg">
@@ -148,7 +150,7 @@ export function TrabajosPage() {
               Toca una imagen para abrir la galería completa del proyecto.
             </p>
             <ul className="m-0 mt-8 grid list-none grid-cols-2 gap-2.5 p-0 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 md:gap-4 lg:grid-cols-5">
-              {trabajos.items.map((post, i) => {
+              {items.map((post, i) => {
                 const cover = trabajoCoverSrc(post)
                 return (
                   <li key={post.slug} className="min-w-0">

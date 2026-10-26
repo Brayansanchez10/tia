@@ -56,15 +56,9 @@ export type TrabajoChild = {
 export type TrabajoPortfolioKind = 'corporativo' | 'residencial'
 
 /**
- * Un trabajo del portafolio. Los clientes ven lo que añadas en `site.trabajos.items`
- * (este archivo). Tras editar, vuelve a generar el sitio (`npm run build`) y súbelo.
- *
- * Cómo añadir un trabajo nuevo:
- * 1. Copia un bloque existente (simple o con `children`) y cambia `slug` (único, minúsculas y guiones).
- * 2. Pon `portfolioKind: 'corporativo'` o `'residencial'` (aparece en `/trabajos/portafolio/{corporativo|residencial}`).
- * 3. Sube fotos a `public/img/...` y referencia con rutas `/img/...`.
- * 4. Proyecto simple: `images` o `image` + `paragraphs` → abre en `/trabajos/{slug}`.
- * 5. Proyecto con varias piezas: define `children[]`; `/trabajos/{slug}` será el índice y cada hijo en `/trabajos/{slug}/{hijo}`.
+ * Un trabajo del portafolio. Se edita en `/admin/proyectos` y se guarda en Neon.
+ * Este arreglo es la copia inicial y el respaldo si la base no responde.
+ * Con `children`, `/trabajos/{slug}` es el índice y cada pieza vive en `/trabajos/{slug}/{hijo}`.
  */
 export type TrabajoPost = {
   /** Identificador único en URL: solo minúsculas, números y guiones. Ej: `cocina-roble` → /trabajos/cocina-roble */
@@ -143,8 +137,9 @@ export function trabajoGallerySrcs(media: TrabajoMediaSource): readonly TrabajoG
 export function findTrabajoChild(
   parentSlug: string,
   childSlug: string,
+  items: readonly TrabajoPost[] = site.trabajos.items,
 ): { parent: TrabajoPost; child: TrabajoChild } | undefined {
-  const parent = site.trabajos.items.find((p) => p.slug === parentSlug)
+  const parent = items.find((p) => p.slug === parentSlug)
   if (!parent?.children?.length) return undefined
   const child = parent.children.find((c) => c.slug === childSlug)
   if (!child) return undefined
@@ -262,12 +257,12 @@ export const site = {
           'Stand de exhibición para feria comercial en madera, metal y acrílico: diseño, fabricación y montaje pensados para destacar marca y producto.',
         highlights: ['Diseño y fabricación', 'Madera, metal y acrílico', 'Montaje en sitio'],
         images: [
+          '/img/trabajos/comerciales/Stan2/ST6.jpeg',
           '/img/trabajos/comerciales/Stan2/ST1.mp4',
           '/img/trabajos/comerciales/Stan2/ST2.jpeg',
           '/img/trabajos/comerciales/Stan2/ST3.jpeg',
           '/img/trabajos/comerciales/Stan2/ST4.jpeg',
           '/img/trabajos/comerciales/Stan2/ST5.jpeg',
-          '/img/trabajos/comerciales/Stan2/ST6.jpeg',
           '/img/trabajos/comerciales/Stan2/T2.jpeg',
           '/img/trabajos/comerciales/Stan2/T3.jpeg',
           '/img/trabajos/comerciales/Stan2/T4.jpeg',

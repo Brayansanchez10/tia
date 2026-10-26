@@ -1,6 +1,9 @@
 # API Cloudinary (Netlify Functions) — antes del fallback SPA.
 /api/cloudinary/status   /.netlify/functions/cloudinary-status   200
 /api/cloudinary/upload   /.netlify/functions/cloudinary-upload   200
+/api/documents           /.netlify/functions/documents           200
+/api/projects            /.netlify/functions/projects            200
+/api/cloudinary/sign     /.netlify/functions/cloudinary-sign     200
 
 # SPA (React Router): cualquier ruta sirve index.html para que el cliente enrute.
 /*    /index.html   200

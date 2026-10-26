@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { useCallback, useState, type ReactNode } from 'react'
 import { AdminPdfPreviewPane } from '@/components/admin/AdminPdfPreviewPane'
 import { AdminSavedLibrarySection } from '@/components/admin/AdminSavedLibrarySection'
 import {
   cloneCotizacionData,
   readSavedCotizacionesLibrary,
+  reviveSavedCotizacionList,
   writeSavedCotizacionesLibrary,
-  type SavedCotizacionEntry,
 } from '@/lib/admin/adminSavedDocuments'
+import { usePostgresSavedLibrary } from '@/lib/admin/usePostgresSavedLibrary'
 import { CotizacionPdfDocument } from '@/components/admin/CotizacionPdfDocument'
 import { CotizacionReferenceImagesField } from '@/components/admin/CotizacionReferenceImagesField'
 import { COMPANY_LOGO_SRC } from '@/lib/branding'
@@ -21,14 +22,15 @@ function newBlockId(): string {
 
 export function AdminDashboardPage() {
   const [data, setData] = useState<CotizacionData>(() => createDefaultCotizacion())
-  const [savedList, setSavedList] = useState<SavedCotizacionEntry[]>(() => readSavedCotizacionesLibrary())
+  const { savedList, setSavedList, syncNote } = usePostgresSavedLibrary({
+    kind: 'cotizacion',
+    readLocal: readSavedCotizacionesLibrary,
+    writeLocal: writeSavedCotizacionesLibrary,
+    reviveList: reviveSavedCotizacionList,
+  })
   const [editingSavedId, setEditingSavedId] = useState<string | null>(null)
   const [saveNameDraft, setSaveNameDraft] = useState('')
   const [exporting, setExporting] = useState(false)
-
-  useEffect(() => {
-    writeSavedCotizacionesLibrary(savedList)
-  }, [savedList])
 
   const update = useCallback((patch: Partial<CotizacionData>) => {
     setData((d) => ({ ...d, ...patch }))
@@ -148,7 +150,12 @@ export function AdminDashboardPage() {
       <div className="mt-6">
         <AdminSavedLibrarySection
           title="Cotizaciones guardadas"
-          description="Guarda versiones con un nombre. Editar carga los datos en el formulario; Actualizar guardado sustituye la entrada activa."
+          description={
+            <>
+              Guarda versiones con un nombre. Editar carga los datos en el formulario; Actualizar
+              guardado sustituye la entrada activa. {syncNote}
+            </>
+          }
           items={savedCards}
           editingId={editingSavedId}
           nameDraft={saveNameDraft}

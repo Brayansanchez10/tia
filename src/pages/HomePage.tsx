@@ -1,10 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { site, trabajoCoverSrc, trabajoExcerptText } from '@/content/site'
-import { ButtonLink } from '@/components/ui/ButtonLink'
+import { HeroHomeVisual } from '@/components/home/HeroHomeVisual'
 import { RevealOnView } from '@/components/motion/RevealOnView'
+import { ButtonLink } from '@/components/ui/ButtonLink'
+import { site, trabajoCoverSrc, trabajoExcerptText, type TrabajoPost } from '@/content/site'
+import { usePortfolio } from '@/lib/portfolio/PortfolioProvider'
+import { TRABAJO_CATEGORY_META } from '@/pages/trabajosCategoryShared'
 
-const HERO_BG = '/img/Fondo.jpg'
+/** Render 3D del hero (fondo negro integrado). */
+const HERO_VISUAL = '/img/fondoHome.png'
 const MARKETING_IMAGE = '/img/homeMarketing.jpeg'
 const MARKETING_POINTS = [
   'Pensado en tu cliente final',
@@ -12,13 +16,189 @@ const MARKETING_POINTS = [
   'Entregado con garantía real',
 ] as const
 
-export function HomePage() {
-  const { home, services, about, trabajos } = site
-  const location = useLocation()
+function useHeroDrift(target: RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const node = target.current
+    if (!node) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const fine = window.matchMedia('(min-width: 768px) and (pointer: fine)')
+    if (!fine.matches) return
 
-  const featured = home.featuredSlugs
-    .map((slug) => trabajos.items.find((p) => p.slug === slug))
-    .filter((p): p is (typeof trabajos.items)[number] => Boolean(p))
+    let frame = 0
+    const onScroll = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, 520) * 0.07
+        node.style.transform = `translate3d(0, ${y}px, 0)`
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      node.style.transform = ''
+    }
+  }, [target])
+}
+
+function SamplePhoto({
+  src,
+  eager,
+  ratio = 'aspect-[4/3]',
+}: {
+  src?: string
+  eager?: boolean
+  ratio?: string
+}) {
+  return (
+    <div className={['relative overflow-hidden bg-luxury-panel', ratio].join(' ')}>
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
+        />
+      ) : null}
+    </div>
+  )
+}
+
+function SampleCard({ post, index }: { post: TrabajoPost; index: number }) {
+  const cover = trabajoCoverSrc(post)
+  const excerpt = trabajoExcerptText(post.excerpt)
+
+  return (
+    <li className="min-w-0">
+      <RevealOnView delayMs={Math.min(index * 60, 240)} variant="fadeUp" className="h-full">
+        <Link
+          to={`/trabajos/${post.slug}`}
+          state={{ trabajosVolver: '/' }}
+          className="group flex h-full flex-col no-underline outline-none hover:no-underline focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-4 focus-visible:ring-offset-luxury-bg"
+          aria-label={`Ver proyecto: ${post.title}`}
+        >
+          <SamplePhoto src={cover} />
+          <div className="flex flex-1 flex-col border-t border-white/12 pt-3">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="m-0 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-luxury-gold">
+                {post.category}
+              </p>
+              <span className="font-mono text-[0.65rem] tabular-nums text-paper/40">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+            </div>
+            <h3 className="m-0 mt-1.5 font-serif text-lg font-semibold leading-snug text-paper transition-colors duration-300 group-hover:text-brand sm:text-xl">
+              {post.title}
+            </h3>
+            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-luxury-muted">{excerpt}</p>
+          </div>
+        </Link>
+      </RevealOnView>
+    </li>
+  )
+}
+
+function LeadSample({ post }: { post: TrabajoPost }) {
+  const cover = trabajoCoverSrc(post)
+  const excerpt = trabajoExcerptText(post.excerpt)
+  const highlights = post.highlights?.slice(0, 3)
+
+  return (
+    <RevealOnView variant="fadeUp">
+      <Link
+        to={`/trabajos/${post.slug}`}
+        state={{ trabajosVolver: '/' }}
+        className="group grid no-underline outline-none hover:no-underline focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-4 focus-visible:ring-offset-luxury-bg lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.72fr)] lg:items-stretch lg:gap-10"
+        aria-label={`Ver proyecto: ${post.title}`}
+      >
+        <SamplePhoto src={cover} eager ratio="aspect-[4/3] sm:aspect-[16/10]" />
+        <div className="flex flex-col justify-center border-white/12 pt-4 lg:border-l lg:py-2 lg:pl-8">
+          <p className="m-0 text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold">
+            {post.category} · {post.dateLabel}
+          </p>
+          <h3 className="m-0 mt-3 font-serif text-2xl font-semibold leading-tight text-paper transition-colors duration-300 group-hover:text-brand sm:text-3xl">
+            {post.title}
+          </h3>
+          <p className="mt-3 text-base leading-relaxed text-luxury-muted">{excerpt}</p>
+          {highlights && highlights.length > 0 ? (
+            <ul className="m-0 mt-5 list-none space-y-2 p-0">
+              {highlights.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-paper/88">
+                  <span className="mt-2 h-px w-4 shrink-0 bg-brand" aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <span className="mt-6 inline-flex items-center gap-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-brand">
+            Ver proyecto
+            <span aria-hidden className="transition-transform duration-200 motion-safe:group-hover:translate-x-0.5">
+              →
+            </span>
+          </span>
+        </div>
+      </Link>
+    </RevealOnView>
+  )
+}
+
+function SampleGroup({
+  label,
+  posts,
+  startIndex,
+  withLead,
+  columns = 3,
+}: {
+  label: string
+  posts: readonly TrabajoPost[]
+  startIndex: number
+  withLead?: boolean
+  columns?: 2 | 3
+}) {
+  if (posts.length === 0) return null
+  const lead = withLead ? posts[0] : undefined
+  const cards = withLead ? posts.slice(1) : posts
+
+  return (
+    <div>
+      <div className="mb-5 flex items-center gap-4">
+        <p className="m-0 shrink-0 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-paper/80">{label}</p>
+        <span className="h-px flex-1 bg-white/12" aria-hidden />
+      </div>
+      {lead ? <LeadSample post={lead} /> : null}
+      {cards.length > 0 ? (
+        <ul
+          className={[
+            'm-0 grid list-none grid-cols-1 gap-x-5 gap-y-8 p-0 sm:grid-cols-2',
+            columns === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-3',
+            lead ? 'mt-8 sm:mt-10' : '',
+          ].join(' ')}
+        >
+          {cards.map((post, i) => (
+            <SampleCard key={post.slug} post={post} index={startIndex + i} />
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  )
+}
+
+export function HomePage() {
+  const { home, services, about, footer } = site
+  const { items, featuredSlugs } = usePortfolio()
+  const location = useLocation()
+  const driftRef = useRef<HTMLDivElement>(null)
+  useHeroDrift(driftRef)
+
+  const featured = featuredSlugs
+    .map((slug) => items.find((p) => p.slug === slug))
+    .filter((p): p is TrabajoPost => Boolean(p))
+
+  const commercial = featured.filter((post) => post.portfolioKind === 'corporativo')
+  const residential = featured.filter((post) => post.portfolioKind === 'residencial')
+  const closeCover = trabajoCoverSrc(featured[2] ?? featured[0])
 
   useEffect(() => {
     const id = location.hash.replace(/^#/, '')
@@ -32,40 +212,48 @@ export function HomePage() {
 
   return (
     <div className="bg-luxury-bg pt-0">
-      {/* Hero full-bleed */}
       <section
         id="inicio"
         aria-label="Presentación"
-        className="relative flex min-h-[100svh] w-full flex-col justify-end overflow-hidden"
+        className="relative flex flex-col overflow-hidden bg-black md:min-h-svh"
       >
-        <div className="absolute inset-0" aria-hidden>
-          <img
-            src={HERO_BG}
-            alt=""
-            className="home-hero-bg h-full w-full object-cover object-center"
-            fetchPriority="high"
-            decoding="async"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(20_18_16_/_0.55)_0%,rgb(20_18_16_/_0.72)_42%,rgb(20_18_16_/_0.94)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_70%_20%,rgb(154_0_32_/_0.22),transparent_58%)]" />
-        </div>
+        <div
+          className="pointer-events-none absolute inset-0 opacity-80"
+          aria-hidden
+          style={{
+            background:
+              'radial-gradient(ellipse 55% 45% at 78% 42%, rgb(154 0 32 / 0.2), transparent 60%), radial-gradient(ellipse 40% 30% at 12% 88%, rgb(184 149 108 / 0.12), transparent 70%)',
+          }}
+        />
 
-        <div className="relative z-10 mx-auto w-full max-w-[72rem] px-4 pb-14 pt-[calc(env(safe-area-inset-top,0px)+5.5rem)] sm:px-6 sm:pb-16 md:px-8 md:pb-20 lg:px-10">
-          <div className="home-hero-reveal max-w-2xl">
-            <p className="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-luxury-gold">
+        <div className="relative z-10 mx-auto grid w-full max-w-[90rem] flex-1 items-center gap-5 px-4 pb-8 pt-[calc(env(safe-area-inset-top,0px)+4.75rem)] sm:px-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)] md:grid-rows-[auto_auto] md:gap-x-6 md:gap-y-8 md:px-8 md:pb-10 md:pt-24 lg:px-12">
+          <div className="home-hero-reveal relative z-20 max-w-xl md:col-start-1 md:row-start-1">
+            <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold sm:tracking-[0.34em]">
               {site.tagline}
             </p>
-            <h1 className="mt-4 font-serif text-[clamp(2.35rem,8vw,4.25rem)] font-semibold leading-[0.98] tracking-[-0.02em] text-paper">
-              {home.heroBrand}
+            <h1 className="mt-3 font-serif text-[clamp(2.45rem,10vw,7.1rem)] font-semibold leading-[0.9] tracking-[-0.04em] text-paper md:mt-4 md:leading-[0.86]">
+              <span className="block">Marketing</span>
+              <span className="mt-1 block md:pl-[0.55em]">— Pop</span>
             </h1>
-            <div className="section-rule mt-5" aria-hidden />
-            <p className="mt-6 max-w-[22ch] text-balance font-sans text-[clamp(1.2rem,2.8vw+0.4rem,1.65rem)] font-semibold leading-snug tracking-tight text-paper/95">
+          </div>
+
+          <div ref={driftRef} className="relative z-10 min-w-0 md:col-start-2 md:row-span-2 md:row-start-1 md:-mr-6 lg:-mr-10">
+            <HeroHomeVisual
+              src={HERO_VISUAL}
+              alt="Mostrador comercial de madera, pieza de Marketing — Pop"
+              presentation="float"
+              interactive
+            />
+          </div>
+
+          <div className="home-hero-reveal relative z-20 max-w-xl md:col-start-1 md:row-start-2 md:pb-6">
+            <p className="max-w-[22ch] text-balance font-sans text-[1.05rem] font-semibold leading-snug text-paper/95 sm:text-[clamp(1.15rem,2vw+0.35rem,1.55rem)]">
               {home.heroTitle}
             </p>
-            <p className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-paper/82 sm:text-lg">
+            <p className="mt-3 max-w-md text-pretty text-[0.98rem] leading-relaxed text-paper/78 sm:mt-4 sm:text-lg">
               {home.heroLead}
             </p>
-            <div className="home-hero-cta-group mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap">
+            <div className="home-hero-cta-group mt-6 flex w-full flex-col gap-3 sm:mt-8 sm:max-w-none sm:flex-row">
               <ButtonLink
                 variant="primary"
                 to={home.ctaPrimary.to}
@@ -85,178 +273,172 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Proyectos destacados */}
       <section
         aria-labelledby="home-featured-heading"
-        className="theme-section-alt border-t border-white/8 px-4 py-14 sm:px-6 md:px-8 md:py-20 lg:px-10"
+        className="relative overflow-hidden bg-luxury-bg px-4 pb-12 pt-10 sm:px-6 sm:pb-16 sm:pt-14 md:px-8 md:pb-24 md:pt-20 lg:px-10"
       >
-        <div className="mx-auto w-full max-w-[72rem]">
-          <RevealOnView variant="fadeUp">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
-              <div className="min-w-0 max-w-2xl">
-                <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
-                  Portafolio
-                </p>
-                <h2
-                  id="home-featured-heading"
-                  className="mt-3 font-serif text-[clamp(1.75rem,3vw+0.5rem,2.5rem)] font-semibold leading-tight tracking-tight text-paper"
-                >
-                  {home.featuredHeading}
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-luxury-muted md:text-lg">
-                  {home.featuredLead}
-                </p>
-              </div>
-              <ButtonLink
-                variant="luxuryOutline"
-                to={home.featuredCta.to}
-                className="hidden shrink-0 justify-center rounded-md px-6 text-xs tracking-[0.16em] md:inline-flex"
+        <div
+          className="pointer-events-none absolute inset-x-0 -top-16 h-16 bg-linear-to-b from-black to-transparent"
+          aria-hidden
+        />
+        <div className="mx-auto w-full max-w-[90rem]">
+          <div className="flex flex-col gap-5 border-b border-white/12 pb-6 md:flex-row md:items-end md:justify-between md:gap-10">
+            <RevealOnView variant="fadeUp">
+              <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
+                Portafolio
+              </p>
+              <h2
+                id="home-featured-heading"
+                className="mt-3 max-w-[18ch] scroll-mt-28 text-balance font-serif text-[clamp(1.85rem,7vw,3.15rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-paper sm:max-w-none"
               >
-                {home.featuredCta.label}
-              </ButtonLink>
-            </div>
-          </RevealOnView>
+                {home.featuredHeading}
+              </h2>
+            </RevealOnView>
+            <RevealOnView delayMs={80} variant="fadeUp" className="md:max-w-sm md:pb-1 md:text-right">
+              <p className="text-base leading-relaxed text-luxury-muted">{home.featuredLead}</p>
+              <Link
+                to={home.featuredCta.to}
+                className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold uppercase tracking-[0.16em] text-brand no-underline hover:text-paper"
+              >
+                {home.featuredCta.label} →
+              </Link>
+            </RevealOnView>
+          </div>
 
-          <ul className="m-0 mt-10 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
-            {featured.map((post, i) => {
-              const cover = trabajoCoverSrc(post)
-              const excerpt = trabajoExcerptText(post.excerpt)
-              return (
-                <li key={post.slug} className={i === 0 ? 'sm:col-span-2 lg:col-span-2' : ''}>
-                  <RevealOnView delayMs={Math.min(i * 60, 300)} variant="fadeUp">
-                    <Link
-                      to={`/trabajos/${post.slug}`}
-                      state={{ trabajosVolver: '/' }}
-                      className="group relative block overflow-hidden rounded-md border border-white/10 bg-luxury-panel no-underline outline-none transition-[border-color,transform] motion-safe:duration-300 hover:border-brand/40 hover:no-underline focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-luxury-bg motion-safe:hover:-translate-y-0.5"
-                      aria-label={`Ver proyecto: ${post.title}`}
-                    >
-                      <div
-                        className={[
-                          'relative overflow-hidden bg-luxury-bg',
-                          i === 0 ? 'aspect-[16/10] sm:aspect-[16/9]' : 'aspect-[4/3]',
-                        ].join(' ')}
-                      >
-                        {cover ? (
-                          <img
-                            src={cover}
-                            alt=""
-                            loading={i < 2 ? 'eager' : 'lazy'}
-                            decoding="async"
-                            className="absolute inset-0 h-full w-full object-cover transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.04]"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 bg-surface" aria-hidden />
-                        )}
-                        <div
-                          className="absolute inset-0 bg-linear-to-t from-luxury-bg via-luxury-bg/25 to-transparent opacity-90"
-                          aria-hidden
-                        />
-                        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6">
-                          <p className="m-0 text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold">
-                            {post.category} · {post.dateLabel}
-                          </p>
-                          <h3
-                            className={[
-                              'm-0 mt-2 font-serif font-semibold leading-snug text-paper',
-                              i === 0 ? 'text-xl sm:text-2xl md:text-3xl' : 'text-lg sm:text-xl',
-                            ].join(' ')}
-                          >
-                            {post.title}
-                          </h3>
-                          <p
-                            className={[
-                              'mt-2 line-clamp-2 text-sm leading-relaxed text-paper/78',
-                              i === 0 ? 'max-w-xl sm:text-base' : '',
-                            ].join(' ')}
-                          >
-                            {excerpt}
-                          </p>
-                          <span className="mt-3 inline-flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-brand">
-                            Ver proyecto
-                            <span aria-hidden className="transition-transform motion-safe:duration-200 group-hover:translate-x-0.5">
-                              →
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  </RevealOnView>
-                </li>
-              )
-            })}
-          </ul>
-
-          <div className="mt-8 md:hidden">
-            <ButtonLink
-              variant="luxuryOutline"
-              to={home.featuredCta.to}
-              className="min-h-12 w-full justify-center rounded-md text-xs tracking-[0.16em]"
-            >
-              {home.featuredCta.label}
-            </ButtonLink>
+          <div className="mt-10 space-y-14 md:mt-12">
+            <SampleGroup
+              label={TRABAJO_CATEGORY_META.corporativo.title}
+              posts={commercial}
+              startIndex={0}
+              withLead
+            />
+            <SampleGroup
+              label={TRABAJO_CATEGORY_META.residencial.title}
+              posts={residential}
+              startIndex={0}
+              columns={2}
+            />
           </div>
         </div>
       </section>
 
-      {/* Compromiso / valor */}
       <section
-        aria-labelledby="home-marketing-heading"
-        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] border-t border-white/8 px-4 py-14 sm:px-6 md:px-8 md:py-20 lg:px-10"
+        id="servicios"
+        aria-labelledby="servicios-heading"
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] border-t border-white/10 bg-luxury-panel px-4 py-12 sm:px-6 sm:py-16 md:px-8 md:py-24 lg:px-10"
       >
-        <div className="mx-auto grid w-full max-w-[72rem] items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
-          <RevealOnView variant="fadeUp">
-            <div>
-              <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
-                Nuestro compromiso
-              </p>
-              <h2
-                id="home-marketing-heading"
-                className="mt-3 max-w-[22ch] font-serif text-[clamp(1.75rem,3vw+0.4rem,2.4rem)] font-semibold leading-tight text-paper"
-              >
-                Fabricamos muebles que trabajan para tu espacio
-              </h2>
-              <div className="section-rule mt-5" aria-hidden />
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-paper/88">
-                Sabemos que tu local es tu vitrina. Cada proyecto lo hacemos para que se vea bien, funcione mejor y te ayude a vender.
-              </p>
-              <ul className="m-0 mt-7 list-none space-y-3.5 p-0">
-                {MARKETING_POINTS.map((point) => (
-                  <li key={point} className="flex items-start gap-3 text-base text-paper/90 md:text-lg">
-                    <span
-                      className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-brand/15 text-[0.7rem] font-bold text-brand"
-                      aria-hidden
-                    >
-                      ✓
-                    </span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-6 text-lg font-medium leading-snug text-paper md:text-xl">
-                Trabajos bien hechos, a precio justo. Así de simple.
-              </p>
-              <div className="mt-8">
-                <ButtonLink
-                  variant="primary"
-                  to="/contacto"
-                  className="min-h-12 rounded-md px-7 text-sm uppercase tracking-[0.14em]"
-                >
-                  Quiero cotizar mi proyecto
-                </ButtonLink>
-              </div>
-            </div>
+        <div className="mx-auto grid w-full max-w-[90rem] gap-10 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
+          <RevealOnView variant="fadeRight" className="lg:sticky lg:top-28 lg:self-start">
+            <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
+              {services.pageEyebrow}
+            </p>
+            <h2
+              id="servicios-heading"
+              className="mt-3 max-w-[16ch] font-serif text-[clamp(2rem,8vw,4.2rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-paper sm:max-w-[12ch] lg:max-w-[10ch]"
+            >
+              Del plano al punto de venta
+            </h2>
+            <p className="mt-5 max-w-sm text-base leading-relaxed text-luxury-muted md:text-lg">{services.intro}</p>
           </RevealOnView>
 
-          <RevealOnView delayMs={80} variant="fadeUp">
-            <figure className="relative m-0 overflow-hidden rounded-md border border-white/10">
+          <ol className="m-0 list-none p-0">
+            {services.items.map((item, i) => (
+              <li key={item.name} className="last:border-b last:border-white/12">
+                <RevealOnView delayMs={Math.min(i * 50, 200)} variant="fadeUp">
+                  <article className="home-service-row group border-t border-white/12 py-6 sm:py-7">
+                    <div className="grid grid-cols-[3.2rem_minmax(0,1fr)] gap-3 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-5">
+                      <span className="home-service-num pt-1 font-serif text-2xl font-semibold tabular-nums tracking-tight text-luxury-gold transition-colors duration-300 sm:text-3xl">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="m-0 font-serif text-xl font-semibold tracking-tight text-paper sm:text-2xl">
+                          {item.name}
+                        </h3>
+                        <p className="mt-1.5 text-base font-medium text-paper/88">{item.tagline}</p>
+                        <p className="mt-3 max-w-xl text-[0.98rem] leading-relaxed text-luxury-muted sm:text-base">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </RevealOnView>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section
+        id="nosotros"
+        aria-labelledby="nosotros-heading"
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] overflow-hidden px-4 py-12 sm:px-6 sm:py-16 md:px-8 md:py-24 lg:px-10"
+      >
+        <div className="mx-auto grid w-full max-w-[90rem] items-start gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(16rem,0.8fr)] lg:gap-8">
+          <div>
+            <RevealOnView variant="fadeUp">
+              <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
+                {about.pageEyebrow}
+              </p>
+              <h2
+                id="nosotros-heading"
+                className="mt-3 max-w-[16ch] font-serif text-[clamp(1.9rem,7.5vw,4rem)] font-semibold leading-[0.98] tracking-[-0.03em] text-paper sm:max-w-[14ch]"
+              >
+                {about.title}
+              </h2>
+            </RevealOnView>
+            <div className="mt-8 max-w-2xl space-y-5">
+              {about.paragraphs.map((paragraph, i) => (
+                <RevealOnView key={paragraph.slice(0, 24)} delayMs={i * 60} variant="fadeUp">
+                  <p
+                    className={
+                      i === 0
+                        ? 'font-serif text-[clamp(1.35rem,2vw+0.6rem,1.85rem)] font-medium leading-snug text-paper'
+                        : 'text-base leading-relaxed text-luxury-muted md:text-lg'
+                    }
+                  >
+                    {paragraph}
+                  </p>
+                </RevealOnView>
+              ))}
+            </div>
+
+            <ul className="m-0 mt-10 list-none space-y-3 p-0">
+              {MARKETING_POINTS.map((point, i) => (
+                <li key={point}>
+                  <RevealOnView delayMs={80 + i * 70} variant="fadeRight">
+                    <p
+                      className={[
+                        'm-0 font-serif text-[clamp(1.2rem,5vw,2.15rem)] font-semibold leading-tight tracking-[-0.02em] text-paper',
+                        i === 1 ? 'sm:pl-5' : '',
+                        i === 2 ? 'sm:pl-10' : '',
+                      ].join(' ')}
+                    >
+                      <span className="mr-3 text-brand" aria-hidden>
+                        —
+                      </span>
+                      {point}
+                    </p>
+                  </RevealOnView>
+                </li>
+              ))}
+            </ul>
+            <RevealOnView delayMs={120} variant="fadeUp">
+              <p className="mt-8 max-w-md text-lg font-medium text-paper/90">
+                Trabajos bien hechos, a precio justo. Así de simple.
+              </p>
+            </RevealOnView>
+          </div>
+
+          <RevealOnView variant="clip" className="lg:mt-24">
+            <figure className="relative m-0 lg:-mr-6">
               <img
                 src={MARKETING_IMAGE}
                 alt="Mostrador comercial fabricado e instalado por Marketing — Pop"
-                className="aspect-[4/5] w-full object-cover sm:aspect-[5/6] lg:aspect-[4/5]"
+                className="aspect-[16/11] w-full object-cover sm:aspect-[5/4] lg:aspect-[3/4]"
                 loading="lazy"
                 decoding="async"
               />
-              <figcaption className="absolute inset-x-0 bottom-0 m-0 bg-linear-to-t from-black/80 to-transparent px-4 pb-4 pt-16 text-sm text-white/90 sm:px-5 sm:pb-5">
+              <figcaption className="mt-3 max-w-[22ch] text-sm leading-snug text-luxury-muted">
                 Mobiliario comercial para espacios que venden mejor
               </figcaption>
             </figure>
@@ -264,110 +446,47 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Nosotros */}
-      <section
-        id="nosotros"
-        aria-labelledby="nosotros-heading"
-        className="theme-section-alt scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] border-t border-white/8 px-4 py-14 sm:px-6 md:px-8 md:py-20 lg:px-10"
-      >
-        <div className="mx-auto w-full max-w-[72rem]">
+      <section aria-labelledby="home-close-heading" className="relative min-h-[28rem] overflow-hidden sm:min-h-[70svh]">
+        {closeCover ? (
+          <img
+            src={closeCover}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-black/72" aria-hidden />
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,rgb(154_0_32_/_0.35),transparent_55%)]"
+          aria-hidden
+        />
+        <div className="relative z-10 mx-auto flex min-h-[28rem] max-w-[90rem] flex-col justify-end px-4 py-10 sm:min-h-[70svh] sm:px-6 sm:py-16 md:px-10 md:py-20">
           <RevealOnView variant="fadeUp">
             <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
-              {about.pageEyebrow}
+              {site.tagline}
             </p>
             <h2
-              id="nosotros-heading"
-              className="mt-3 max-w-[24ch] font-serif text-[clamp(1.75rem,3vw+0.4rem,2.4rem)] font-semibold leading-tight text-paper"
+              id="home-close-heading"
+              className="mt-4 max-w-[16ch] text-balance font-serif text-[clamp(2.05rem,8vw,5.6rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white sm:max-w-[12ch] sm:leading-[0.9]"
             >
-              {about.title}
+              {footer.ctaEyebrow}
             </h2>
-            <div className="section-rule mt-5" aria-hidden />
-          </RevealOnView>
-
-          <RevealOnView delayMs={70} variant="fadeUp">
-            <div className="mt-10 grid gap-6 md:grid-cols-3 md:gap-8">
-              {about.paragraphs.map((p, i) => (
-                <p
-                  key={i}
-                  className={
-                    i === 0
-                      ? 'text-base leading-relaxed text-paper/90 md:text-lg'
-                      : 'text-base leading-relaxed text-luxury-muted md:text-[1.05rem]'
-                  }
-                >
-                  {p}
-                </p>
-              ))}
-            </div>
-          </RevealOnView>
-        </div>
-      </section>
-
-      {/* Servicios */}
-      <section
-        id="servicios"
-        aria-labelledby="servicios-heading"
-        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+5rem)] border-t border-white/8 px-4 py-14 sm:px-6 md:px-8 md:py-20 lg:px-10"
-      >
-        <div className="mx-auto w-full max-w-[72rem]">
-          <RevealOnView variant="fadeUp">
-            <p className="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-luxury-gold">
-              {services.pageEyebrow}
-            </p>
-            <h2
-              id="servicios-heading"
-              className="mt-3 font-serif text-[clamp(1.75rem,3vw+0.4rem,2.4rem)] font-semibold tracking-tight text-paper"
-            >
-              {services.title}
-            </h2>
-            <div className="section-rule mt-5" aria-hidden />
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-luxury-muted md:text-lg">
-              {services.intro}
-            </p>
-          </RevealOnView>
-
-          <ul className="m-0 mt-12 list-none border-t border-white/10 p-0">
-            {services.items.map((item, i) => (
-              <li key={`${i}-${item.name}`} className="border-b border-white/10 py-8 md:py-10">
-                <RevealOnView delayMs={Math.min(i * 40, 200)} variant="fadeUp">
-                  <div className="grid gap-3 md:grid-cols-[4.5rem_minmax(0,1fr)_minmax(0,1.1fr)] md:items-start md:gap-8">
-                    <span
-                      className="font-mono text-[0.7rem] font-semibold tabular-nums tracking-[0.2em] text-brand"
-                      aria-hidden
-                    >
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="m-0 font-serif text-xl font-semibold tracking-tight text-paper md:text-2xl">
-                        {item.name}
-                      </h3>
-                      <p className="mt-2 text-base font-medium text-paper/85">{item.tagline}</p>
-                    </div>
-                    <p className="text-[1.02rem] leading-relaxed text-luxury-muted md:pt-1">
-                      {item.description}
-                    </p>
-                  </div>
-                </RevealOnView>
-              </li>
-            ))}
-          </ul>
-
-          <RevealOnView delayMs={80} variant="fadeUp">
-            <div className="mt-12 flex flex-col gap-4 rounded-md border border-white/10 bg-luxury-panel/80 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6">
-              <div>
-                <p className="m-0 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-luxury-gold">
-                  Siguiente paso
-                </p>
-                <p className="mt-2 text-base text-paper/90">
-                  Agenda una visita o llamada para tu proyecto retail, POP o a medida.
-                </p>
-              </div>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-white/82 sm:text-lg">{footer.ctaLead}</p>
+            <div className="mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row">
               <ButtonLink
                 variant="primary"
                 to="/contacto"
-                className="min-h-12 w-full shrink-0 justify-center rounded-md px-7 text-sm uppercase tracking-[0.14em] sm:w-auto"
+                className="min-h-12 w-full justify-center rounded-md px-7 text-sm font-semibold uppercase tracking-[0.14em] sm:w-auto"
               >
-                Pedir cotización
+                Solicitar cotización
+              </ButtonLink>
+              <ButtonLink
+                variant="luxuryOutline"
+                to="/trabajos"
+                className="min-h-12 w-full justify-center rounded-md px-7 text-sm tracking-[0.14em] sm:w-auto"
+              >
+                Ver proyectos
               </ButtonLink>
             </div>
           </RevealOnView>

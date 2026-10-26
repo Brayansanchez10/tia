@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
+import { PortfolioProvider } from '@/lib/portfolio/PortfolioProvider'
 
 /** Detalle de proyecto bajo `/trabajos/...` (no listados ni portafolio): el CTA genérico del pie en móvil no aporta y rompe el flujo tipo app. */
 function hideFooterLeadCtaOnMobile(pathname: string): boolean {
@@ -12,7 +13,7 @@ function hideFooterLeadCtaOnMobile(pathname: string): boolean {
 
 export function MainLayout() {
   const { pathname } = useLocation()
-  const hideMobileFooterLead = hideFooterLeadCtaOnMobile(pathname)
+  const hideMobileFooterLead = pathname === '/' || hideFooterLeadCtaOnMobile(pathname)
   const isHome = pathname === '/'
 
   return (
@@ -25,7 +26,9 @@ export function MainLayout() {
           isHome ? 'pt-0' : 'pt-[calc(env(safe-area-inset-top,0px)+5rem)]',
         ].join(' ')}
       >
-        <Outlet />
+        <PortfolioProvider>
+          <Outlet />
+        </PortfolioProvider>
       </main>
       <SiteFooter hideMobileLeadCta={hideMobileFooterLead} />
     </div>

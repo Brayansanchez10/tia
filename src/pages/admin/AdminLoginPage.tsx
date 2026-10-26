@@ -6,7 +6,7 @@ import { COMPANY_LOGO_SRC } from '@/lib/branding'
 export function AdminLoginPage() {
   const { login, isAuthenticated, isMisconfigured } = useAdminAuth()
   const location = useLocation()
-  const from = (location.state as { from?: string } | null)?.from ?? '/admin/dashboard'
+  const from = (location.state as { from?: string } | null)?.from ?? '/admin/proyectos'
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -44,10 +44,10 @@ export function AdminLoginPage() {
             Acceso
           </p>
           <h1 className="mt-3 font-[family-name:var(--font-serif)] text-2xl text-paper sm:text-3xl">
-            Panel administrador
+            Tus trabajos
           </h1>
-          <p className="mt-2 text-sm text-luxury-muted">
-            Introduce la contraseña para gestionar cotizaciones y exportar PDF.
+          <p className="mt-2 text-sm leading-relaxed text-luxury-muted">
+            Escribe la contraseña para agregar fotos, cambiar textos o esconder un proyecto.
           </p>
 
           {isMisconfigured && (

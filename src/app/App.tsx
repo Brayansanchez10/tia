@@ -5,6 +5,7 @@ import { AdminLayout } from '@/layouts/AdminLayout'
 import { MainLayout } from '@/layouts/MainLayout'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '@/pages/admin/AdminLoginPage'
+import { AdminProyectosPage } from '@/pages/admin/AdminProyectosPage'
 import { AdminRecibosPage } from '@/pages/admin/AdminRecibosPage'
 import { ContactoPage } from '@/pages/ContactoPage'
 import { HomePage } from '@/pages/HomePage'
@@ -21,7 +22,8 @@ export function App() {
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route element={<RequireAuth />}>
-            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route index element={<Navigate to="proyectos" replace />} />
+            <Route path="proyectos" element={<AdminProyectosPage />} />
             <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="recibos" element={<AdminRecibosPage />} />
           </Route>

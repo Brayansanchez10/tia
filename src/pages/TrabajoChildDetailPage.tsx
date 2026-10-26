@@ -1,5 +1,6 @@
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { findTrabajoChild, trabajoExcerptText, trabajoGallerySrcs } from '@/content/site'
+import { usePortfolio } from '@/lib/portfolio/PortfolioProvider'
 import { useTheme } from '@/theme/ThemeProvider'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { TrabajoGalleryList } from '@/components/trabajos/TrabajoGallery'
@@ -20,7 +21,8 @@ export function TrabajoChildDetailPage() {
   const { theme } = useTheme()
   const { parentSlug, childSlug } = useParams()
   const location = useLocation()
-  const resolved = parentSlug && childSlug ? findTrabajoChild(parentSlug, childSlug) : undefined
+  const { items } = usePortfolio()
+  const resolved = parentSlug && childSlug ? findTrabajoChild(parentSlug, childSlug, items) : undefined
 
   if (!resolved) {
     return <Navigate to="/trabajos" replace />

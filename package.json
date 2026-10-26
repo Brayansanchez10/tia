@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@neon/config": "^1.9.3",
+    "@neon/env": "^1.6.4",
+    "@neondatabase/serverless": "^1.2.0",
     "@react-pdf/renderer": "^4.5.0",
     "@tailwindcss/vite": "^4.2.2",
     "cloudinary": "^2.10.0",

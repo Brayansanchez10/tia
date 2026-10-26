@@ -176,12 +176,12 @@ function reviveSavedReciboEntry(raw: unknown): SavedReciboEntry | null {
   return { id, label, updatedAt, data }
 }
 
-function parseCotizacionList(json: unknown): SavedCotizacionEntry[] {
+export function reviveSavedCotizacionList(json: unknown): SavedCotizacionEntry[] {
   if (!Array.isArray(json)) return []
   return json.map(reviveSavedCotizacionEntry).filter((x): x is SavedCotizacionEntry => x !== null)
 }
 
-function parseReciboList(json: unknown): SavedReciboEntry[] {
+export function reviveSavedReciboList(json: unknown): SavedReciboEntry[] {
   if (!Array.isArray(json)) return []
   return json.map(reviveSavedReciboEntry).filter((x): x is SavedReciboEntry => x !== null)
 }
@@ -213,7 +213,7 @@ export function readSavedCotizacionesLibrary(): SavedCotizacionEntry[] {
   try {
     const s = localStorage.getItem(LIB_COTIZACION_KEY)
     if (s) {
-      const list = parseCotizacionList(JSON.parse(s) as unknown)
+      const list = reviveSavedCotizacionList(JSON.parse(s) as unknown)
       if (list.length) return list
     }
     const legacy = readLegacyCotizacionDraft()
@@ -250,7 +250,7 @@ export function readSavedRecibosLibrary(): SavedReciboEntry[] {
   try {
     const s = localStorage.getItem(LIB_RECIBO_KEY)
     if (s) {
-      const list = parseReciboList(JSON.parse(s) as unknown)
+      const list = reviveSavedReciboList(JSON.parse(s) as unknown)
       if (list.length) return list
     }
     const legacy = readLegacyReciboDraft()

@@ -1,11 +1,20 @@
 import type { Connect, Plugin } from 'vite'
+import { adminAuthorized } from './server/adminGate'
 import { handleCloudinaryStatus, handleCloudinaryUpload } from './server/cloudinaryApi'
+import { jsonResponse } from './server/cloudinaryHttpJson'
+import { signPortfolioUpload } from './server/cloudinarySign'
 
 const STATUS_PATH = '/api/cloudinary/status'
 const UPLOAD_PATH = '/api/cloudinary/upload'
+const SIGN_PATH = '/api/cloudinary/sign'
 
 function patchProcessEnv(env: Record<string, string>): void {
-  for (const key of ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'] as const) {
+  for (const key of [
+    'CLOUDINARY_CLOUD_NAME',
+    'CLOUDINARY_API_KEY',
+    'CLOUDINARY_API_SECRET',
+    'VITE_ADMIN_PASSWORD',
+  ] as const) {
     const v = env[key]
     if (v) process.env[key] = v
   }
@@ -20,6 +29,22 @@ function attachCloudinaryApi(middlewares: Connect.Server): void {
     }
     if (path === UPLOAD_PATH && req.method === 'POST') {
       void handleCloudinaryUpload(req, res)
+      return
+    }
+    if (path === SIGN_PATH && req.method === 'POST') {
+      const provided = req.headers['x-admin-password']
+      const password = Array.isArray(provided) ? provided[0] : provided
+      const gate = adminAuthorized(password)
+      if (!gate.ok) {
+        jsonResponse(res, gate.status, { error: gate.error })
+        return
+      }
+      const ticket = signPortfolioUpload()
+      if (!ticket) {
+        jsonResponse(res, 503, { error: 'Cloudinary no configurado en el servidor.' })
+        return
+      }
+      jsonResponse(res, 200, ticket)
       return
     }
     next()

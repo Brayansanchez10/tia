@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { AdminPdfPreviewPane } from '@/components/admin/AdminPdfPreviewPane'
 import { AdminSavedLibrarySection } from '@/components/admin/AdminSavedLibrarySection'
 import {
   cloneReciboData,
   readSavedRecibosLibrary,
+  reviveSavedReciboList,
   writeSavedRecibosLibrary,
-  type SavedReciboEntry,
 } from '@/lib/admin/adminSavedDocuments'
+import { usePostgresSavedLibrary } from '@/lib/admin/usePostgresSavedLibrary'
 import { ReciboPdfDocument } from '@/components/admin/ReciboPdfDocument'
 import { COMPANY_LOGO_SRC } from '@/lib/branding'
 import { defaultReciboBranding } from '@/lib/recibo/defaults'
@@ -23,16 +24,17 @@ function newLineId(): string {
 
 export function AdminRecibosPage() {
   const [data, setData] = useState<ReciboData>(() => createDefaultRecibo())
-  const [savedList, setSavedList] = useState<SavedReciboEntry[]>(() => readSavedRecibosLibrary())
+  const { savedList, setSavedList, syncNote } = usePostgresSavedLibrary({
+    kind: 'recibo',
+    readLocal: readSavedRecibosLibrary,
+    writeLocal: writeSavedRecibosLibrary,
+    reviveList: reviveSavedReciboList,
+  })
   const [editingSavedId, setEditingSavedId] = useState<string | null>(null)
   const [saveNameDraft, setSaveNameDraft] = useState('')
   const [exporting, setExporting] = useState(false)
 
   const totals = useMemo(() => computeReciboTotals(data), [data])
-
-  useEffect(() => {
-    writeSavedRecibosLibrary(savedList)
-  }, [savedList])
 
   const update = useCallback((patch: Partial<ReciboData>) => {
     setData((d) => ({ ...d, ...patch }))
@@ -155,7 +157,12 @@ export function AdminRecibosPage() {
       <div className="mt-6">
         <AdminSavedLibrarySection
           title="Recibos guardados"
-          description="Guarda versiones con un nombre. Editar carga el recibo en el formulario; Actualizar guardado sustituye la tarjeta activa."
+          description={
+            <>
+              Guarda versiones con un nombre. Editar carga el recibo en el formulario; Actualizar
+              guardado sustituye la tarjeta activa. {syncNote}
+            </>
+          }
           items={savedCards}
           editingId={editingSavedId}
           nameDraft={saveNameDraft}

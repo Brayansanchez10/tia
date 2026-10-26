@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-export type RevealVariant = 'fadeUp' | 'fadeLeft' | 'fadeRight' | 'scale' | 'fadeDown'
+export type RevealVariant = 'fadeUp' | 'fadeLeft' | 'fadeRight' | 'scale' | 'fadeDown' | 'clip'
 
 type RevealOnViewProps = {
   children: ReactNode
@@ -40,6 +40,11 @@ const variantClasses: Record<
     shown: 'translate-y-0 scale-100 opacity-100',
     transition:
       'motion-safe:transition-[opacity,transform] motion-safe:duration-[900ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]',
+  },
+  clip: {
+    hidden: 'home-clip',
+    shown: 'home-clip is-in',
+    transition: '',
   },
 }
 

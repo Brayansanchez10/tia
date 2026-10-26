@@ -1,5 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom'
-import { site } from '@/content/site'
+import { usePortfolio } from '@/lib/portfolio/PortfolioProvider'
 import { TrabajoDetailPage } from '@/pages/TrabajoDetailPage'
 import { TrabajoHubPage } from '@/pages/TrabajoHubPage'
 
@@ -8,7 +8,8 @@ import { TrabajoHubPage } from '@/pages/TrabajoHubPage'
  */
 export function TrabajoEntryPage() {
   const { slug } = useParams()
-  const post = site.trabajos.items.find((p) => p.slug === slug)
+  const { items } = usePortfolio()
+  const post = items.find((p) => p.slug === slug)
 
   if (!post) {
     return <Navigate to="/trabajos" replace />

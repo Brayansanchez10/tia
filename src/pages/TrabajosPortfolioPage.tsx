@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { site } from '@/content/site'
+import { usePortfolio } from '@/lib/portfolio/PortfolioProvider'
 import { RevealOnView } from '@/components/motion/RevealOnView'
 import { WorkCard } from '@/components/trabajos/WorkCard'
 import {
@@ -15,18 +15,18 @@ const backLinkClass =
 export function TrabajosPortfolioPage() {
   const { kind: kindParam } = useParams()
   const kind = parseTrabajoPortfolioKindParam(kindParam)
+  const { items: catalog } = usePortfolio()
+
+  const items = useMemo(
+    () => (kind ? catalog.filter((p) => p.portfolioKind === kind) : []),
+    [catalog, kind],
+  )
 
   if (!kind) {
     return <Navigate to="/trabajos" replace />
   }
 
-  const { trabajos } = site
   const { title, blurb, icon: Icon } = TRABAJO_CATEGORY_META[kind]
-
-  const items = useMemo(
-    () => trabajos.items.filter((p) => p.portfolioKind === kind),
-    [trabajos.items, kind],
-  )
 
   return (
     <div className="min-h-[50vh] w-full bg-luxury-bg">
@@ -63,9 +63,7 @@ export function TrabajosPortfolioPage() {
 
         {items.length === 0 ? (
           <p className="mt-12 rounded-lg border border-dashed border-white/15 bg-luxury-panel/40 px-4 py-8 text-center text-sm text-paper/75">
-            Cuando añadas trabajos con{' '}
-            <code className="text-luxury-gold/90">portfolioKind: &apos;{kind}&apos;</code> en{' '}
-            <code className="text-paper/80">src/content/site.ts</code>, aparecerán aquí.
+            Los proyectos de esta categoría se agregan desde el acceso de administración.
           </p>
         ) : (
           <ul className="m-0 mt-10 grid list-none grid-cols-1 gap-6 p-0 sm:gap-7 md:grid-cols-2 md:gap-8 lg:gap-10">

@@ -179,6 +179,90 @@ html[data-theme='light'] {
     width: 3.5rem;
     background: linear-gradient(90deg, var(--theme-brand-red), var(--theme-luxury-gold));
   }
+
+  /** Hero: tilt 3D con variables (--hero-tilt-*) desde el puntero. */
+  .home-hero-visual-root {
+    perspective: 1200px;
+  }
+
+  .home-hero-visual-tilt {
+    --hero-tilt-x: 0deg;
+    --hero-tilt-y: 0deg;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(var(--hero-tilt-x)) rotateY(var(--hero-tilt-y)) translateZ(0);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-visual-tilt {
+      transition: transform 0.2s cubic-bezier(0.22, 0.9, 0.28, 1);
+    }
+
+    .home-hero-visual-plate {
+      transition:
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+      .home-hero-visual-root:hover .home-hero-visual-plate {
+        box-shadow:
+          0 32px 96px rgb(0 0 0 / 0.55),
+          0 0 0 1px rgb(184 149 108 / 0.22);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero-visual-tilt {
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /** Revelado de imagen por máscara (una vez, al entrar en pantalla). */
+  .home-clip {
+    clip-path: inset(14% 0 16% 0);
+    opacity: 0;
+  }
+
+  .home-clip.is-in {
+    clip-path: inset(0);
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-clip {
+      transition:
+        clip-path 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.7s ease;
+    }
+
+    .home-service-row {
+      transition:
+        background-color 0.35s ease,
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .home-service-row:hover {
+        transform: translateX(0.65rem);
+      }
+
+      .home-service-row:hover .home-service-num {
+        color: var(--theme-brand-red);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-clip,
+    .home-clip.is-in {
+      clip-path: none;
+      opacity: 1;
+      transition: none;
+    }
+  }
 }
 
 @layer base {

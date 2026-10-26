@@ -9,4 +9,4 @@
   node_bundler = "esbuild"
 
 # Las rutas /api/* también están en public/_redirects (copiado a dist).
-# Netlify Functions: variables CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+# Netlify Functions: CLOUDINARY_*, DATABASE_URL, DATABASE_URL_UNPOOLED, VITE_ADMIN_PASSWORD
